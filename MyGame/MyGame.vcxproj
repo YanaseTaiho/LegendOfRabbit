@@ -415,7 +415,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\cereal-1.2.2\include;D:\ドキュメント\Visual Studio 2017\Projects\MyGame\MyGame\Asset;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\cereal-1.2.2\include;D:\ドキュメント\LegendOfRabbit\MyGame\Asset;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -426,7 +426,7 @@
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Program Files\assimp-3.1.1\lib64;D:\ドキュメント\Visual Studio 2017\Projects\MyGame\MyGame\Asset\DirectX\d3dx11\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\assimp-3.1.1\lib64;D:\ドキュメント\LegendOfRabbit\MyGame\Asset\DirectX\d3dx11\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
@@ -454,14 +454,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\cereal-1.2.2\include;D:\ドキュメント\Visual Studio 2017\Projects\MyGame\MyGame\Asset;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\cereal-1.2.2\include;D:\ドキュメント\LegendOfRabbit\MyGame\Asset;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files\assimp-3.1.1\lib64;D:\ドキュメント\Visual Studio 2017\Projects\MyGame\MyGame\Asset\DirectX\d3dx11\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files\assimp-3.1.1\lib64;D:\ドキュメント\LegendOfRabbit\MyGame\Asset\DirectX\d3dx11\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
