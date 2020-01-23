@@ -1,0 +1,59 @@
+{
+    "Stage": {
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "cereal_class_version": 0,
+                "name": "Stage",
+                "materialParam": {
+                    "cereal_class_version": 0,
+                    "ambient": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 0.0
+                    },
+                    "diffuse": {
+                        "r": 0.9999994039535523,
+                        "g": 1.0,
+                        "b": 0.9999899864196777,
+                        "a": 1.0
+                    },
+                    "emissive": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 0.7400000095367432
+                    },
+                    "bump": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "specular": {
+                        "r": 0.25,
+                        "g": 0.25,
+                        "b": 0.25,
+                        "a": 0.5
+                    },
+                    "specularFactor": 1.0,
+                    "shininess": 1.0,
+                    "reflection": 1.850000023841858,
+                    "height": 0.0
+                },
+                "shader": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "MyDirectX::MeshShader",
+                    "ptr_wrapper": {
+                        "id": 2147483650,
+                        "data": {}
+                    }
+                },
+                "texName": "Asset\\Art\\Model\\Ground.jpg",
+                "normalName": "Asset\\Art\\Texture\\Ground_normal3.jpg",
+                "heightName": ""
+            }
+        }
+    }
+}

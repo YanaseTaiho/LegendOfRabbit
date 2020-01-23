@@ -1,0 +1,4 @@
+崖ジャンプ	Cliff_Jump
+崖掴まり	Cliff_Grap
+崖掴まり状態	Cliff_Idle
+崖上がり	Cliff_Up

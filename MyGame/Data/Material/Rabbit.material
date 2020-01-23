@@ -1,0 +1,59 @@
+{
+    "Rabbit": {
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "cereal_class_version": 0,
+                "name": "Rabbit",
+                "materialParam": {
+                    "cereal_class_version": 0,
+                    "ambient": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 0.0
+                    },
+                    "diffuse": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "emissive": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 0.8700000047683716
+                    },
+                    "bump": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "specular": {
+                        "r": 0.25,
+                        "g": 0.25,
+                        "b": 0.25,
+                        "a": 0.3199999928474426
+                    },
+                    "specularFactor": 1.0,
+                    "shininess": 1.0,
+                    "reflection": 0.0,
+                    "height": 0.0
+                },
+                "shader": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "MyDirectX::SkinMeshShader",
+                    "ptr_wrapper": {
+                        "id": 2147483650,
+                        "data": {}
+                    }
+                },
+                "texName": "Asset/Art/Model/Rabit_Base.png",
+                "normalName": "",
+                "heightName": ""
+            }
+        }
+    }
+}
