@@ -19,6 +19,13 @@ namespace FrameWork
 			else if (value >= max) { return max; }
 			else { return value; }
 		}
+		template <typename T>
+		static T Loop(T value, T min, T max)
+		{
+			if (value < min) { return max; }
+			else if (value > max) { return min; }
+			else { return value; }
+		}
 		// 0.0f ` 1.0f ‚Ì”ÍˆÍ“à‚É‚È‚é‚æ‚¤‚É‚·‚é
 		static float Clamp01(float value)
 		{

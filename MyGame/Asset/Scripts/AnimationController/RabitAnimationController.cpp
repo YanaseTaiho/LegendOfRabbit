@@ -20,6 +20,7 @@ void RabitAnimationController::Initialize()
 	// çUåÇån
 	auto attack_Combo = AddParameterInt("Attack_Combo");
 	auto attack_Type = AddParameterInt("Attack_Type");
+	auto attack_Trigger = AddParameterTrigger("Attack_Trigger");
 
 	AddFilter("Normal", [=](std::shared_ptr<AnimationFilter> & filter)
 	{
@@ -68,71 +69,160 @@ void RabitAnimationController::Initialize()
 		auto attack_Thrust_2 = Attack_Thrust_Filter->AddState("Attack_Thrust_2");
 		auto attack_Thrust_3 = Attack_Thrust_Filter->AddState("Attack_Thrust_3");
 
+		// Attack_Filter
 		{
-			//Attack_Filter->AddTransition(Idle_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
-			//{
-			//	transition->SetOption(0.05f, true, 0.9f);
-			//});
-			//Attack_Filter->AddTransition(Move_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
-			//{
-			//	transition->SetOption(0.05f, true, 0.9f);
-			//});
+			Attack_Filter->AddTransition(Idle_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, true, 0.9f);
+				transition->AddConditionFloat(walkValue, Less, 0.1f);
+			});
+			Attack_Filter->AddTransition(Move_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, true, 0.9f);
+				transition->AddConditionFloat(walkValue, Greater, 0.1f);
+			});
+			Attack_Filter->AddTransition(fall, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.05f, false);
+				transition->AddConditionBool(isFall, true);
+			});
 
-			//// Inside
-			//{
-			//	attack_Inside_1->AddTransition(attack_Inside_2, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//		transition->AddConditionInt(walkValue, );
-			//	});
-			//	attack_Inside_1->AddTransition(attack_Outside_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_1->AddTransition(attack_Upper_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_1->AddTransition(attack_Thrust_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_2->AddTransition(attack_Inside_3, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_2->AddTransition(attack_Outside_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_2->AddTransition(attack_Upper_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_2->AddTransition(attack_Thrust_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//}
-			//// Outside
-			//{
-			//	attack_Inside_1->AddTransition(attack_Inside_2, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_1->AddTransition(attack_Outside_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_1->AddTransition(attack_Upper_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//	attack_Inside_1->AddTransition(attack_Thrust_1, [=](std::shared_ptr<AnimationTransition> & transition)
-			//	{
-			//		transition->SetOption(0.0f, false);
-			//	});
-			//}
+			// Inside
+			{
+				Attack_Inside_Filter->AddTransition(attack_Outside_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, true, 0.7f);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Outside);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Inside_Filter->AddTransition(attack_Upper_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, true, 0.7f);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Upper);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Inside_Filter->AddTransition(attack_Thrust_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, true, 0.7f);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Thrust);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+
+				attack_Inside_1->AddTransition(attack_Inside_2, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, true, 0.7f);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Inside);
+					transition->AddConditionInt(attack_Combo, 1);
+				});
+				attack_Inside_2->AddTransition(attack_Inside_3, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, true, 0.7f);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Inside);
+					transition->AddConditionInt(attack_Combo, 2);
+				});
+			}
+			// Outside
+			{
+				Attack_Outside_Filter->AddTransition(attack_Inside_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Inside);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Outside_Filter->AddTransition(attack_Upper_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Upper);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Outside_Filter->AddTransition(attack_Thrust_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Thrust);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+
+				attack_Outside_1->AddTransition(attack_Outside_2, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Outside);
+					transition->AddConditionInt(attack_Combo, 1);
+				});
+				attack_Outside_2->AddTransition(attack_Outside_3, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Outside);
+					transition->AddConditionInt(attack_Combo, 2);
+				});
+			}
+			// Upper
+			{
+				Attack_Upper_Filter->AddTransition(attack_Inside_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Inside);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Upper_Filter->AddTransition(attack_Outside_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Outside);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Upper_Filter->AddTransition(attack_Thrust_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Thrust);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+
+				attack_Upper_1->AddTransition(attack_Upper_2, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Upper);
+					transition->AddConditionInt(attack_Combo, 1);
+				});
+				attack_Upper_2->AddTransition(attack_Upper_3, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Upper);
+					transition->AddConditionInt(attack_Combo, 2);
+				});
+			}
+			// Thrust
+			{
+				Attack_Thrust_Filter->AddTransition(attack_Inside_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Inside);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Thrust_Filter->AddTransition(attack_Outside_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Outside);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+				Attack_Thrust_Filter->AddTransition(attack_Upper_1, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Upper);
+					transition->AddConditionInt(attack_Combo, 0);
+				});
+
+				attack_Thrust_1->AddTransition(attack_Thrust_2, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Thrust);
+					transition->AddConditionInt(attack_Combo, 1);
+				});
+				attack_Thrust_2->AddTransition(attack_Thrust_3, [=](std::shared_ptr<AnimationTransition> & transition)
+				{
+					transition->SetOption(0.0f, false);
+					transition->AddConditionInt(attack_Type, (int)PlayerActor::AttackType::Thrust);
+					transition->AddConditionInt(attack_Combo, 2);
+				});
+			}
 		}
 
 
@@ -140,7 +230,7 @@ void RabitAnimationController::Initialize()
 		filter->SetEntryPoint(idle);
 
 		// ÉgÉâÉìÉWÉVÉáÉìí«â¡
-
+		//
 		// Idle_Filter
 		{
 			Idle_Filter->AddTransition(walk, [=](std::shared_ptr<AnimationTransition> & transition)
@@ -163,6 +253,11 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.03f, false);
 				transition->AddConditionTrigger(cliff_Jump_Trigger);
 			});
+			Idle_Filter->AddTransition(Attack_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.0f, false);
+				transition->AddConditionTrigger(attack_Trigger);
+			});
 		}
 
 		// Move_Filter
@@ -177,11 +272,15 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.2f, false);
 				transition->AddConditionBool(isFall, true);
 			});
-
 			Move_Filter->AddTransition(roll, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.05f, false);
 				transition->AddConditionTrigger(rollTrigger);
+			});
+			Move_Filter->AddTransition(Attack_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.0f, false);
+				transition->AddConditionTrigger(attack_Trigger);
 			});
 
 			// Walk

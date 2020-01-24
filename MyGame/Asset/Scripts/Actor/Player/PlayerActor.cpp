@@ -117,15 +117,29 @@ void PlayerActor::OnUpdate()
 	
 	if (!handSword.expired() && handSword.lock()->IsActive())
 	{
+		static int combo = 0;
+
 		if (animator.lock()->IsCurrentAnimation("Idle")
 			|| animator.lock()->IsCurrentAnimation("Walk")
 			|| animator.lock()->IsCurrentAnimation("Run"))
 		{
+			combo = 0;
+
 			if (!sorwd_HandContorller.expired()) sorwd_HandContorller.lock()->SetWeight(0.1f);
 		}
 		else
 		{
 			if (!sorwd_HandContorller.expired()) sorwd_HandContorller.lock()->SetWeight(-0.1f);
+		}
+
+		
+		if (Input::Keyboad::IsTrigger('E'))
+		{
+			animator.lock()->SetTrigger("Attack_Trigger");
+			animator.lock()->SetInt("Attack_Type", (int)AttackType::Inside);
+			animator.lock()->SetInt("Attack_Combo", combo);
+			combo++;
+			combo = Mathf::Loop(combo, 0, 2);
 		}
 	}
 	if (!handShield.expired() && handShield.lock()->IsActive())

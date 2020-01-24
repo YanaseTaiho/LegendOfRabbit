@@ -12,6 +12,7 @@ void AnimationFilter::DrawimGui(int id)
 	std::string strId = "##" + std::to_string(cnt);
 	if (ImGui::CollapsingHeader((name + strId).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		ImGui::Indent();
 		for (auto & anim : animStates)
 		{
 			strId = "##" + std::to_string(cnt);
@@ -27,13 +28,14 @@ void AnimationFilter::DrawimGui(int id)
 			}
 			cnt++;
 		}
-	}
 
-	for (auto & filter : childFilters)
-	{
-		filter->DrawimGui(cnt);
-		cnt++;
+		for (auto & filter : childFilters)
+		{
+			filter->DrawimGui(cnt);
+			cnt++;
+		}
 	}
+	ImGui::Unindent();
 }
 
 void AnimationFilter::Start()
