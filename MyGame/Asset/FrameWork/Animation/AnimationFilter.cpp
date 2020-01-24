@@ -40,6 +40,7 @@ void AnimationFilter::Start()
 {
 	for (auto animState : animStates)
 	{
+		if (!animState->motion) continue;
 		if (!animState->motion->IsTakeNode())
 		{
 			auto newTakeNode = Singleton<AnimationClipManager>::Instance()->GetTakeNode(animState->motion->GetName());
@@ -95,6 +96,8 @@ bool AnimationFilter::SetAnimation(std::string name)
 			return true;
 		}
 	}
+
+	return false;
 }
 
 void AnimationFilter::SetEntryPoint(std::weak_ptr<AnimationState> entryState)
@@ -116,6 +119,9 @@ std::shared_ptr<AnimationFilter> & AnimationFilter::AddFilter(std::string name, 
 			auto & child = childFilters.back();
 			child->myFilter = child;
 			child->parentFilter = myFilter;
+
+			if (func) func(child);
+
 			return child;
 		}
 	}
@@ -125,6 +131,9 @@ std::shared_ptr<AnimationFilter> & AnimationFilter::AddFilter(std::string name, 
 	child->myFilter = child;
 	child->parentFilter = myFilter;
 	child->name = name;
+
+	if (func) func(child);
+
 	return child;
 }
 
@@ -154,16 +163,49 @@ void AnimationFilter::AddTransition(std::weak_ptr<AnimationState> nextState, std
 {
 	if (nextState.expired()) return;
 
+	for (auto itr = transitions.begin(), end = transitions.end(); itr != end; ++itr)
+	{
+		if ((*itr)->nextAnimation.expired()) continue;
+		if ((*itr)->nextAnimation.lock()->name == nextState.lock()->name)
+		{
+			transitions.erase(itr);
+			break;
+		}
+	}
+
 	transitions.emplace_back(std::make_shared<AnimationTransition>());
 	auto & add = transitions.back();
 	add->nextAnimation = nextState;
 	func(add);
 }
 
+void AnimationFilter::AddTransition(std::weak_ptr<AnimationFilter> filter, std::function<void(std::shared_ptr<AnimationTransition> & transition)> func)
+{
+	for (auto state : filter.lock()->animStates)
+	{
+		AddTransition(state, func);
+	}
+
+	for (auto child : filter.lock()->childFilters)
+	{
+		AddTransition(child, func);
+	}
+}
+
 void AnimationFilter::AddTransition(std::string nextStateName, std::function<void(std::shared_ptr<AnimationTransition>&transition)> func)
 {
 	auto state = GetState(nextStateName);
 	if (state.expired()) return;
+
+	for (auto itr = transitions.begin(), end = transitions.end(); itr != end; ++itr)
+	{
+		if ((*itr)->nextAnimation.expired()) continue;
+		if ((*itr)->nextAnimation.lock()->name == state.lock()->name)
+		{
+			transitions.erase(itr);
+			break;
+		}
+	}
 
 	transitions.emplace_back(std::make_shared<AnimationTransition>());
 	auto & add = transitions.back();

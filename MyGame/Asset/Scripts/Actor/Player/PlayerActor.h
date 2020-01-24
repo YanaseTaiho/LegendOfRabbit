@@ -55,6 +55,16 @@ public:
 		Air,
 		CliffGrap
 	};
+
+	enum class AttackType : int
+	{
+		Inside,
+		Outside,
+		Upper,
+		Thrust,
+		Jump
+	};
+
 	std::weak_ptr<Transform> cameraTransform;
 
 	std::weak_ptr<RotationFixedController> sorwd_HandContorller;	// Œ•‘•”õŽž

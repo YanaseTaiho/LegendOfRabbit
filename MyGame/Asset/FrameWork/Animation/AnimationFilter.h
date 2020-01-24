@@ -36,9 +36,10 @@ namespace FrameWork
 		bool SetAnimation(std::string name);
 
 		void SetEntryPoint(std::weak_ptr<AnimationState> entryState);
-		std::shared_ptr<AnimationFilter> & AddFilter(std::string name, std::function<void(std::shared_ptr<AnimationFilter> & filter)> func);
+		std::shared_ptr<AnimationFilter> & AddFilter(std::string name, std::function<void(std::shared_ptr<AnimationFilter> & filter)> func = nullptr);
 		std::shared_ptr<AnimationState> & AddState(std::string name);
 		void AddTransition(std::weak_ptr<AnimationState> nextState, std::function<void(std::shared_ptr<AnimationTransition> & transition)> func);
+		void AddTransition(std::weak_ptr<AnimationFilter> filter, std::function<void(std::shared_ptr<AnimationTransition> & transition)> func);
 		void AddTransition(std::string nextStateName, std::function<void(std::shared_ptr<AnimationTransition> & transition)> func);
 
 		std::weak_ptr<AnimationState> GetState(std::string name);

@@ -79,6 +79,7 @@
     <ClCompile Include="Asset\Main\audio_clip.cpp" />
     <ClCompile Include="Asset\FrameWork\Scene\Prefab.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.cpp" />
+    <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
     <ClCompile Include="Asset\Tool\Menu.cpp" />
     <ClCompile Include="Asset\Scene\Editor\EditorScene.cpp" />

@@ -51,6 +51,8 @@ void AnimationController::AddFilter(std::string name, std::function<void(std::sh
 
 void AnimationController::Initialize()
 {
+	//std::vector<std::shared_ptr<AnimationFilter>>().swap(animationFilters);
+
 	std::unordered_map<std::string, std::shared_ptr<float>>().swap(parameterFloatMap);
 	std::unordered_map<std::string, std::shared_ptr<int>>().swap(parameterIntMap);
 	std::unordered_map<std::string, std::shared_ptr<bool>>().swap(parameterBoolMap);

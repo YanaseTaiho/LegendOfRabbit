@@ -8,6 +8,8 @@ using namespace FrameWork;
 
 void AnimationState::LoadSerialize()
 {
+	if (!this->motion) return;
+
 	auto take = Singleton<AnimationClipManager>::Instance()->GetTakeNode(this->motion->GetName());
 	this->motion->SetTakeNode(take);
 }
@@ -31,6 +33,16 @@ bool AnimationState::SetAnimationClip(std::string animClipName, float speed, boo
 void AnimationState::AddTransition(std::weak_ptr<AnimationState> nextState, std::function<void(std::shared_ptr<AnimationTransition>&transition)> func)
 {
 	if (nextState.expired()) return;
+
+	for (auto itr = transitions.begin(), end = transitions.end(); itr != end; ++itr)
+	{
+		if ((*itr)->nextAnimation.expired()) continue;
+		if ((*itr)->nextAnimation.lock()->name == nextState.lock()->name)
+		{
+			transitions.erase(itr);
+			break;
+		}
+	}
 
 	transitions.emplace_back(std::make_shared<AnimationTransition>());
 	auto & add = transitions.back();
