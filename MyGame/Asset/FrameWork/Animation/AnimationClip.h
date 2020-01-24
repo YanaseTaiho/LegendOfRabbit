@@ -24,11 +24,11 @@ namespace FrameWork
 
 		// hierarchy : ‚±‚ÌŠK‘w‚Æ“¯‚¶êŠ‚É‘}“ü
 		// frame : ‘}“ü‚µ‚½‚¢ƒtƒŒ[ƒ€
-		void SetAnimationTake(Transform * hierarchy, int frame, Matrix4 & matrix);
+		void SetAnimationTake(Transform * const hierarchy, int frame, Matrix4 & matrix);
 		// ”z—ñ‚ÅŠK‘w‚ğw’è‚µ‚Ä‘}“ü
 		void SetAnimationTake(std::vector<int> * indexArray, int frame, Matrix4 & matrix);
 		// w’è‚µ‚½ŠK‘w‚ÌƒtƒŒ[ƒ€‚ğíœ
-		void DeleteAnimationTake(Transform * hierarchy, int frame);
+		void DeleteAnimationTake(Transform * const hierarchy, int frame);
 		// w’è‚µ‚½ŠK‘w‚ÌƒtƒŒ[ƒ€‚ğíœ
 		void DeleteAnimationTake(std::vector<int> indexArray, int frame);
 		// w’è‚µ‚½ƒtƒŒ[ƒ€‚ÉƒR[ƒ‹ƒoƒbƒNŠÖ”‚ğŒÄ‚Ô
@@ -38,7 +38,7 @@ namespace FrameWork
 		void UpdateAnimation(Transform * transform);
 		void UpdateFrame();
 
-		static void UpdateBlendAnimation(Transform * transform, AnimationClip * anim1, AnimationClip * anim2, const float weight);
+		static void UpdateBlendAnimation(Transform * const transform, AnimationClip * const anim1, AnimationClip * const anim2, const float weight);
 
 		void SetTakeNode(std::weak_ptr<TakeNode> takeNode) { this->takeNode = takeNode; }
 		void SetLoop(bool onLoop) { this->isLoop = onLoop; }
@@ -63,11 +63,11 @@ namespace FrameWork
 		void Initialize(std::string name, std::weak_ptr<TakeNode> takeNode);
 
 		// –Ú“I‚ÌŠK‘w‚ğŒŸõ‚µ‚Ä indexArray ‚ÉŠK‘wƒf[ƒ^‚ğ“ü‚ê‚é
-		bool SearchHeirarchy(Transform * hierarchy, Transform * parent, std::vector<int> * indexArray);
+		bool SearchHeirarchy(Transform * const hierarchy, Transform * const parent, std::vector<int> * indexArray);
 
-		static inline void HierarchyUpdate(Transform * transform, TakeNode * takeNode, const float frameCnt);
+		static inline void HierarchyUpdate(Transform * const transform, TakeNode * const takeNode, const float frameCnt);
 
-		static inline void HierarchyBlendUpdate(Transform * transform, TakeNode * takeNode1, TakeNode * takeNode2, const float frameCnt1, const float frameCnt2, const float weight);
+		static inline void HierarchyBlendUpdate(Transform * const transform, TakeNode * const takeNode1, TakeNode * const takeNode2, const float frameCnt1, const float frameCnt2, const float weight);
 
 		std::weak_ptr<TakeNode> takeNode;	// QÆ
 		std::string name;

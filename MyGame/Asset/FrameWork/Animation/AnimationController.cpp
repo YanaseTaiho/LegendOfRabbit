@@ -10,11 +10,6 @@ AnimationController::AnimationController()
 
 AnimationController::~AnimationController()
 {
-	std::vector<std::shared_ptr<AnimationState>>().swap(animStates);
-
-	std::vector<std::shared_ptr<AnimationTransition>>().swap(transitions);
-	std::vector<std::weak_ptr<AnimationTransition>>().swap(currentTransitions);
-
 	std::unordered_map<std::string, std::shared_ptr<float>>().swap(parameterFloatMap);
 	std::unordered_map<std::string, std::shared_ptr<int>>().swap(parameterIntMap);
 	std::unordered_map<std::string, std::shared_ptr<bool>>().swap(parameterBoolMap);
@@ -23,62 +18,39 @@ AnimationController::~AnimationController()
 
 void AnimationController::DrawimGui(int id)
 {
-	int cnt = id;
-	for (auto & anim : animStates)
+	for (auto & filter : animationFilters)
 	{
-		std::string strId = "##" + std::to_string(cnt);
-		if (ImGui::TreeNode((anim->name + strId).c_str()))
-		{
-			Singleton<AnimationClipManager>::Instance()->DropTargetImGui(anim->motion, std::to_string(cnt));
-
-			if (anim->motion)
-			{
-				anim->motion->DrawImGui(cnt);
-			}
-			ImGui::TreePop();
-		}
-		cnt++;
+		filter->DrawimGui(id);
 	}
 }
 
-std::weak_ptr<AnimationState> AnimationController::AddState(std::string name)
+void AnimationController::AddFilter(std::string name, std::function<void(std::shared_ptr<AnimationFilter> & filter)> func)
 {
-	for (auto itr = animStates.begin(), end = animStates.end(); itr != end; ++itr)
+	for (auto itr = animationFilters.begin(), end = animationFilters.end(); itr != end; ++itr)
 	{
 		// 既にあった場合はコピーして入れなおす
 		if ((*itr)->name == name)
 		{
-			std::shared_ptr<AnimationState> oldAnim = *itr;
-			animStates.erase(itr);
+			std::shared_ptr<AnimationFilter> oldAnim = *itr;
+			animationFilters.erase(itr);
 
-			animStates.emplace_back(std::make_shared<AnimationState>(*oldAnim));
-			auto newState = animStates.back();
-
-			// トランジションの更新
-			/*for (auto tran : transitions)
-			{
-				if (tran->entryAnimation.lock() == oldAnim)
-					tran->entryAnimation = newState;
-
-				if (tran->nextAnimation.lock() == oldAnim)
-					tran->nextAnimation = newState;
-			}*/
-			
-			return newState;
+			animationFilters.emplace_back(std::make_shared<AnimationFilter>(*oldAnim));
+			auto newFilter = animationFilters.back();
+			newFilter->myFilter = newFilter;
+			func(newFilter);
+			return;
 		}
 	}
 
-	animStates.emplace_back(std::make_shared<AnimationState>());
-	animStates.back()->SetName(name);
-
-	return animStates.back();
+	animationFilters.emplace_back(std::make_shared<AnimationFilter>());
+	auto & filter = animationFilters.back();
+	filter->myFilter = filter;
+	filter->name = name;
+	func(filter);
 }
 
 void AnimationController::Initialize()
 {
-	std::vector<std::shared_ptr<AnimationTransition>>().swap(transitions);
-	std::vector<std::weak_ptr<AnimationTransition>>().swap(currentTransitions);
-
 	std::unordered_map<std::string, std::shared_ptr<float>>().swap(parameterFloatMap);
 	std::unordered_map<std::string, std::shared_ptr<int>>().swap(parameterIntMap);
 	std::unordered_map<std::string, std::shared_ptr<bool>>().swap(parameterBoolMap);
@@ -87,144 +59,49 @@ void AnimationController::Initialize()
 
 void AnimationController::Start()
 {
-	for (auto animState : animStates)
+	for (auto & filter : animationFilters)
 	{
-		if (!animState->motion->IsTakeNode())
-		{
-			auto newTakeNode = Singleton<AnimationClipManager>::Instance()->GetTakeNode(animState->motion->GetName());
-			animState->motion->SetTakeNode(newTakeNode);
-		}
+		filter->Start();
 	}
-
-	SetCurrentTransitions(runningState);
 }
 
-void AnimationController::Update(Transform * transform)
+void AnimationController::Update(Transform * const transform)
 {
-	if (runningState.expired()) return;
-
+	bool isTrasition = false;
 	// ここで次に遷移する条件を満たしたら遷移状態に入る
-	for (auto & transition : currentTransitions)
+	for (auto & filter : animationFilters)
 	{
-		// 状態遷移の条件を確認
-		if (transition.lock()->CheckTransition())
+		if (filter->runningState.expired()) continue;
+
+		// 遷移中の時は次のステートの条件を確認する
+		if (!filter->runningTransition.expired())
 		{
-			// 既に遷移中かどうか確かめる
-			bool isTransition = !runningTransition.expired();
-
-			// 次の状態に強制的に移行
-			if (isTransition)
+			if (filter->runningTransition.lock()->nextAnimation.lock()->CheckTransition())
 			{
-				runningState = runningTransition.lock()->nextAnimation;
-				runningState.lock()->motion->OnStart();	// フレームを初期化
-				SetCurrentTransitions(runningState);
+				isTrasition = true;
 			}
-			else
-			{
-				runningTransition = transition;
-				runningTransition.lock()->OnStart();
-				SetCurrentTransitions(transition.lock()->entryAnimation);
-			}
-
-			// トリガーパラメータだけ状態遷移成功時リセット
-			for (auto & param : parameterTriggerMap)
-			{
-				*param.second = false;
-			}
-
-			break;
 		}
-	}
-
-	// 状態更新
-	if (runningTransition.expired())
-	{
-		runningState.lock()->Update(transform);
-	}
-	// 状態遷移更新
-	else
-	{
-		// 遷移が完了したらtrueが帰る
-		if (runningTransition.lock()->Update(transform))
+		// 現在のステートの位置から親を辿って確認する
+		else
 		{
-			// 次の状態に移行
-			runningState = runningTransition.lock()->nextAnimation;
-			runningTransition.reset();
-
-			SetCurrentTransitions(runningState);
+			if (filter->runningState.lock()->CheckTransition())
+			{
+				isTrasition = true;
+			}
 		}
+
+		filter->Update(transform);
 	}
+	if(isTrasition) 
+		ResetParameterTrigger();
 }
 
 void AnimationController::SetAnimationCallBack(std::string name, int frame, std::function<void(void)> callBack)
 {
-	for (auto anim : animStates)
+	for (auto filter : animationFilters)
 	{
-		if (anim->name == name && anim->motion)
-		{
-			anim->motion->SetCallBackFrame(frame, callBack);
-			return;
-		}
+		if (filter->SetAnimationCallBack(name, frame, callBack)) return;
 	}
-}
-
-std::weak_ptr<AnimationState> AnimationController::GetState(std::string name)
-{
-	for (auto & state : animStates)
-	{
-		if (state->name == name)
-		{
-			return state;
-		}
-	}
-
-	return std::weak_ptr<AnimationState>();
-}
-
-std::weak_ptr<AnimationTransition> AnimationController::AddTransition(std::weak_ptr<AnimationState> entryState, std::weak_ptr<AnimationState> nextState)
-{
-	if (entryState.expired() || nextState.expired()) 
-		return std::weak_ptr<AnimationTransition>();
-
-	//for (auto itr = transitions.begin(), end = transitions.end(); itr != end; ++itr)
-	//{
-	//	// 既にあった場合はコピーして入れなおす
-	//	if ((*itr)->entryAnimation.lock() == entryState.lock() && (*itr)->nextAnimation.lock() == nextState.lock())
-	//	{
-	//		std::shared_ptr<AnimationTransition> oldTrans = *itr;
-	//		transitions.erase(itr);
-
-	//		transitions.emplace_back(std::make_shared<AnimationTransition>(*oldTrans));
-	//		return transitions.back();
-	//	}
-	//}
-
-	transitions.emplace_back(std::make_shared<AnimationTransition>(entryState, nextState));
-	return transitions.back();
-}
-
-std::weak_ptr<AnimationTransition> AnimationController::AddTransition(std::weak_ptr<AnimationState> entryState, std::weak_ptr<AnimationState> nextState, std::function<void(std::shared_ptr<AnimationTransition> & transition)> func)
-{
-	if (entryState.expired() || nextState.expired())
-		return std::weak_ptr<AnimationTransition>();
-
-	//for (auto itr = transitions.begin(), end = transitions.end(); itr != end; ++itr)
-	//{
-	//	// 既にあった場合はコピーして入れなおす
-	//	if ((*itr)->entryAnimation.lock() == entryState.lock() && (*itr)->nextAnimation.lock() == nextState.lock())
-	//	{
-	//		std::shared_ptr<AnimationTransition> oldTrans = *itr;
-	//		transitions.erase(itr);
-
-	//		transitions.emplace_back(std::make_shared<AnimationTransition>(*oldTrans));
-	//		func(transitions.back());
-	//		return transitions.back();
-	//	}
-	//}
-
-	transitions.emplace_back(std::make_shared<AnimationTransition>(entryState, nextState));
-	func(transitions.back());
-	return transitions.back();
 }
 
 std::weak_ptr<float> AnimationController::AddParameterFloat(std::string name, float param)
@@ -261,17 +138,10 @@ std::weak_ptr<bool> AnimationController::AddParameterTrigger(std::string name, b
 
 void AnimationController::SetAnimation(std::string name)
 {
-	for (auto anim : animStates)
+	for (auto & filter : animationFilters)
 	{
-		if (anim->name == name)
-		{
-			runningState = anim;
-			break;
-		}
+		if (filter->SetAnimation(name)) return;
 	}
-
-	runningState.lock()->motion->OnStart();	// フレームを初期化
-	SetCurrentTransitions(runningState);
 }
 
 void AnimationController::SetParameterFloat(std::string name, float param)
@@ -302,39 +172,48 @@ void AnimationController::SetParameterTrigger(std::string name)
 	*parameterTriggerMap[name] = true;
 }
 
-float AnimationController::GetCurrentPercent()
+void AnimationController::ResetParameterTrigger()
 {
-	if (runningState.expired()) return 0.0f;
+	// トリガーパラメータだけ状態遷移成功時リセット
+	for (auto & param : parameterTriggerMap)
+	{
+		*param.second = false;
+	}
+}
 
-	return runningState.lock()->motion->GetCurrentPercent();
+float AnimationController::GetCurrentPercent(int layer)
+{
+	for (auto & filter : animationFilters)
+	{
+		if (layer == 0)
+		{
+			if (filter->runningState.expired()) break;
+
+			return filter->runningState.lock()->motion->GetCurrentPercent();
+		}
+		layer--;
+	}
+	return 0.0f;
 }
 
 bool AnimationController::IsCurrentState(std::string name)
 {
-	if (this->runningState.expired()) return false;
-
-	if (!runningTransition.expired())
+	for (auto & filter : animationFilters)
 	{
-		return runningTransition.lock()->nextAnimation.lock()->name == name;
-	}
+		if (filter->runningState.expired()) continue;
 
-	return this->runningState.lock()->name == name;
-}
-
-void AnimationController::SetEntryPoint(std::weak_ptr<AnimationState> entryState)
-{
-	this->runningState = entryState;
-}
-
-void AnimationController::SetCurrentTransitions(std::weak_ptr<AnimationState> entryState)
-{
-	currentTransitions.clear();
-
-	for (auto & transition : transitions)
-	{
-		if (transition->entryAnimation.lock() == entryState.lock())
+		if (!filter->runningTransition.expired())
 		{
-			currentTransitions.emplace_back(transition);
+			if (filter->runningTransition.lock()->nextAnimation.lock()->name == name)
+			{
+				return true;
+			}
+		}
+		else if (filter->runningState.lock()->name == name)
+		{
+			return true;
 		}
 	}
+
+	return false;
 }

@@ -3,11 +3,6 @@
 
 using namespace FrameWork;
 
-AnimationTransition::AnimationTransition(std::weak_ptr<AnimationState> entryAnimation, std::weak_ptr<AnimationState> nextAnimation) :
-	isHasExitTime(false), exitTime(1.0f), duration(0.0f), time(0.0f) , entryAnimation(entryAnimation), nextAnimation(nextAnimation)
-{
-}
-
 AnimationTransition::~AnimationTransition()
 {
 	std::vector<FloatParameter>().swap(conditionFloats);
@@ -26,7 +21,6 @@ void AnimationTransition::SetOption(float duration, bool isHasExitTime, float ex
 void AnimationTransition::OnStart()
 {
 	time = 0.0f;
-	//entryAnimation.lock()->motion->SetFrameCount(0.0f);
 	nextAnimation.lock()->motion->OnStart();
 }
 
@@ -63,13 +57,13 @@ void AnimationTransition::AddConditionTrigger(std::weak_ptr<bool> parameter)
 	conditionTriggers.emplace_back(parameter);
 }
 
-bool AnimationTransition::Update(Transform * transform)
+bool AnimationTransition::Update(Transform * const transform, const AnimationState * entry)
 {
-	if (entryAnimation.expired() || nextAnimation.expired()) return false;
+	if (!nextAnimation.lock()->motion) return false;
 
 	if (duration > 0.0f)
 	{
-		AnimationClip * anim1 = entryAnimation.lock()->motion.get();
+		AnimationClip * anim1 = entry->motion.get();
 		AnimationClip * anim2 = nextAnimation.lock()->motion.get();
 
 		time += Time::DeltaTime();
@@ -93,13 +87,13 @@ bool AnimationTransition::Update(Transform * transform)
 	return false;
 }
 
-bool AnimationTransition::CheckTransition()
+bool AnimationTransition::CheckTransition(const AnimationState * entry)
 {
 	bool isExit = true;
 
 	if (isHasExitTime)
 	{
-		isExit = (exitTime <= entryAnimation.lock()->motion->GetCurrentPercent());
+		isExit = (exitTime <= entry->motion->GetCurrentPercent());
 	}
 
 	if (!isExit) return false;

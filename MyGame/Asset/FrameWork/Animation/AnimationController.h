@@ -3,6 +3,7 @@
 
 #include "AnimationState.h"
 #include "AnimationTransition.h"
+#include "AnimationFilter.h"
 #include <unordered_map>
 #include <functional>
 
@@ -15,16 +16,40 @@ namespace FrameWork
 		template<class Archive>
 		void save(Archive & archive, std::uint32_t const version) const
 		{
-			archive(CEREAL_NVP(transitions), CEREAL_NVP(animStates),
-				CEREAL_NVP(runningState), CEREAL_NVP(runningTransition), CEREAL_NVP(currentTransitions),
-				CEREAL_NVP(parameterFloatMap), CEREAL_NVP(parameterIntMap), CEREAL_NVP(parameterBoolMap), CEREAL_NVP(parameterTriggerMap));
+			if (version >= 1)
+			{
+				archive(animationFilters, parameterFloatMap, parameterIntMap, parameterBoolMap, parameterTriggerMap);
+			}
+			else
+			{
+				std::vector<std::shared_ptr<AnimationTransition>> transitions;
+				std::vector<std::shared_ptr<AnimationState>> animStates;
+				std::weak_ptr<AnimationState> runningState;
+				std::weak_ptr<AnimationTransition> runningTransition;
+				std::vector < std::weak_ptr<AnimationTransition>> currentTransitions;
+				archive(CEREAL_NVP(transitions), CEREAL_NVP(animStates),
+					CEREAL_NVP(runningState), CEREAL_NVP(runningTransition), CEREAL_NVP(currentTransitions),
+					CEREAL_NVP(parameterFloatMap), CEREAL_NVP(parameterIntMap), CEREAL_NVP(parameterBoolMap), CEREAL_NVP(parameterTriggerMap));
+			}
 		}
 		template<class Archive>
 		void load(Archive & archive, std::uint32_t const version)
 		{
-			archive(CEREAL_NVP(transitions), CEREAL_NVP(animStates), 
-				CEREAL_NVP(runningState), CEREAL_NVP(runningTransition), CEREAL_NVP(currentTransitions),
-				CEREAL_NVP(parameterFloatMap), CEREAL_NVP(parameterIntMap), CEREAL_NVP(parameterBoolMap), CEREAL_NVP(parameterTriggerMap));
+			if (version >= 1)
+			{
+				archive(animationFilters, parameterFloatMap, parameterIntMap, parameterBoolMap, parameterTriggerMap);
+			}
+			else
+			{
+				std::vector<std::shared_ptr<AnimationTransition>> transitions;
+				std::vector<std::shared_ptr<AnimationState>> animStates;
+				std::weak_ptr<AnimationState> runningState;
+				std::weak_ptr<AnimationTransition> runningTransition;
+				std::vector < std::weak_ptr<AnimationTransition>> currentTransitions;
+				archive(CEREAL_NVP(transitions), CEREAL_NVP(animStates),
+					CEREAL_NVP(runningState), CEREAL_NVP(runningTransition), CEREAL_NVP(currentTransitions),
+					CEREAL_NVP(parameterFloatMap), CEREAL_NVP(parameterIntMap), CEREAL_NVP(parameterBoolMap), CEREAL_NVP(parameterTriggerMap));
+			}
 		}
 
 	public:
@@ -35,7 +60,7 @@ namespace FrameWork
 
 		virtual void Initialize();
 		void Start();
-		void Update(Transform * transform);
+		void Update(Transform * const transform);
 
 		void SetAnimationCallBack(std::string name, int frame, std::function<void(void)> callBack);
 
@@ -45,32 +70,21 @@ namespace FrameWork
 		void SetParameterBool(std::string name, bool param);
 		void SetParameterTrigger(std::string name);
 
+		void ResetParameterTrigger();
+
 		// 現在のアニメーションの進行度( 0.0f ～　1.0f )
-		float GetCurrentPercent();
+		float GetCurrentPercent(int layer = 0);
 		bool IsCurrentState(std::string name);
 	protected:
-		std::weak_ptr<AnimationState> AddState(std::string name);
-		std::weak_ptr<AnimationState> GetState(std::string name);
-
-		std::weak_ptr<AnimationTransition> AddTransition(std::weak_ptr<AnimationState> entryState, std::weak_ptr<AnimationState> nextState);
-		std::weak_ptr<AnimationTransition> AddTransition(std::weak_ptr<AnimationState> entryState, std::weak_ptr<AnimationState> nextState, std::function<void(std::shared_ptr<AnimationTransition> & transition)> func);
+		void AddFilter(std::string name, std::function<void(std::shared_ptr<AnimationFilter> & filter)> func);
 
 		std::weak_ptr<float> AddParameterFloat(std::string name, float param = 0.0f);
 		std::weak_ptr<int> AddParameterInt(std::string name, int param = 0);
 		std::weak_ptr<bool> AddParameterBool(std::string name, bool param = false);
 		std::weak_ptr<bool> AddParameterTrigger(std::string name, bool param = false);
 
-		void SetEntryPoint(std::weak_ptr<AnimationState> entryState);
-
 	private:
-		std::weak_ptr<AnimationState> runningState;	// 実行中の状態
-		std::weak_ptr<AnimationTransition> runningTransition;	// 実行中の状態遷移
-		std::vector<std::weak_ptr<AnimationTransition>> currentTransitions;	// 現在の状態遷移リスト
-
-		std::vector<std::shared_ptr<AnimationTransition>> transitions;	// 状態遷移のインスタンスリスト
-		std::vector<std::shared_ptr<AnimationState>> animStates;		// 状態のインスタンスリスト
-
-		void SetCurrentTransitions(std::weak_ptr<AnimationState> entryState);
+		std::vector<std::shared_ptr<AnimationFilter>> animationFilters;	// 状態遷移のインスタンスリスト
 
 		// パラメータのデータ格納用
 		std::unordered_map<std::string, std::shared_ptr<float>> parameterFloatMap;
@@ -80,7 +94,7 @@ namespace FrameWork
 	};
 }
 
-CEREAL_CLASS_VERSION(FrameWork::AnimationController, 0)
+CEREAL_CLASS_VERSION(FrameWork::AnimationController, 1)
 
 #endif // !_ANIMATIONCONTROLLER_H_
 

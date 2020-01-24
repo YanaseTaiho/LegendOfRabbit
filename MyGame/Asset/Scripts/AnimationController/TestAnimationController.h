@@ -34,12 +34,13 @@ public:
 	{
 		AnimationController::Initialize();
 
-		// ステート追加
-		auto idle = AddState("Idel");
-		idle.lock()->SetAnimationClip(animName1.c_str(), speed, true);
-
-		// エントリーポイント設定
-		SetEntryPoint(idle);
+		AddFilter("Normal", [](std::shared_ptr<AnimationFilter> & filter)
+		{
+			// ステート追加
+			auto idle = filter->AddState("Idel");
+			// エントリーポイント設定
+			filter->SetEntryPoint(idle);
+		});
 	}
 };
 

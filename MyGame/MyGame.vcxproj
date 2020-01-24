@@ -53,6 +53,7 @@
     <ClCompile Include="Asset\FrameWork\Animation\AnimationClip.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationClipManager.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationController.cpp" />
+    <ClCompile Include="Asset\FrameWork\Animation\AnimationFilter.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationState.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationTake.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationTransition.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Asset\FrameWork\Animation\AnimationController.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationClipManager.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationState.h" />
+    <ClInclude Include="Asset\FrameWork\Animation\AnimationFilter.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationTransition.h" />
     <ClInclude Include="Asset\FrameWork\Animation\SkeletonData.h" />
     <ClInclude Include="Asset\FrameWork\Animation\TakeNode.h" />

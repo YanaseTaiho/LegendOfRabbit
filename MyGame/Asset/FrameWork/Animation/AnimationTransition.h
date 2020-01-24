@@ -18,14 +18,21 @@ namespace FrameWork
 		template<class Archive>
 		void serialize(Archive & archive, std::uint32_t const version)
 		{
-			archive(entryAnimation, nextAnimation,
-				conditionInts, conditionFloats, conditionBools, conditionTriggers);
-			archive(duration, isHasExitTime, exitTime);
+			if (version >= 1)
+			{
+				archive(nextAnimation,conditionInts, conditionFloats, conditionBools, conditionTriggers);
+				archive(duration, isHasExitTime, exitTime);
+			}
+			else
+			{
+				std::weak_ptr<AnimationState> entryAnimation;
+				archive(entryAnimation, nextAnimation, conditionInts, conditionFloats, conditionBools, conditionTriggers);
+				archive(duration, isHasExitTime, exitTime);
+			}
 		}
 
 	public:
 		AnimationTransition() {}
-		AnimationTransition(std::weak_ptr<AnimationState> entryAnimation, std::weak_ptr<AnimationState> nextAnimation);
 		~AnimationTransition();
 
 		void SetOption(float duration, bool isHasExitTime, float exitTime = 1.0f);
@@ -40,16 +47,16 @@ namespace FrameWork
 		// パラメータが真の時 真
 		void AddConditionTrigger(std::weak_ptr<bool> parameter);
 
-		bool Update(Transform * transform);
+		bool Update(Transform * const transform, const AnimationState * entry);
 
 		// 状態遷移開始できるかの確認
-		bool CheckTransition();
+		bool CheckTransition(const AnimationState * entry);
 
 		bool isHasExitTime;
 		float exitTime;	
 		float duration;	// 遷移時間
 
-		std::weak_ptr<AnimationState> entryAnimation;
+		//std::weak_ptr<AnimationState> entryAnimation;
 		std::weak_ptr<AnimationState> nextAnimation;
 	private:
 		float time = 0.0f;
@@ -106,7 +113,7 @@ namespace FrameWork
 	};
 }
 
-CEREAL_CLASS_VERSION(FrameWork::AnimationTransition, 0)
+CEREAL_CLASS_VERSION(FrameWork::AnimationTransition, 1)
 
 #endif // !_ANIMATIONTRANSITION_H_
 

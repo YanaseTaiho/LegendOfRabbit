@@ -1,4 +1,6 @@
 #include "AnimationState.h"
+#include "AnimationFilter.h"
+#include "AnimationTransition.h"
 #include "AnimationClipManager.h"
 #include "../Singleton.h"
 
@@ -26,8 +28,62 @@ bool AnimationState::SetAnimationClip(std::string animClipName, float speed, boo
 	return true;
 }
 
-void AnimationState::Update(Transform * transform)
+void AnimationState::AddTransition(std::weak_ptr<AnimationState> nextState, std::function<void(std::shared_ptr<AnimationTransition>&transition)> func)
+{
+	if (nextState.expired()) return;
+
+	transitions.emplace_back(std::make_shared<AnimationTransition>());
+	auto & add = transitions.back();
+	add->nextAnimation = nextState;
+	func(add);
+}
+
+void AnimationState::OnStart()
+{
+	if(motion) motion->OnStart();
+}
+
+bool AnimationState::CheckTransition()
+{
+	// 先にフィルターの遷移条件を確認
+	if (animFilter.lock()->CheckTransition(this))
+	{
+		return true;
+	}
+
+	// 次に遷移する条件を満たしたら遷移状態に入る
+	for (auto & transition : transitions)
+	{
+		// 状態遷移の条件を確認
+		if (transition->CheckTransition(this))
+		{
+			auto const filter = animFilter.lock()->GetBossParent();
+			// 既に遷移中かどうか確かめる
+			bool isTransition = !filter->runningTransition.expired();
+
+			// 次の状態に強制的に移行
+			if (isTransition)
+			{
+				filter->runningState = filter->runningTransition.lock()->nextAnimation;
+				filter->runningState.lock()->OnStart();	// フレームを初期化
+				filter->runningTransition.reset();
+			}
+			else
+			{
+				filter->ChangeTransition(transition);
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void AnimationState::Update(Transform * const transform)
 {
 	if (this->motion)
+	{
 		this->motion->UpdateAnimation(transform);
+	}
 }

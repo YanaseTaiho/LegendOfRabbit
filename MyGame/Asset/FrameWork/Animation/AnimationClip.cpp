@@ -28,7 +28,7 @@ void AnimationClip::Initialize(std::string name, std::weak_ptr<TakeNode> takeNod
 	this->takeNode = takeNode;
 }
 
-void AnimationClip::SetAnimationTake(Transform * hierarchy, int frame, Matrix4 & matrix)
+void AnimationClip::SetAnimationTake(Transform * const hierarchy, int frame, Matrix4 & matrix)
 {
 	std::vector<int> indexArray;
 	SearchHeirarchy(hierarchy, hierarchy->GetBossParent().lock().get(), &indexArray);
@@ -62,7 +62,7 @@ void AnimationClip::SetAnimationTake(std::vector<int> * indexArray, int frame, M
 	targetNode->animTake->AddTakeRotation(frame, matrix.rotation());
 }
 
-void AnimationClip::DeleteAnimationTake(Transform * hierarchy, int frame)
+void AnimationClip::DeleteAnimationTake(Transform * const hierarchy, int frame)
 {
 	std::vector<int> indexArray;
 	SearchHeirarchy(hierarchy, hierarchy->GetBossParent().lock().get(), &indexArray);
@@ -99,7 +99,7 @@ void AnimationClip::SetCallBackFrame(int frameCnt, std::function<void(void)> cal
 	callBackFuncMap[frameCnt] = callBackFunc;
 }
 
-void AnimationClip::UpdateAnimation(Transform * transform)
+void AnimationClip::UpdateAnimation(Transform * const transform)
 {
 	HierarchyUpdate(transform, takeNode.lock().get(), frameCnt);
 	UpdateFrame();
@@ -144,7 +144,7 @@ void AnimationClip::UpdateFrame()
 	}
 }
 
-void AnimationClip::UpdateBlendAnimation(Transform * transform, AnimationClip * anim1, AnimationClip * anim2, const float weight)
+void AnimationClip::UpdateBlendAnimation(Transform * const transform, AnimationClip * const anim1, AnimationClip * const anim2, const float weight)
 {
 	HierarchyBlendUpdate(transform, anim1->takeNode.lock().get(), anim2->takeNode.lock().get(), anim1->frameCnt, anim2->frameCnt, weight);
 	anim1->UpdateFrame();
@@ -164,7 +164,7 @@ AnimationClip * AnimationClip::CreateClone()
 	return clone;
 }
 
-bool AnimationClip::SearchHeirarchy(Transform * hierarchy, Transform * parent, std::vector<int>* indexArray)
+bool AnimationClip::SearchHeirarchy(Transform * const hierarchy, Transform * const parent, std::vector<int>* indexArray)
 {
 	// 見つけたらtrueを返す
 	if (hierarchy == parent)
@@ -196,7 +196,7 @@ void AnimationClip::OnStart()
 	frameCnt = 0.0f;
 }
 
-inline void AnimationClip::HierarchyUpdate(Transform * transform, TakeNode * takeNode, const float frameCnt)
+inline void AnimationClip::HierarchyUpdate(Transform * const transform, TakeNode * const takeNode, const float frameCnt)
 {
 	// テイクを生成していれば更新
 	if (takeNode->animTake)
@@ -231,7 +231,7 @@ inline void AnimationClip::HierarchyUpdate(Transform * transform, TakeNode * tak
 	}
 }
 
-inline void AnimationClip::HierarchyBlendUpdate(Transform * transform, TakeNode * takeNode1, TakeNode * takeNode2, const float frameCnt1, const float frameCnt2, const float weight)
+inline void AnimationClip::HierarchyBlendUpdate(Transform * const transform, TakeNode * const takeNode1, TakeNode * const takeNode2, const float frameCnt1, const float frameCnt2, const float weight)
 {
 	// 二つのテイクがあればブレンド
 	if (takeNode1->animTake && takeNode2->animTake)
