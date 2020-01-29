@@ -48,7 +48,7 @@ namespace FrameWork
 		
 		bool IsLoop() { return this->isLoop; }
 		int GetFrameCount() { return (int)this->frameCnt; }
-		float GetCurrentPercent() { return (maxFrame <= 0.0f) ? 1.0f : Mathf::Clamp01(frameCnt / maxFrame); }
+		float GetCurrentPercent() { return (maxFrame <= 0.0f) ? 1.0f : Mathf::Clamp01(Mathf::Absf(frameCnt / maxFrame)); }
 		int GetMaxFrame() { return this->maxFrame; }
 		float GetSpeed() { return this->speed; }
 		bool IsEnd() { return isEnd; }

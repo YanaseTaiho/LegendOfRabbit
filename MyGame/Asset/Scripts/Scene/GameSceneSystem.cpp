@@ -17,6 +17,9 @@ void GameSceneSystem::DrawImGui(int id)
 
 void GameSceneSystem::Start()
 {
+	player.lock()->cameraController = cameraController;
+	cameraController.lock()->playerActor = player;
+
 	player.lock()->OnStart();
 
 	cameraController.lock()->OnStart();

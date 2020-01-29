@@ -5,6 +5,7 @@
 #include "../FSMManager.h"
 
 class RotationFixedController;
+class CameraController;
 
 class PlayerActor : public BaseActor
 {
@@ -14,32 +15,22 @@ private:
 	void save(Archive & archive, std::uint32_t const version) const
 	{
 		archive(cereal::make_nvp("MonoBehaviour", cereal::base_class<MonoBehaviour>(this)));
-		archive(cameraTransform);
 
-		if (version >= 1)
-			archive(rayStart, rayLength, height, jumpForce, moveForce, forceMax);
-
-		if (version >= 2)
-			archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
-
-		if (version >= 3)
-			archive(sorwd_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
+		archive(cameraController);
+		archive(rayStart, rayLength, height, jumpForce, moveForce, forceMax);
+		archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
+		archive(sword_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
 	}
 
 	template<class Archive>
 	void load(Archive & archive, std::uint32_t const version)
 	{
 		archive(cereal::make_nvp("MonoBehaviour", cereal::base_class<MonoBehaviour>(this)));
-		archive(cameraTransform);
 
-		if(version >= 1)
-			archive(rayStart, rayLength, height, jumpForce, moveForce, forceMax);
-
-		if (version >= 2)
-			archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
-
-		if (version >= 3)
-			archive(sorwd_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
+		archive(cameraController);
+		archive(rayStart, rayLength, height, jumpForce, moveForce, forceMax);
+		archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
+		archive(sword_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
 	}
 
 	void DrawImGui(int id) override;
@@ -70,9 +61,9 @@ public:
 		Jump
 	};
 
-	std::weak_ptr<Transform> cameraTransform;
+	std::weak_ptr<CameraController> cameraController;
 
-	std::weak_ptr<RotationFixedController> sorwd_HandContorller;	// åïëïîıéû
+	std::weak_ptr<RotationFixedController> sword_HandContorller;	// åïëïîıéû
 	std::weak_ptr<RotationFixedController> shield_HandContorller;	// èÇëïîıéû
 	std::weak_ptr<RotationFixedController> shieldRock_HandContorller;// èÇÇç\Ç¶ÇƒÇ¢ÇÈéû
 
@@ -111,6 +102,7 @@ public:
 	float moveAmount = 0.0f;
 
 	bool onGround = false;
+	bool isRockOn = false;
 
 	void OnStart() override;
 	void OnUpdate() override;
@@ -128,7 +120,7 @@ private:
 	void CheckCliff();
 };
 
-CEREAL_CLASS_VERSION(PlayerActor, 3)
+CEREAL_CLASS_VERSION(PlayerActor, 0)
 CEREAL_REGISTER_TYPE(PlayerActor)
 
 #endif // !_PLAYERACTOR_H_

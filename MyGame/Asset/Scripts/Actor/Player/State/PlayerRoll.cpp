@@ -3,6 +3,7 @@
 
 void PlayerRoll::OnStart(PlayerActor * actor)
 {
+	actor->animator.lock()->SetTrigger("RollTrigger");
 	Vector3 force;
 	actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (80.0f * Time::DeltaTime()));
 }
@@ -26,7 +27,7 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 			return;
 		}
 	}
-	else if(actor->animator.lock()->GetCurrentPercent() < 0.9f)
+	else if(actor->animator.lock()->GetCurrentPercent() < 0.8f)
 	{
 		Ray downRay;
 		RayCastInfo info;
@@ -41,6 +42,10 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 			actor->ChangeState(PlayerActor::State::RollStop);
 			return;
 		}
+	}
+	else
+	{
+		actor->horizontalRegistance = 0.8f;
 	}
 
 	if (!actor->onGround)

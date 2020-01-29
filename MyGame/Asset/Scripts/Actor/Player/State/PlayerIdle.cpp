@@ -24,6 +24,22 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
+	if (Input::Keyboad::IsTrigger('E'))
+	{
+		actor->ChangeState(PlayerActor::State::Attack);
+		return;
+	}
+
+	if (actor->isRockOn)
+	{
+		if (Input::Keyboad::IsTrigger('Q'))
+		{
+			actor->ChangeState(PlayerActor::State::AttackJump);
+			return;
+		}
+	}
+	
+
 	if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
 	{
 		//Quaternion look = Quaternion::LookRotation(actor->moveDir);

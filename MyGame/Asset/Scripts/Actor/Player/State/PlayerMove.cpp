@@ -16,6 +16,8 @@ void PlayerMove::OnStart(PlayerActor * actor)
 
 void PlayerMove::OnUpdate(PlayerActor * actor)
 {
+	actor->animator.lock()->SetFloat("WalkValue", actor->forceAmount);
+
 	if (Input::Keyboad::IsTrigger(VK_SPACE))
 	{
 		actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce);
@@ -42,21 +44,22 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		{
 			actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
 			actor->animator.lock()->SetTrigger("JumpTrigger");
-			actor->ChangeState(PlayerActor::State::Air);
 		}
 
 		actor->ChangeState(PlayerActor::State::Air);
 		return;
 	}
-	// ‰ñ“]
+	if (Input::Keyboad::IsTrigger('E'))
+	{
+		actor->ChangeState(PlayerActor::State::Attack);
+		return;
+	}
+	// “]‚ª‚é
 	if (Input::Keyboad::IsTrigger('R') && actor->moveAmount > 0.1f)
 	{
-		actor->animator.lock()->SetTrigger("RollTrigger");
 		actor->ChangeState(PlayerActor::State::Roll);
 		return;
 	}
-
-	actor->animator.lock()->SetFloat("WalkValue", actor->forceAmount);
 
 	// ŠR‚ª‚ ‚é‚Ì‚©‚ðŠm”F
 	if (!actor->castCliffGroundInfo.collision.expired()
@@ -78,22 +81,39 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 	Vector3 forward = actor->transform.lock()->forward();
 	forward.y = 0.0f;
 
-	// ‰ñ“]ˆ—
-	Quaternion q1 = actor->transform.lock()->GetWorldRotation();
-	if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
+	if (actor->isRockOn)
 	{
-		Quaternion look = Quaternion::LookRotation(actor->moveDir).Normalized();
-		bool flag = Vector3::Dot(forward, actor->moveDir) >= -1.0f;
-		q1 = (flag) ?
-			q1.Slerp(look, Time::DeltaTime() * lookSpeed) : look;
+		if (Input::Keyboad::IsTrigger('Q'))
+		{
+			actor->ChangeState(PlayerActor::State::AttackJump);
+			return;
+		}
 
-		actor->transform.lock()->SetWorldRotation(q1.Normalize());
+		// ˆÚ“®ˆ—
+		Vector3 force;
+		force += actor->moveDir * (actor->moveAmount * actor->moveForce * Time::DeltaTime());
+		auto rb = actor->rigidbody.lock();
+		rb->AddForce(force);
 	}
+	else
+	{
+		// ‰ñ“]ˆ—
+		Quaternion q1 = actor->transform.lock()->GetWorldRotation();
+		if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
+		{
+			Quaternion look = Quaternion::LookRotation(actor->moveDir).Normalized();
+			bool flag = Vector3::Dot(forward, actor->moveDir) >= -1.0f;
+			q1 = (flag) ?
+				q1.Slerp(look, Time::DeltaTime() * lookSpeed) : look;
 
-	// ˆÚ“®ˆ—
-	Vector3 force;
-	forward = actor->transform.lock()->forward();
-	force += forward * (actor->moveAmount * actor->moveForce * Time::DeltaTime());
-	Rigidbody *rb = actor->rigidbody.lock().get();
-	rb->AddForce(force);
+			actor->transform.lock()->SetWorldRotation(q1.Normalize());
+		}
+
+		// ˆÚ“®ˆ—
+		Vector3 force;
+		forward = actor->transform.lock()->forward();
+		force += forward * (actor->moveAmount * actor->moveForce * Time::DeltaTime());
+		Rigidbody *rb = actor->rigidbody.lock().get();
+		rb->AddForce(force);
+	}
 }

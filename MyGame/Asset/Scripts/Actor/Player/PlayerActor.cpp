@@ -9,6 +9,7 @@
 #include "State/PlayerAttackJump.h"
 #include "State/PlayerAttack.h"
 
+#include "../../Camera/CameraController.h"
 #include "../../RotationFixedController.h"
 #include "../../../DirectX/Common.h"
 
@@ -17,10 +18,10 @@ using namespace MyDirectX;
 void PlayerActor::DrawImGui(int id)
 {
 	std::string strId = "##PlayerActor" + std::to_string(id);
-	ImGui::Text("Camera Transform");
-	MyImGui::DropTargetComponent(cameraTransform, strId);
+	ImGui::Text("Camera Controller");
+	MyImGui::DropTargetComponent(cameraController, strId);
 	ImGui::Text("Sorwd Hander");
-	MyImGui::DropTargetComponent(sorwd_HandContorller, strId);
+	MyImGui::DropTargetComponent(sword_HandContorller, strId);
 	ImGui::Text("Shield Hander");
 	MyImGui::DropTargetComponent(shield_HandContorller, strId);
 	ImGui::Text("Shield Rock Hander");
@@ -87,40 +88,15 @@ void PlayerActor::OnStart()
 
 void PlayerActor::OnUpdate()
 {
-	UpdateInput();
-	// 地面に接しているか
-	CheckGround();
-	// 前に崖があるのかチェック
-	CheckCliff();
-
-	if (!state.expired())
-		state.lock()->OnUpdate(this);
-
-	// 移動速度の最大値
-	Vector2 force = Vector2(rigidbody.lock()->velocity.x, rigidbody.lock()->velocity.z);
-	float forceLen = force.Length();
-	if (forceLen > forceMax)
-	{
-		force = force.Normalized() * forceMax;
-		forceLen = forceMax;
-	}
-
-	force *= horizontalRegistance;
-	rigidbody.lock()->velocity = Vector3(force.x, rigidbody.lock()->velocity.y, force.y);
-
-	forceAmount = forceLen / forceMax;
-
-	ImGui::Text("ForceAmount : %f3.3f", forceAmount);
-
 	static bool isSorwd = false;
 	static bool isShield = false;
 	static bool isShieldRock = false;
 	if (Input::Keyboad::IsTrigger('1'))
 	{
-		isSorwd = !isSorwd; 
+		isSorwd = !isSorwd;
 		isShield = !isShield;
 
-		if (!sorwd_HandContorller.expired()) sorwd_HandContorller.lock()->SetWeight(isSorwd ? 0.1f : -0.1f);
+		if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(isSorwd ? 0.1f : -0.1f);
 		if (!handSword.expired()) handSword.lock()->SetActive(isSorwd);
 		if (!backSword.expired()) backSword.lock()->SetActive(!isSorwd);
 
@@ -128,59 +104,25 @@ void PlayerActor::OnUpdate()
 		if (!handShield.expired()) handShield.lock()->SetActive(isShield);
 		if (!backShield.expired()) backShield.lock()->SetActive(!isShield);
 	}
-	
+
+	if (Input::Keyboad::IsTrigger('3'))
+	{
+		isRockOn = !isRockOn;
+	}
+
 	if (!handSword.expired() && handSword.lock()->IsActive())
 	{
-		static int combo = 0;
-		static AttackType attackType = AttackType::Inside;
-
 		if (animator.lock()->IsCurrentAnimation("Idle")
 			|| animator.lock()->IsCurrentAnimation("Walk")
 			|| animator.lock()->IsCurrentAnimation("Run")
 			|| animator.lock()->IsCurrentAnimation("Land"))
 		{
-			//combo = 0;
-
-			if (!sorwd_HandContorller.expired()) sorwd_HandContorller.lock()->SetWeight(0.1f);
+			if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(0.1f);
 		}
 		else
 		{
-			if (!sorwd_HandContorller.expired()) sorwd_HandContorller.lock()->SetWeight(-0.1f);
+			if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(-0.1f);
 		}
-
-		if (Input::Keyboad::IsPress('T'))
-		{
-			if (attackType != AttackType::Upper) combo = 0;
-			attackType = AttackType::Upper;
-		}
-		if (Input::Keyboad::IsPress('F'))
-		{
-			if (attackType != AttackType::Outside) combo = 0;
-			attackType = AttackType::Outside;
-		}
-		if (Input::Keyboad::IsPress('H'))
-		{
-			if (attackType != AttackType::Inside) combo = 0;
-			attackType = AttackType::Inside;
-		}
-		if (Input::Keyboad::IsPress('G'))
-		{
-			if (attackType != AttackType::Thrust) combo = 0;
-			attackType = AttackType::Thrust;
-		}
-
-
-		if (Input::Keyboad::IsTrigger('E'))
-		{
-			animator.lock()->SetTrigger("Attack_Trigger");
-			animator.lock()->SetInt("Attack_Type", (int)attackType);
-			animator.lock()->SetInt("Attack_Combo", combo);
-			combo++;
-			combo = Mathf::Loop(combo, 0, 2);
-
-			sorwd_HandContorller.lock()->SetWeight(-1.0f);
-		}
-		ImGui::Text("Combo : %d", combo);
 	}
 	if (!handShield.expired() && handShield.lock()->IsActive())
 	{
@@ -205,6 +147,29 @@ void PlayerActor::OnUpdate()
 			if (!shieldRock_HandContorller.expired()) shieldRock_HandContorller.lock()->SetWeight(-0.1f);
 		}
 	}
+
+	UpdateInput();
+	// 地面に接しているか
+	CheckGround();
+	// 前に崖があるのかチェック
+	CheckCliff();
+
+	if (!state.expired())
+		state.lock()->OnUpdate(this);
+
+	// 移動速度の最大値
+	Vector2 force = Vector2(rigidbody.lock()->velocity.x, rigidbody.lock()->velocity.z);
+	float forceLen = force.Length();
+	if (forceLen > forceMax)
+	{
+		force = force.Normalized() * forceMax;
+		forceLen = forceMax;
+	}
+
+	force *= horizontalRegistance;
+	rigidbody.lock()->velocity = Vector3(force.x, rigidbody.lock()->velocity.y, force.y);
+
+	forceAmount = forceLen / forceMax;
 }
 
 void PlayerActor::OnLateUpdate()
@@ -228,7 +193,7 @@ void PlayerActor::ChangeState(State state)
 
 void PlayerActor::UpdateInput()
 {
-	if (cameraTransform.expired()) return;
+	if (cameraController.expired()) return;
 
 	float h = 0.0f;
 	float v = 0.0f;
@@ -265,10 +230,10 @@ void PlayerActor::UpdateInput()
 
 	if (moveAmount > 0.1f)
 	{
-		Vector3 forward = cameraTransform.lock()->forward();
+		Vector3 forward = cameraController.lock()->transform.lock()->forward();
 		forward.y = 0.0f;
 		forward.Normalize();
-		Vector3 right = cameraTransform.lock()->right();
+		Vector3 right = cameraController.lock()->transform.lock()->right();
 		right.y = 0.0f;
 		right.Normalize();
 
@@ -312,7 +277,7 @@ void PlayerActor::CheckGround()
 			}
 		}
 		onGround = true;
-		horizontalRegistance = 0.8f;
+		horizontalRegistance = 0.7f;
 	}
 
 	animator.lock()->SetBool("IsFall", !onGround);
