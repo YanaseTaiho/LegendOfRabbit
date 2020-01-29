@@ -2,6 +2,7 @@
 #include "../Actor/Player/PlayerActor.h"
 
 #include "Plugin/CharacterCameraPlugin.h"
+#include "Plugin/RockOnCameraPlugin.h"
 
 void CameraController::DrawImGui(int id)
 {
@@ -20,6 +21,7 @@ void CameraController::DrawImGui(int id)
 void CameraController::OnStart()
 {
 	AddPlugin(Plugin::Character, new CharacterCameraPlugin());
+	AddPlugin(Plugin::RockOn, new RockOnCameraPlugin());
 }
 
 void CameraController::OnUpdate()

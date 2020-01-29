@@ -51,7 +51,7 @@ namespace FrameWork
 		// 自身を単位クオータニオン( 実数が1で虚数が0 )に設定
 		Quaternion SetIdentity();
 
-		Quaternion Slerp(Quaternion q, float t);
+		Quaternion Slerp(const Quaternion & q, float t) const;
 		// 二つのベクトルの間の角度のクオータニオンを求める
 		Quaternion SetFormToRotation(Vector3 from, Vector3 to);
 		// 目的の方向に向くようにセット

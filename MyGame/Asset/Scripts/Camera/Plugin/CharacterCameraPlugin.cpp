@@ -24,10 +24,11 @@ void CharacterCameraPlugin::OnUpdate(CameraController * controller)
 
 void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 {
-	PlayerActor * player = controller->playerActor.lock().get();
-	Transform * rootTransform = controller->transform.lock().get();
+	auto player = controller->playerActor.lock().get();
+	auto rootTransform = controller->transform.lock().get();
 
 	Vector3 rootPos = rootTransform->GetWorldPosition();
+	Quaternion rootRotation = rootTransform->GetWorldRotation();
 	Vector3 playerPos = controller->targetTransform.lock()->GetWorldPosition() + Vector3(0.0f, controller->offsetHeight, 0.0f);
 
 	rootPos = Vector3::Lerp(rootPos, playerPos, Time::DeltaTime() * moveSpeed);
@@ -78,8 +79,14 @@ void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 					value = -value;
 
 				lookValue += value * (degree / 180.0f) * player->moveAmount;
+
 				if (fabsf(lookValue) > degree)
 					lookValue = (lookValue >= 0) ? degree : -degree;
+
+				rootForward = rootTransform->forward(); rootForward.y = 0.0f;
+				rootForward.Normalize();
+				rootRight = rootTransform->right(); rootRight.y = 0.0f;
+				rootRight.Normalize();
 			}
 
 			break;
@@ -87,7 +94,7 @@ void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 	}
 
 	// …•½•ûŒü‚Ì‰ñ“]Šp‚ÌŽZo
-	lookValue = Mathf::Clamp(lookValue, -50.0f, 50.0f);
+	//lookValue = Mathf::Clamp(lookValue, -50.0f, 50.0f);
 	lookHolizontal += lookValue;
 	lookValue *= 0.9f;
 
@@ -130,13 +137,16 @@ void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 
 
 	// ã‹L‚ÌŒvŽZŒ‹‰Ê‚Ì”½‰f
-	Quaternion lookAt = Quaternion::EulerAngles(0.0f, lookHolizontal, 0.0f);
-	lookAt = Quaternion::AxisAngle(rootRight, lookVertical) * lookAt;
-	rootTransform->SetWorldRotation(lookAt.Normalized());
 	rootTransform->SetWorldPosition(rootPos);
 
+	rootRotation = Quaternion::AxisAngle(Vector3::up(), lookValue) * rootRotation;
+	rootTransform->SetWorldRotation(rootRotation.Normalize());
+
+	//rootRotation = Quaternion::AxisAngle(rootRight, lookValue * Time::DeltaTime()) * rootRotation;
+	//rootTransform->SetWorldRotation(rootRotation.Normalize());
+
 	// ƒJƒƒ‰Ž©‘Ì‚Ì‰ñ“]
-	Transform * camera = controller->cameraTransform.lock().get();
+	auto camera = controller->cameraTransform.lock();
 	Quaternion cameraLook;
 	cameraLook = Quaternion::LookRotation(playerPos - camera->GetWorldPosition());
 	cameraLook = Quaternion::Slerp(camera->GetWorldRotation(), cameraLook, Time::DeltaTime() * 1.0f);

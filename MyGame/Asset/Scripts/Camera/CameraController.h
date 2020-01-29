@@ -32,7 +32,8 @@ public:
 
 	enum class Plugin : int
 	{
-		Character
+		Character,
+		RockOn
 	};
 
 	void OnStart();

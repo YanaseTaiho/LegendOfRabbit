@@ -96,7 +96,7 @@ Quaternion Quaternion::SetIdentity()
 	return *this;
 }
 
-Quaternion Quaternion::Slerp(Quaternion q, float t)
+Quaternion Quaternion::Slerp(const Quaternion & q, float t) const
 {
 	Quaternion q1;
 	q1.quaternion = quaternion.slerp(t, q.quaternion);

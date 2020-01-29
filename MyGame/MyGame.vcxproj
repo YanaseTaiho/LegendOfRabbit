@@ -89,6 +89,7 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRoll.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
+    <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
     <ClCompile Include="Asset\Tool\Menu.cpp" />
     <ClCompile Include="Asset\Scene\Editor\EditorScene.cpp" />
@@ -222,6 +223,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.h">
       <SubType>
       </SubType>
     </ClInclude>

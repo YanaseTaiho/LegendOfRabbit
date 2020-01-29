@@ -294,6 +294,9 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttack.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\FrameWork\debugPrintf.h">
@@ -705,6 +708,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerAttack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -108,6 +108,11 @@ void PlayerActor::OnUpdate()
 	if (Input::Keyboad::IsTrigger('3'))
 	{
 		isRockOn = !isRockOn;
+
+		if (isRockOn)
+			cameraController.lock()->ChangePlugin(CameraController::Plugin::RockOn);
+		else
+			cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
 	}
 
 	if (!handSword.expired() && handSword.lock()->IsActive())
