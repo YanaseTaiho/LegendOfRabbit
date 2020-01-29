@@ -82,6 +82,8 @@
     <ClCompile Include="Asset\FrameWork\Scene\SceneManager.cpp" />
     <ClCompile Include="Asset\Main\audio_clip.cpp" />
     <ClCompile Include="Asset\FrameWork\Scene\Prefab.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttack.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttackJump.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRoll.cpp" />
@@ -202,6 +204,14 @@
     <ClInclude Include="Asset\FrameWork\GameObject\GameObject.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Collision.h" />
     <ClInclude Include="Asset\FrameWork\Scene\Prefab.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerAttack.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerAttackJump.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.h" />
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.h">
       <SubType>

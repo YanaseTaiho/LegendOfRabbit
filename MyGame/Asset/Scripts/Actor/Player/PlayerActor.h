@@ -56,7 +56,9 @@ public:
 		Roll,
 		RollStop,
 		CliffGrap,
-		CliffJump
+		CliffJump,
+		AttackJump,
+		Attack
 	};
 
 	enum class AttackType : int

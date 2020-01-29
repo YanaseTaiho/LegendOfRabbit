@@ -21,6 +21,10 @@ void RabitAnimationController::Initialize()
 	auto attack_Combo = AddParameterInt("Attack_Combo");
 	auto attack_Type = AddParameterInt("Attack_Type");
 	auto attack_Trigger = AddParameterTrigger("Attack_Trigger");
+	auto attack_Jump_Trigger = AddParameterTrigger("Attack_Jump_Trigger");
+
+	// ロックオン系
+
 
 	AddFilter("Normal", [=](std::shared_ptr<AnimationFilter> & filter)
 	{
@@ -68,6 +72,22 @@ void RabitAnimationController::Initialize()
 		auto attack_Thrust_1 = Attack_Thrust_Filter->AddState("Attack_Thrust_1");
 		auto attack_Thrust_2 = Attack_Thrust_Filter->AddState("Attack_Thrust_2");
 		auto attack_Thrust_3 = Attack_Thrust_Filter->AddState("Attack_Thrust_3");
+
+		// Attack_Jump
+		{
+			attack_Jump->AddTransition(attack_Jump_Land, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.0f, false);
+				transition->AddConditionBool(isFall, false);
+			});
+		}
+		// Attack_Jump_Land
+		{
+			attack_Jump_Land->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, true);
+			});
+		}
 
 		// Attack_Filter
 		{
@@ -127,6 +147,11 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.03f, false);
 				transition->AddConditionTrigger(cliff_Jump_Trigger);
 			});
+			Idle_Filter->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.03f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});
 			
 			AttackTransition(Idle_Filter, attack_Inside_1, PlayerActor::AttackType::Inside, 0);
 			AttackTransition(Idle_Filter, attack_Outside_1, PlayerActor::AttackType::Outside, 0);
@@ -160,6 +185,11 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.05f, false);
 				transition->AddConditionTrigger(rollTrigger);
+			});
+			Move_Filter->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.03f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 
 			// 攻撃モーションへ
@@ -260,6 +290,11 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.0f, false);
 				transition->AddConditionBool(isCliff_Grap, true);
 			});
+			jump->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.0f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});
 			jump->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
@@ -284,6 +319,11 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.0f, false);
 				transition->AddConditionBool(isCliff_Grap, true);
+			});
+			fall->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.0f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 			fall->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{

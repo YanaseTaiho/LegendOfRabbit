@@ -18,6 +18,13 @@ void PlayerAir::OnUpdate(PlayerActor * actor)
 		actor->animator.lock()->SetTrigger("JumpTrigger");
 	}
 
+	// ƒWƒƒƒ“ƒvØ‚è
+	if (Input::Keyboad::IsTrigger('Q'))
+	{
+		actor->ChangeState(PlayerActor::State::AttackJump);
+		return;
+	}
+
 	// ŠR’Í‚Ý”»’è
 	if (!actor->castCliffGroundInfo.collision.expired() && !actor->castCliffWallInfo.collision.expired()
 		&& actor->rigidbody.lock()->velocity.y < 0										// —Í‚ª‰º•ûŒü‚É“­‚¢‚Ä‚¢‚éŽž‚Ì‚Ý

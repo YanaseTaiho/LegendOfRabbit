@@ -6,6 +6,8 @@
 #include "State/PlayerRollStop.h"
 #include "State/PlayerCliffGrap.h"
 #include "State/PlayerCliffJump.h"
+#include "State/PlayerAttackJump.h"
+#include "State/PlayerAttack.h"
 
 #include "../../RotationFixedController.h"
 #include "../../../DirectX/Common.h"
@@ -68,6 +70,8 @@ void PlayerActor::OnStart()
 	fsmManager->AddState((int)State::RollStop, new PlayerRollStop());
 	fsmManager->AddState((int)State::CliffGrap, new PlayerCliffGrap());
 	fsmManager->AddState((int)State::CliffJump, new PlayerCliffJump());
+	fsmManager->AddState((int)State::AttackJump, new PlayerAttackJump());
+	fsmManager->AddState((int)State::Attack, new PlayerAttack());
 
 	animator = this->gameObject.lock()->GetComponent<Animator>();
 	rigidbody = this->gameObject.lock()->GetComponent<Rigidbody>();
