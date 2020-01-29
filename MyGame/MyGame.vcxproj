@@ -47,6 +47,7 @@
     <ClCompile Include="Asset\DirectX\Shader\MeshShader.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\SkinMeshShader.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\SkyDomeShader.cpp" />
+    <ClCompile Include="Asset\DirectX\Shader\ToonMeshShader.cpp" />
     <ClCompile Include="Asset\DirectX\Shadow\Shadow.cpp" />
     <ClCompile Include="Asset\DirectX\Texture\Texture.cpp" />
     <ClCompile Include="Asset\DirectX\Texture\TextureManager.cpp" />
@@ -75,10 +76,16 @@
     <ClCompile Include="Asset\DirectX\Material\Material.cpp" />
     <ClCompile Include="Asset\FrameWork\GameObject\GameObjectManager.cpp" />
     <ClCompile Include="Asset\FrameWork\Input\Mouse.cpp" />
+    <ClCompile Include="Asset\FrameWork\Input\GamePad.cpp">
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
+    </ClCompile>
     <ClCompile Include="Asset\FrameWork\Scene\SceneManager.cpp" />
     <ClCompile Include="Asset\Main\audio_clip.cpp" />
     <ClCompile Include="Asset\FrameWork\Scene\Prefab.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRoll.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
     <ClCompile Include="Asset\Tool\Menu.cpp" />
@@ -139,6 +146,7 @@
     <ClInclude Include="Asset\DirectX\Shader\MeshShader.h" />
     <ClInclude Include="Asset\DirectX\Shader\SkinMeshShader.h" />
     <ClInclude Include="Asset\DirectX\Shader\SkyDomeShader.h" />
+    <ClInclude Include="Asset\DirectX\Shader\ToonMeshShader.h" />
     <ClInclude Include="Asset\DirectX\Shadow\Shadow.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationController.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationClipManager.h" />
@@ -178,6 +186,7 @@
     <ClInclude Include="Asset\FrameWork\FileLoader.h" />
     <ClInclude Include="Asset\FrameWork\GameObject\GameObjectManager.h" />
     <ClInclude Include="Asset\FrameWork\Input\Mouse.h" />
+    <ClInclude Include="Asset\FrameWork\Input\GamePad.h" />
     <ClInclude Include="Asset\FrameWork\Layer.h" />
     <ClInclude Include="Asset\FrameWork\Mathf.h" />
     <ClInclude Include="Asset\FrameWork\MyImGui.h" />
@@ -194,6 +203,18 @@
     <ClInclude Include="Asset\FrameWork\Component\Collision\Collision.h" />
     <ClInclude Include="Asset\FrameWork\Scene\Prefab.h" />
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRoll.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Scripts\Common.h" />
     <ClInclude Include="Asset\Scripts\RotationFixedController.h" />
     <ClInclude Include="Asset\Tool\Menu.h" />
@@ -264,6 +285,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Asset\Shader\PixelShader\PS_SkyDome.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Asset\Shader\PixelShader\PS_Toon.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>

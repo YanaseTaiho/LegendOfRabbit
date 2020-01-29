@@ -10,7 +10,7 @@ public:
 	void OnUpdate(PlayerActor * actor) override;
 
 private:
-	float moveSpeed = 5.5f;
+	float moveSpeed;
 };
 
 #endif // !_PLAYERIDLE_H_

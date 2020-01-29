@@ -46,6 +46,11 @@ namespace FrameWork
 		void SetBool(std::string name, bool value);
 		void SetTrigger(std::string name);
 
+		float GetFloat(std::string name);
+		int GetInt(std::string name);
+		bool GetBool(std::string name);
+		bool GetTrigger(std::string name);
+
 		float GetCurrentPercent();
 		bool IsCurrentAnimation(std::string name);	// AnimationControllerのステート名
 	protected:

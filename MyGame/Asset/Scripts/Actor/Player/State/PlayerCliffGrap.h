@@ -8,6 +8,9 @@ class PlayerCliffGrap : public BaseFSM<PlayerActor>
 public:
 	void OnStart(PlayerActor * actor) override;
 	void OnUpdate(PlayerActor * actor) override;
+
+private:
+	bool isUp = false;
 };
 
 #endif // !_PLAYER_CLIFF_GRAP_H_

@@ -39,6 +39,7 @@ namespace MyDirectX
 		LINE,
 		SHADOW,
 		SKYDOME,
+		MESH_TOON_TEXTURE,
 		MAX
 	};
 

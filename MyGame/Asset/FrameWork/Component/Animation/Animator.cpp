@@ -128,6 +128,26 @@ void Animator::SetTrigger(std::string name)
 	this->animController->SetParameterTrigger(name);
 }
 
+float Animator::GetFloat(std::string name)
+{
+	return this->animController->GetParameterFloat(name);
+}
+
+int Animator::GetInt(std::string name)
+{
+	return this->animController->GetParameterInt(name);
+}
+
+bool Animator::GetBool(std::string name)
+{
+	return this->animController->GetParameterBool(name);
+}
+
+bool Animator::GetTrigger(std::string name)
+{
+	return this->animController->GetParameterTrigger(name);
+}
+
 float Animator::GetCurrentPercent()
 {
 	return this->animController->GetCurrentPercent();

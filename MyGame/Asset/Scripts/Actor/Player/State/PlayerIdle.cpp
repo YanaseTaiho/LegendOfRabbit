@@ -24,10 +24,10 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
-	if (actor->moveAmount > 0.1f)
+	if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
 	{
-		Quaternion look = Quaternion::LookRotation(actor->moveDir);
-		actor->transform.lock()->SetWorldRotation(look);
+		//Quaternion look = Quaternion::LookRotation(actor->moveDir);
+		//actor->transform.lock()->SetWorldRotation(look);
 
 		actor->ChangeState(PlayerActor::State::Move);
 	}

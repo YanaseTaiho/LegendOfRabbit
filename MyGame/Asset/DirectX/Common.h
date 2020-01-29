@@ -13,6 +13,7 @@
 #include "Shader/MeshShader.h"
 #include "Shader/SkinMeshShader.h"
 #include "Shader/SkyDomeShader.h"
+#include "Shader/ToonMeshShader.h"
 
 // ƒŒƒ“ƒ_ƒ‰[
 #include "Renderer/MeshRenderer.h"

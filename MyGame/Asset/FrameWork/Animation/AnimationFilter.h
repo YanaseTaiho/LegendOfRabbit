@@ -23,6 +23,8 @@ namespace FrameWork
 		void load(Archive & archive, std::uint32_t const version)
 		{
 			archive(name, myFilter, parentFilter, runningState, childFilters, transitions, animStates);
+
+			transitions.clear();
 		}
 
 	public:

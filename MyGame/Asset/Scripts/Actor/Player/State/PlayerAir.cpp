@@ -6,7 +6,7 @@
 
 void PlayerAir::OnStart(PlayerActor * actor)
 {
-	//actor->rigidbody.lock()->resistance = 0.98f;
+	moveSpeed = 2.0f;
 }
 
 void PlayerAir::OnUpdate(PlayerActor * actor)
@@ -16,7 +16,21 @@ void PlayerAir::OnUpdate(PlayerActor * actor)
 		Vector3 force = Vector3::up() * actor->jumpForce;
 		actor->rigidbody.lock()->AddForce(force);
 		actor->animator.lock()->SetTrigger("JumpTrigger");
-		//actor->ChangeState(PlayerActor::State::Air);
+	}
+
+	// ŠR’Í‚Ý”»’è
+	if (!actor->castCliffGroundInfo.collision.expired() && !actor->castCliffWallInfo.collision.expired()
+		&& actor->rigidbody.lock()->velocity.y < 0										// —Í‚ª‰º•ûŒü‚É“­‚¢‚Ä‚¢‚éŽž‚Ì‚Ý
+		&& actor->castCliffGroundInfo.point.y - actor->castCliffWallInfo.point.y < 5.0f	// ‚‚³‚ðŠm”F
+		&& Vector3::Dot(actor->castCliffGroundInfo.normal, Vector3::up()) > 0.7f)		// ’Í‚ß‚éŠR‚ÌŠp“x‚ðŠm”F
+	{
+		Vector3 dir = -actor->castCliffWallInfo.normal; dir.y = 0.0;
+		Quaternion look = Quaternion::LookRotation(dir).Normalized();
+		actor->transform.lock()->SetWorldRotation(look);
+
+		actor->transform.lock()->SetWorldPosition(actor->castCliffGroundInfo.point);
+		actor->ChangeState(PlayerActor::State::CliffGrap);
+		return;
 	}
 
 	if (actor->onGround)
@@ -32,19 +46,6 @@ void PlayerAir::OnUpdate(PlayerActor * actor)
 			actor->ChangeState(PlayerActor::State::Idle);
 			return;
 		}
-	}
-
-	if (!actor->castCliffGroundInfo.collision.expired()
-		&& actor->rigidbody.lock()->velocity.y < 0
-		&& actor->castCliffGroundInfo.point.y - actor->castCliffWallInfo.point.y < 5.0f)
-	{
-		Vector3 dir = -actor->castCliffWallInfo.normal; dir.y = 0.0;
-		Quaternion look = Quaternion::LookRotation(dir).Normalized();
-		actor->transform.lock()->SetWorldRotation(look);
-
-		actor->transform.lock()->SetWorldPosition(actor->castCliffGroundInfo.point);
-		actor->ChangeState(PlayerActor::State::CliffGrap);
-		return;
 	}
 
 	if (!actor->animator.lock()->IsCurrentAnimation("Cliff_Jump"))

@@ -259,10 +259,12 @@ bool AnimationFilter::CheckTransition(const AnimationState * currentState)
 	// ‚±‚±‚ÅŽŸ‚É‘JˆÚ‚·‚éðŒ‚ð–ž‚½‚µ‚½‚ç‘JˆÚó‘Ô‚É“ü‚é
 	for (auto & transition : transitions)
 	{
+		auto const filter = GetBossParent();
+		if (filter->runningState.lock() == transition->nextAnimation.lock()) continue;
+
 		// ó‘Ô‘JˆÚ‚ÌðŒ‚ðŠm”F
 		if (transition->CheckTransition(currentState))
 		{
-			auto const filter = GetBossParent();
 			// Šù‚É‘JˆÚ’†‚©‚Ç‚¤‚©Šm‚©‚ß‚é
 			bool isTransition = !filter->runningTransition.expired();
 
@@ -271,7 +273,7 @@ bool AnimationFilter::CheckTransition(const AnimationState * currentState)
 			{
 				filter->runningState = filter->runningTransition.lock()->nextAnimation;
 				filter->runningState.lock()->OnStart();	// ƒtƒŒ[ƒ€‚ð‰Šú‰»
-				filter->runningTransition.reset();
+				filter->ChangeTransition(transition);
 			}
 			else
 			{

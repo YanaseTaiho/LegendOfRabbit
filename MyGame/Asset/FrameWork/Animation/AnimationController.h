@@ -70,6 +70,11 @@ namespace FrameWork
 		void SetParameterBool(std::string name, bool param);
 		void SetParameterTrigger(std::string name);
 
+		float GetParameterFloat(std::string name);
+		int GetParameterInt(std::string name);
+		bool GetParameterBool(std::string name);
+		bool GetParameterTrigger(std::string name);
+
 		void ResetParameterTrigger();
 
 		// 現在のアニメーションの進行度( 0.0f ～　1.0f )

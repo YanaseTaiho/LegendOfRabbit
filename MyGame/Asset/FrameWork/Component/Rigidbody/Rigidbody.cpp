@@ -28,11 +28,11 @@ void Rigidbody::DrawImGui(int id)
 
 void Rigidbody::Update()
 {
+	transform.lock()->SetWorldPosition(transform.lock()->GetWorldPosition() + velocity);
+
 	resistance = Mathf::Clamp01(resistance);
 	velocity *= (1.0f - resistance);
 	velocity.y -= gravity;
-
-	transform.lock()->SetWorldPosition(transform.lock()->GetWorldPosition() + velocity);
 }
 
 void Rigidbody::UpdateSet()

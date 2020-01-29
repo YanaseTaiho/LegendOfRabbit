@@ -53,7 +53,10 @@ public:
 		Idle,
 		Move,
 		Air,
-		CliffGrap
+		Roll,
+		RollStop,
+		CliffGrap,
+		CliffJump
 	};
 
 	enum class AttackType : int
@@ -93,6 +96,7 @@ public:
 	float moveForce = 3.0f;
 	float forceMax = 5.0f;
 	float forceAmount = 0.0f;
+	float horizontalRegistance = 0.2f;
 
 	float cliffJumpForce = 1.0f;
 	float cliffRayStartY_Front = 5.0f;

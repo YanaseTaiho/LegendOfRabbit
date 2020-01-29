@@ -273,6 +273,21 @@
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Asset\DirectX\Shader\ToonMeshShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\FrameWork\Input\GamePad.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRoll.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\FrameWork\debugPrintf.h">
@@ -665,6 +680,21 @@
     <ClInclude Include="Asset\FrameWork\Animation\AnimationFilter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\DirectX\Shader\ToonMeshShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\FrameWork\Input\GamePad.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRoll.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Asset\Shader\PixelShader\PS_Texture.hlsl" />
@@ -681,6 +711,7 @@
     <FxCompile Include="Asset\Shader\VertexShader\VS_SkinMesh_NormalTexture.hlsl" />
     <FxCompile Include="Asset\Shader\PixelShader\PS_SkyDome.hlsl" />
     <FxCompile Include="Asset\Shader\GeometryShader\GS_Line.hlsl" />
+    <FxCompile Include="Asset\Shader\PixelShader\PS_Toon.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyGame.rc">

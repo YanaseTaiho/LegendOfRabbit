@@ -174,6 +174,34 @@ void AnimationController::SetParameterTrigger(std::string name)
 	*parameterTriggerMap[name] = true;
 }
 
+float AnimationController::GetParameterFloat(std::string name)
+{
+	if (parameterFloatMap.count(name) == 0) return 0.0f;
+
+	return *parameterFloatMap[name];
+}
+
+int AnimationController::GetParameterInt(std::string name)
+{
+	if (parameterIntMap.count(name) == 0) return 0;
+
+	return *parameterIntMap[name];
+}
+
+bool AnimationController::GetParameterBool(std::string name)
+{
+	if (parameterBoolMap.count(name) == 0) return false;
+
+	return *parameterBoolMap[name];
+}
+
+bool AnimationController::GetParameterTrigger(std::string name)
+{
+	if (parameterTriggerMap.count(name) == 0) return false;
+
+	return *parameterTriggerMap[name];
+}
+
 void AnimationController::ResetParameterTrigger()
 {
 	// トリガーパラメータだけ状態遷移成功時リセット
@@ -210,8 +238,12 @@ bool AnimationController::IsCurrentState(std::string name)
 			{
 				return true;
 			}
+			if (filter->runningTransition.lock()->nextAnimation.lock()->animFilter.lock()->name == name)
+			{
+				return true;
+			}
 		}
-		else if (filter->runningState.lock()->name == name)
+		if (filter->runningState.lock()->name == name || filter->runningState.lock()->animFilter.lock()->name == name)
 		{
 			return true;
 		}

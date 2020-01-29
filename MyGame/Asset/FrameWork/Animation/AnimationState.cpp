@@ -12,6 +12,8 @@ void AnimationState::LoadSerialize()
 
 	auto take = Singleton<AnimationClipManager>::Instance()->GetTakeNode(this->motion->GetName());
 	this->motion->SetTakeNode(take);
+
+	transitions.clear();
 }
 
 void AnimationState::SetName(std::string name)
@@ -33,6 +35,7 @@ bool AnimationState::SetAnimationClip(std::string animClipName, float speed, boo
 void AnimationState::AddTransition(std::weak_ptr<AnimationState> nextState, std::function<void(std::shared_ptr<AnimationTransition>&transition)> func)
 {
 	if (nextState.expired()) return;
+	if (nextState.lock().get() == this) return;
 
 	for (auto itr = transitions.begin(), end = transitions.end(); itr != end; ++itr)
 	{
@@ -66,10 +69,12 @@ bool AnimationState::CheckTransition()
 	// ŽŸ‚É‘JˆÚ‚·‚éðŒ‚ð–ž‚½‚µ‚½‚ç‘JˆÚó‘Ô‚É“ü‚é
 	for (auto & transition : transitions)
 	{
+		auto const filter = animFilter.lock()->GetBossParent();
+		if (filter->runningState.lock() == transition->nextAnimation.lock()) continue;
+
 		// ó‘Ô‘JˆÚ‚ÌðŒ‚ðŠm”F
 		if (transition->CheckTransition(this))
 		{
-			auto const filter = animFilter.lock()->GetBossParent();
 			// Šù‚É‘JˆÚ’†‚©‚Ç‚¤‚©Šm‚©‚ß‚é
 			bool isTransition = !filter->runningTransition.expired();
 
@@ -78,7 +83,7 @@ bool AnimationState::CheckTransition()
 			{
 				filter->runningState = filter->runningTransition.lock()->nextAnimation;
 				filter->runningState.lock()->OnStart();	// ƒtƒŒ[ƒ€‚ð‰Šú‰»
-				filter->runningTransition.reset();
+				filter->ChangeTransition(transition);
 			}
 			else
 			{
