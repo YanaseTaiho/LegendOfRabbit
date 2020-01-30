@@ -7,7 +7,7 @@
 using namespace FrameWork;
 using namespace MyDirectX;
 
-#define DEPTH_FAR (512.0f)
+#define DEPTH_FAR (256.0f)
 
 void DirectionalLight::Awake()
 {
