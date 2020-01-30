@@ -109,6 +109,7 @@ void PlayerActor::OnUpdate()
 	{
 		isRockOn = !isRockOn;
 
+		animator.lock()->SetBool("IsRockOn", isRockOn);
 		if (isRockOn)
 			cameraController.lock()->ChangePlugin(CameraController::Plugin::RockOn);
 		else
@@ -120,7 +121,11 @@ void PlayerActor::OnUpdate()
 		if (animator.lock()->IsCurrentAnimation("Idle")
 			|| animator.lock()->IsCurrentAnimation("Walk")
 			|| animator.lock()->IsCurrentAnimation("Run")
-			|| animator.lock()->IsCurrentAnimation("Land"))
+			|| animator.lock()->IsCurrentAnimation("Land")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Back_Filter"))
 		{
 			if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(0.1f);
 		}
@@ -134,7 +139,11 @@ void PlayerActor::OnUpdate()
 		if (animator.lock()->IsCurrentAnimation("Idle")
 			|| animator.lock()->IsCurrentAnimation("Walk")
 			|| animator.lock()->IsCurrentAnimation("Run")
-			|| animator.lock()->IsCurrentAnimation("Land"))
+			|| animator.lock()->IsCurrentAnimation("Land")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Back_Filter"))
 		{
 			if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(0.1f);
 		}

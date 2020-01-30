@@ -14,6 +14,9 @@ public:
 private:
 	int frameCnt;
 	float lookSpeed;
+	PlayerActor::Direction moveDirection;
+
+	void CheckDirection(PlayerActor * actor);
 };
 
 #endif // !_PLAYERMOVE_H_

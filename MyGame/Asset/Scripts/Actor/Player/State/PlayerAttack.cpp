@@ -13,6 +13,7 @@ void PlayerAttack::OnStart(PlayerActor * actor)
 
 void PlayerAttack::OnUpdate(PlayerActor * actor)
 {
+	actor->animator.lock()->SetFloat("WalkValue", actor->forceAmount);
 	actor->horizontalRegistance = 0.90f;
 	actor->sword_HandContorller.lock()->SetWeight(-1.0f);
 
@@ -22,8 +23,10 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
-	if (actor->animator.lock()->IsCurrentAnimation("Idle_Filter")
-		|| actor->animator.lock()->IsCurrentAnimation("Move_Filter"))
+	if (!actor->animator.lock()->IsCurrentAnimation("Attack_Inside_Filter")
+		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Outside_Filter")
+		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Upper_Filter")
+		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Thrust_Filter"))
 	{
 		if (Input::Keyboad::IsTrigger('E'))
 		{

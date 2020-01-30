@@ -89,6 +89,8 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			return;
 		}
 
+		CheckDirection(actor);
+
 		// ˆÚ“®ˆ—
 		Vector3 force;
 		force += actor->moveDir * (actor->moveAmount * actor->moveForce * Time::DeltaTime());
@@ -116,4 +118,30 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		Rigidbody *rb = actor->rigidbody.lock().get();
 		rb->AddForce(force);
 	}
+}
+
+void PlayerMove::CheckDirection(PlayerActor * actor)
+{
+	float attackDir = Vector3::Dot(actor->transform.lock()->forward(), actor->moveDir);
+	bool isRight = Vector3::Dot(actor->transform.lock()->right(), actor->moveDir) >= 0;
+
+	if (attackDir >= 0.9f)
+	{
+		moveDirection = PlayerActor::Direction::Forward;
+	}
+	else if (!isRight && attackDir > -0.9f && attackDir < 0.9f)
+	{
+		moveDirection = PlayerActor::Direction::Left;
+	}
+	else if (isRight && attackDir > -0.9f && attackDir < 0.9f)
+	{
+		moveDirection = PlayerActor::Direction::Right;
+	}
+	else if (attackDir <= -0.9f)
+	{
+		moveDirection = PlayerActor::Direction::Back;
+	}
+
+	actor->animator.lock()->SetInt("RockOnDirection", (int)moveDirection);
+	//actor->animator.lock()->SetFloat("WalkValue", actor->moveAmount);
 }

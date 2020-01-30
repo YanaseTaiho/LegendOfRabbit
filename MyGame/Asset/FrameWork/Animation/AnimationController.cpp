@@ -243,7 +243,7 @@ bool AnimationController::IsCurrentState(std::string name)
 				return true;
 			}
 		}
-		if (filter->runningState.lock()->name == name || filter->runningState.lock()->animFilter.lock()->name == name)
+		else if (filter->runningState.lock()->name == name || filter->runningState.lock()->animFilter.lock()->name == name)
 		{
 			return true;
 		}

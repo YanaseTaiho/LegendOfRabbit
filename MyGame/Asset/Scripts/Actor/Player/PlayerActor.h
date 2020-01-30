@@ -61,6 +61,14 @@ public:
 		Jump
 	};
 
+	enum class Direction : int
+	{
+		Forward,
+		Left,
+		Right,
+		Back,
+	};
+
 	std::weak_ptr<CameraController> cameraController;
 
 	std::weak_ptr<RotationFixedController> sword_HandContorller;	// Œ•‘•”õŽž
