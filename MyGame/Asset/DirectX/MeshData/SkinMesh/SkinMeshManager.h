@@ -25,6 +25,7 @@ namespace MyDirectX
 	private:
 
 		std::map<std::string, std::shared_ptr<SkinMesh>> skinMeshMap;
+		std::vector<std::string> loadSkinMeshNames;
 	};
 }
 

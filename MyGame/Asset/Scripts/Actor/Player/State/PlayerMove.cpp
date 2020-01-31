@@ -1,4 +1,5 @@
 #include "PlayerMove.h"
+#include "PlayerAttack.h"
 #include "../PlayerActor.h"
 #include "../../../../DirectX/Common.h"
 
@@ -51,13 +52,22 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 	}
 	if (Input::Keyboad::IsTrigger('E'))
 	{
-		actor->ChangeState(PlayerActor::State::Attack);
-		return;
-	}
-	// 転がる
-	if (Input::Keyboad::IsTrigger('R') && actor->moveAmount > 0.1f)
-	{
-		actor->ChangeState(PlayerActor::State::Roll);
+		if (actor->isWeaponHold)
+		{
+			actor->ChangeState(PlayerActor::State::Attack);
+		}
+		else
+		{
+			actor->WeaponHold([=]()
+			{
+				actor->ChangeState(PlayerActor::State::Attack);
+				auto attack = std::static_pointer_cast<PlayerAttack>(actor->fsmManager->GetState((int)PlayerActor::State::Attack).lock());
+				attack->Attack(actor);
+			});
+			actor->ChangeState(PlayerActor::State::Idle);
+			//return;
+		}
+		
 		return;
 	}
 
@@ -81,24 +91,63 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 	Vector3 forward = actor->transform.lock()->forward();
 	forward.y = 0.0f;
 
+	// ロックオン中
 	if (actor->isRockOn)
 	{
-		if (Input::Keyboad::IsTrigger('Q'))
-		{
-			actor->ChangeState(PlayerActor::State::AttackJump);
-			return;
-		}
-
 		CheckDirection(actor);
 
+		if (actor->moveDir != Vector3::zero() && Input::Keyboad::IsTrigger('R'))
+		{
+			switch (moveDirection)
+			{
+				// ジャンプ切り
+			case PlayerActor::Direction::Forward:
+
+				actor->ChangeState(PlayerActor::State::AttackJump);
+				return;
+
+				// サイドステップ
+			case PlayerActor::Direction::Left:
+			case PlayerActor::Direction::Right:
+
+			{
+				Vector3 force = Vector3::up() * actor->jumpForce * 0.55f;
+				force += actor->moveDir * 200.0f * Time::DeltaTime();
+				actor->rigidbody.lock()->AddForce(force);
+
+				actor->ChangeState(PlayerActor::State::Step);
+				return;
+			}
+			// バク宙
+			case PlayerActor::Direction::Back:
+			{
+				Vector3 force = Vector3::up() * actor->jumpForce * 0.75f;
+				force += actor->moveDir * 150.0f * Time::DeltaTime();
+				actor->rigidbody.lock()->AddForce(force);
+
+				actor->ChangeState(PlayerActor::State::Step);
+				return;
+			}
+
+			}	// !switch (moveDirection)
+		}	// !actor->moveDir != Vector3::zero() && Input::Keyboad::IsTrigger('Q')
+		
 		// 移動処理
 		Vector3 force;
 		force += actor->moveDir * (actor->moveAmount * actor->moveForce * Time::DeltaTime());
 		auto rb = actor->rigidbody.lock();
 		rb->AddForce(force);
 	}
+	// 通常
 	else
 	{
+		// 転がる
+		if (Input::Keyboad::IsTrigger('R') && actor->moveAmount > 0.1f)
+		{
+			actor->ChangeState(PlayerActor::State::Roll);
+			return;
+		}
+
 		// 回転処理
 		Quaternion q1 = actor->transform.lock()->GetWorldRotation();
 		if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())

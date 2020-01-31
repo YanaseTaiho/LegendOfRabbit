@@ -123,9 +123,9 @@ void Animator::SetBool(std::string name, bool value)
 	this->animController->SetParameterBool(name, value);
 }
 
-void Animator::SetTrigger(std::string name)
+void Animator::SetTrigger(std::string name, bool param)
 {
-	this->animController->SetParameterTrigger(name);
+	this->animController->SetParameterTrigger(name, param);
 }
 
 float Animator::GetFloat(std::string name)

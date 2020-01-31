@@ -44,7 +44,7 @@ namespace FrameWork
 		void SetFloat(std::string name, float value);
 		void SetInt(std::string name, int value);
 		void SetBool(std::string name, bool value);
-		void SetTrigger(std::string name);
+		void SetTrigger(std::string name, bool param = true);
 
 		float GetFloat(std::string name);
 		int GetInt(std::string name);

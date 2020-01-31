@@ -4,8 +4,11 @@
 void PlayerRoll::OnStart(PlayerActor * actor)
 {
 	actor->animator.lock()->SetTrigger("RollTrigger");
-	Vector3 force;
-	actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (80.0f * Time::DeltaTime()));
+
+	actor->animator.lock()->SetAnimationCallBack("Roll", 1, [=]()
+	{
+		actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (200.0f * Time::DeltaTime()));
+	});
 }
 
 void PlayerRoll::OnUpdate(PlayerActor * actor)

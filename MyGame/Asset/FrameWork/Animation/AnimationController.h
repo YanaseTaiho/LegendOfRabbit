@@ -68,7 +68,7 @@ namespace FrameWork
 		void SetParameterFloat(std::string name, float param);
 		void SetParameterInt(std::string name, int param);
 		void SetParameterBool(std::string name, bool param);
-		void SetParameterTrigger(std::string name);
+		void SetParameterTrigger(std::string name, bool param = true);
 
 		float GetParameterFloat(std::string name);
 		int GetParameterInt(std::string name);

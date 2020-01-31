@@ -1,5 +1,6 @@
 #include "PlayerIdle.h"
 #include "PlayerMove.h"
+#include "PlayerAttack.h"
 #include "../PlayerActor.h"
 
 void PlayerIdle::OnStart(PlayerActor * actor)
@@ -24,15 +25,33 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
+	if (Input::Keyboad::IsTrigger('1'))
+	{
+		if (!actor->isWeaponHold) actor->WeaponHold();
+		else actor->WeaponNotHold();
+	}
+
 	if (Input::Keyboad::IsTrigger('E'))
 	{
-		actor->ChangeState(PlayerActor::State::Attack);
+		if (actor->isWeaponHold)
+		{
+			actor->ChangeState(PlayerActor::State::Attack);
+		}
+		else
+		{
+			actor->WeaponHold([=]()
+			{
+				actor->ChangeState(PlayerActor::State::Attack);
+				auto attack = std::static_pointer_cast<PlayerAttack>(actor->fsmManager->GetState((int)PlayerActor::State::Attack).lock());
+				attack->Attack(actor);
+			});
+		}
 		return;
 	}
 
 	if (actor->isRockOn)
 	{
-		if (Input::Keyboad::IsTrigger('Q'))
+		if (Input::Keyboad::IsTrigger('R'))
 		{
 			actor->ChangeState(PlayerActor::State::AttackJump);
 			return;
@@ -40,7 +59,8 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 	}
 	
 
-	if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
+	if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero()
+		&& !actor->animator.lock()->IsCurrentAnimation("Weapon_Change"))
 	{
 		//Quaternion look = Quaternion::LookRotation(actor->moveDir);
 		//actor->transform.lock()->SetWorldRotation(look);

@@ -8,6 +8,7 @@
 #include "State/PlayerCliffJump.h"
 #include "State/PlayerAttackJump.h"
 #include "State/PlayerAttack.h"
+#include "State/PlayerStep.h"
 
 #include "../../Camera/CameraController.h"
 #include "../../RotationFixedController.h"
@@ -73,39 +74,17 @@ void PlayerActor::OnStart()
 	fsmManager->AddState((int)State::CliffJump, new PlayerCliffJump());
 	fsmManager->AddState((int)State::AttackJump, new PlayerAttackJump());
 	fsmManager->AddState((int)State::Attack, new PlayerAttack());
+	fsmManager->AddState((int)State::Step, new PlayerStep());
 
 	animator = this->gameObject.lock()->GetComponent<Animator>();
 	rigidbody = this->gameObject.lock()->GetComponent<Rigidbody>();
 
 	ChangeState(State::Idle);
-
-	/*std::weak_ptr<GameObject> obj = System::FindGameObject(Tag::MainCamera);
-	if (!obj.expired())
-	{
-		cameraTransform = obj.lock()->transform;
-	}*/
 }
 
 void PlayerActor::OnUpdate()
 {
-	static bool isSorwd = false;
-	static bool isShield = false;
-	static bool isShieldRock = false;
-	if (Input::Keyboad::IsTrigger('1'))
-	{
-		isSorwd = !isSorwd;
-		isShield = !isShield;
-
-		if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(isSorwd ? 0.1f : -0.1f);
-		if (!handSword.expired()) handSword.lock()->SetActive(isSorwd);
-		if (!backSword.expired()) backSword.lock()->SetActive(!isSorwd);
-
-		if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(isShield ? 0.1f : -0.1f);
-		if (!handShield.expired()) handShield.lock()->SetActive(isShield);
-		if (!backShield.expired()) backShield.lock()->SetActive(!isShield);
-	}
-
-	if (Input::Keyboad::IsTrigger('3'))
+	if (Input::Keyboad::IsTrigger('F'))
 	{
 		isRockOn = !isRockOn;
 
@@ -122,6 +101,9 @@ void PlayerActor::OnUpdate()
 			|| animator.lock()->IsCurrentAnimation("Walk")
 			|| animator.lock()->IsCurrentAnimation("Run")
 			|| animator.lock()->IsCurrentAnimation("Land")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Step")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Step")
+			//|| animator.lock()->IsCurrentAnimation("RockOn_Back_Step")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
@@ -140,25 +122,26 @@ void PlayerActor::OnUpdate()
 			|| animator.lock()->IsCurrentAnimation("Walk")
 			|| animator.lock()->IsCurrentAnimation("Run")
 			|| animator.lock()->IsCurrentAnimation("Land")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Step")
+			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Step")
+			//|| animator.lock()->IsCurrentAnimation("RockOn_Back_Step")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
 			|| animator.lock()->IsCurrentAnimation("RockOn_Back_Filter"))
 		{
 			if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(0.1f);
+
+			if (Input::Keyboad::IsPress('2'))
+			{
+				if (!shieldRock_HandContorller.expired()) shieldRock_HandContorller.lock()->SetWeight(0.3f);
+			}
 		}
 		else
 		{
 			if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(-0.1f);
-		}
 
-		if (Input::Keyboad::IsPress('2'))
-		{
-			if (!shieldRock_HandContorller.expired()) shieldRock_HandContorller.lock()->SetWeight(0.1f);
-		}
-		else
-		{
-			if (!shieldRock_HandContorller.expired()) shieldRock_HandContorller.lock()->SetWeight(-0.1f);
+			if (!shieldRock_HandContorller.expired() && !Input::Keyboad::IsPress('2')) shieldRock_HandContorller.lock()->SetWeight(-0.3f);
 		}
 	}
 
@@ -203,6 +186,48 @@ void PlayerActor::ChangeState(State state)
 	if (!fsmManager) return;
 	currentState = state;
 	fsmManager->ChangeState(this, (int)state);
+}
+
+void PlayerActor::WeaponHold(std::function<void()> func)
+{
+	if (isWeaponHold || animator.lock()->IsCurrentAnimation("Weapon_Change")) return;
+
+	animator.lock()->SetTrigger("Weapon_Change_Trigger");
+
+	animator.lock()->SetAnimationCallBack("Weapon_Change", 14, [=]()
+	{
+		isWeaponHold = true;
+
+		if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(0.1f);
+		if (!handSword.expired()) handSword.lock()->SetActive(isWeaponHold);
+		if (!backSword.expired()) backSword.lock()->SetActive(!isWeaponHold);
+
+		if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(0.1f);
+		if (!handShield.expired()) handShield.lock()->SetActive(isWeaponHold);
+		if (!backShield.expired()) backShield.lock()->SetActive(!isWeaponHold);
+
+		if(func) func();
+	});
+}
+
+void PlayerActor::WeaponNotHold()
+{
+	if (!isWeaponHold || animator.lock()->IsCurrentAnimation("Weapon_Change")) return;
+
+	animator.lock()->SetTrigger("Weapon_Change_Trigger");
+
+	animator.lock()->SetAnimationCallBack("Weapon_Change", 14, [=]()
+	{
+		isWeaponHold = false;
+
+		if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(-0.1f);
+		if (!handSword.expired()) handSword.lock()->SetActive(isWeaponHold);
+		if (!backSword.expired()) backSword.lock()->SetActive(!isWeaponHold);
+
+		if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(-0.1f);
+		if (!handShield.expired()) handShield.lock()->SetActive(isWeaponHold);
+		if (!backShield.expired()) backShield.lock()->SetActive(!isWeaponHold);
+	});
 }
 
 void PlayerActor::UpdateInput()

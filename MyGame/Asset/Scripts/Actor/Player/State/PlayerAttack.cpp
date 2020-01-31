@@ -30,44 +30,7 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 	{
 		if (Input::Keyboad::IsTrigger('E'))
 		{
-			CheckAttackType(actor);
-
-			actor->animator.lock()->SetTrigger("Attack_Trigger");
-			actor->animator.lock()->SetInt("Attack_Type", (int)attackType);
-			actor->animator.lock()->SetInt("Attack_Combo", combo);
-
-			// ロックオン時
-			if (actor->isRockOn)
-			{
-				Vector3 forward = actor->transform.lock()->forward();
-				float attackDot = Vector3::Dot(forward, actor->moveDir);
-				if (attackDot < 0.3f) attackDot = 0.3f;
-				Vector3 force = forward * attackDot * Time::DeltaTime() * 150.0f;
-				actor->rigidbody.lock()->AddForce(force);
-			}
-			// 通常時
-			else
-			{
-				if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
-				{
-					Quaternion look = Quaternion::LookRotation(actor->moveDir);
-					actor->transform.lock()->SetWorldRotation(look);
-
-					Vector3 forward = actor->transform.lock()->forward();
-					Vector3 force = forward * Time::DeltaTime() * 100.0f;
-					actor->rigidbody.lock()->AddForce(force);
-				}
-			}
-
-			if (combo == 2)
-			{
-				Vector3 forward = actor->transform.lock()->forward();
-				Vector3 force = forward * Time::DeltaTime() * 100.0f;
-				actor->rigidbody.lock()->AddForce(force);
-			}
-
-			combo++;
-			combo = Mathf::Loop(combo, 0, 2);
+			Attack(actor);	
 		}
 
 		frameCnt++;
@@ -88,6 +51,48 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 		frameCnt = 0;
 	}
 	ImGui::Text("Combo : %d", combo);
+}
+
+void PlayerAttack::Attack(PlayerActor * actor)
+{
+	CheckAttackType(actor);
+
+	actor->animator.lock()->SetTrigger("Attack_Trigger");
+	actor->animator.lock()->SetInt("Attack_Type", (int)attackType);
+	actor->animator.lock()->SetInt("Attack_Combo", combo);
+
+	// ロックオン時
+	if (actor->isRockOn)
+	{
+		Vector3 forward = actor->transform.lock()->forward();
+		float attackDot = Vector3::Dot(forward, actor->moveDir);
+		if (attackDot < 0.3f) attackDot = 0.3f;
+		Vector3 force = forward * attackDot * Time::DeltaTime() * 150.0f;
+		actor->rigidbody.lock()->AddForce(force);
+	}
+	// 通常時
+	else
+	{
+		if (actor->moveAmount > 0.1f && actor->moveDir != Vector3::zero())
+		{
+			Quaternion look = Quaternion::LookRotation(actor->moveDir);
+			actor->transform.lock()->SetWorldRotation(look);
+
+			Vector3 forward = actor->transform.lock()->forward();
+			Vector3 force = forward * Time::DeltaTime() * 100.0f;
+			actor->rigidbody.lock()->AddForce(force);
+		}
+	}
+
+	if (combo == 2)
+	{
+		Vector3 forward = actor->transform.lock()->forward();
+		Vector3 force = forward * Time::DeltaTime() * 100.0f;
+		actor->rigidbody.lock()->AddForce(force);
+	}
+
+	combo++;
+	combo = Mathf::Loop(combo, 0, 2);
 }
 
 void PlayerAttack::CheckAttackType(PlayerActor * actor)

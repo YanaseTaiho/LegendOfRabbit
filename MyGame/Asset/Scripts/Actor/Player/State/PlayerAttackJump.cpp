@@ -2,7 +2,7 @@
 
 void PlayerAttackJump::OnStart(PlayerActor * actor)
 {
-	actor->rigidbody.lock()->velocity.y = 0.0f;
+	actor->rigidbody.lock()->velocity = Vector3::zero();
 	actor->horizontalRegistance = 1.0f;
 
 	//float jumpForce = (actor->onGround) ? 0.8f : 0.5f;
@@ -11,6 +11,12 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 	actor->rigidbody.lock()->AddForce(force);
 
 	actor->animator.lock()->SetTrigger("Attack_Jump_Trigger");
+
+	actor->animator.lock()->SetAnimationCallBack("Attack_Jump_Land", 20, [=]()
+	{
+		actor->ChangeState(PlayerActor::State::Idle);
+	});
+
 }
 
 void PlayerAttackJump::OnUpdate(PlayerActor * actor)

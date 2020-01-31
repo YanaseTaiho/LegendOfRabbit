@@ -88,6 +88,7 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRoll.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerStep.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
@@ -223,6 +224,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerStep.h">
       <SubType>
       </SubType>
     </ClInclude>

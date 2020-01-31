@@ -167,11 +167,11 @@ void AnimationController::SetParameterBool(std::string name, bool param)
 	*parameterBoolMap[name] = param;
 }
 
-void AnimationController::SetParameterTrigger(std::string name)
+void AnimationController::SetParameterTrigger(std::string name, bool param)
 {
 	if (parameterTriggerMap.count(name) == 0) return;
 
-	*parameterTriggerMap[name] = true;
+	*parameterTriggerMap[name] = param;
 }
 
 float AnimationController::GetParameterFloat(std::string name)

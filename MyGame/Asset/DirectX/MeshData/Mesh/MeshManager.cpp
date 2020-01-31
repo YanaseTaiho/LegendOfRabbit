@@ -24,17 +24,21 @@ void MeshManager::SaveMesh(std::string path)
 	std::string filePathName = path + std::string(FileName);
 	_mkdir(filePathName.c_str());
 	// メッシュデータを一つずつ保存
-	for (auto & mesh : meshMap)
+	for (auto & name : loadMeshNames)
 	{
-		std::string meshName = mesh.first + ".mesh";
-
-		std::string fileName = path + FileName + "/" + meshName;
-		std::ofstream ofs(fileName, std::ios::binary);	// バイナリならstd::ios::binaryとしっかりと書く!!
+		std::shared_ptr<Mesh> mesh = meshMap[name];
+		if (mesh)
 		{
-			cereal::BinaryOutputArchive o_archive(ofs);
-			o_archive(mesh.second);
+			std::string meshName = name + ".mesh";
+
+			std::string fileName = path + FileName + "/" + meshName;
+			std::ofstream ofs(fileName, std::ios::binary);	// バイナリならstd::ios::binaryとしっかりと書く!!
+			{
+				cereal::BinaryOutputArchive o_archive(ofs);
+				o_archive(mesh);
+			}
+			ofs.close();
 		}
-		ofs.close();
 	}
 }
 
@@ -107,6 +111,7 @@ std::weak_ptr<Mesh> MeshManager::Load(std::string fileName)
 				UpdateMeshRenderer(scene->GetCurrentScene()->prefab.FindComponents<MeshRenderer>());
 		}
 
+		loadMeshNames.emplace_back(newMesh->name);
 		meshMap[newMesh->name] = newMesh;
 		return meshMap[newMesh->name];
 	}

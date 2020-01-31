@@ -11,18 +11,13 @@ void PlayerAir::OnStart(PlayerActor * actor)
 
 void PlayerAir::OnUpdate(PlayerActor * actor)
 {	
+	bool isCliffJump = actor->animator.lock()->IsCurrentAnimation("Cliff_Jump");
+
 	if (Input::Keyboad::IsTrigger(VK_SPACE))
 	{
 		Vector3 force = Vector3::up() * actor->jumpForce;
 		actor->rigidbody.lock()->AddForce(force);
 		actor->animator.lock()->SetTrigger("JumpTrigger");
-	}
-
-	// ジャンプ切り
-	if (Input::Keyboad::IsTrigger('Q'))
-	{
-		actor->ChangeState(PlayerActor::State::AttackJump);
-		return;
 	}
 
 	// 崖掴み判定
@@ -55,8 +50,15 @@ void PlayerAir::OnUpdate(PlayerActor * actor)
 		}
 	}
 
-	if (!actor->animator.lock()->IsCurrentAnimation("Cliff_Jump"))
+	if (!isCliffJump)
 	{
+		// ジャンプ切り
+		if (Input::Keyboad::IsTrigger('R'))
+		{
+			actor->ChangeState(PlayerActor::State::AttackJump);
+			return;
+		}
+
 		Vector3 force;
 		auto rb = actor->rigidbody.lock();
 		force += actor->moveDir * (actor->moveAmount * moveSpeed * Time::DeltaTime());

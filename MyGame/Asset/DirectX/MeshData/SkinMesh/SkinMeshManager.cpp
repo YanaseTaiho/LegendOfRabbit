@@ -22,17 +22,21 @@ void SkinMeshManager::SaveMesh(std::string path)
 	std::string filePathName = path + std::string(FileName);
 	_mkdir(filePathName.c_str());
 	// メッシュデータを一つずつ保存
-	for (auto & mesh : skinMeshMap)
+	for (auto & name : loadSkinMeshNames)
 	{
-		std::string meshName = mesh.first + ".skinmesh";
-
-		std::string fileName = path + FileName + "/" + meshName;
-		std::ofstream ofs(fileName, std::ios::binary);	// バイナリならstd::ios::binaryとしっかりと書く!!
+		std::shared_ptr<SkinMesh> mesh = skinMeshMap[name];
+		if (mesh)
 		{
-			cereal::BinaryOutputArchive o_archive(ofs);
-			o_archive(mesh.second);
+			std::string meshName = name + ".skinmesh";
+
+			std::string fileName = path + FileName + "/" + meshName;
+			std::ofstream ofs(fileName, std::ios::binary);	// バイナリならstd::ios::binaryとしっかりと書く!!
+			{
+				cereal::BinaryOutputArchive o_archive(ofs);
+				o_archive(mesh);
+			}
+			ofs.close();
 		}
-		ofs.close();
 	}
 }
 
@@ -125,6 +129,7 @@ std::weak_ptr<SkinMesh> SkinMeshManager::Load(std::string fileName)
 				UpdateMeshRenderer(scene->GetCurrentScene()->prefab.FindComponents<SkinMeshRenderer>());
 		}
 
+		loadSkinMeshNames.emplace_back(newMesh->name);
 		skinMeshMap[newMesh->name] = newMesh;
 		return skinMeshMap[newMesh->name];
 	}

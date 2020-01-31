@@ -49,7 +49,8 @@ public:
 		CliffGrap,
 		CliffJump,
 		AttackJump,
-		Attack
+		Attack,
+		Step
 	};
 
 	enum class AttackType : int
@@ -109,6 +110,7 @@ public:
 	Vector3 moveDir;
 	float moveAmount = 0.0f;
 
+	bool isWeaponHold = false; // ‘•”õ•i‚ğè‚É‚Á‚Ä‚¢‚é‚©
 	bool onGround = false;
 	bool isRockOn = false;
 
@@ -118,6 +120,9 @@ public:
 	void Draw() override;
 
 	void ChangeState(State state);
+
+	void WeaponHold(std::function<void()> func = nullptr);
+	void WeaponNotHold();
 
 private:
 	float horizontal = 0.0f;

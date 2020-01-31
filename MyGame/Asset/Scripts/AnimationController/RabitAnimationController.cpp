@@ -17,6 +17,9 @@ void RabitAnimationController::Initialize()
 	auto isCliff_Grap = AddParameterBool("IsCliff_Grap", false);
 	auto cliff_Up_Trigger = AddParameterTrigger("Cliff_Up_Trigger", false);
 
+	// 武器切り替え
+	auto weapon_Change_Trigger = AddParameterTrigger("Weapon_Change_Trigger");
+
 	// 攻撃系
 	auto attack_Combo = AddParameterInt("Attack_Combo");
 	auto attack_Type = AddParameterInt("Attack_Type");
@@ -27,6 +30,8 @@ void RabitAnimationController::Initialize()
 	// ロックオン系
 	auto isRockOn = AddParameterBool("IsRockOn", false);
 	auto RockOnDirection = AddParameterInt("RockOnDirection");
+	auto step_Trigger = AddParameterTrigger("Step_Trigger");
+	auto step_Trigger_Land = AddParameterTrigger("Step_Trigger_Land");
 
 	AddFilter("Normal", [=](std::shared_ptr<AnimationFilter> & filter)
 	{
@@ -49,6 +54,9 @@ void RabitAnimationController::Initialize()
 		auto cliff_Idle = filter->AddState("Cliff_Idle");
 		auto cliff_Up = filter->AddState("Cliff_Up");
 
+		// 武器付け替え
+		auto weapon_Change = filter->AddState("Weapon_Change");
+
 		// ロックオン時のフィルター
 		auto RockOn_Filter = filter->AddFilter("RockOn_Filter");
 		auto rockOn_Idle = RockOn_Filter->AddState("RockOn_Idle");
@@ -64,6 +72,11 @@ void RabitAnimationController::Initialize()
 		auto RockOn_Back_Filter = RockOn_Filter->AddFilter("RockOn_Back_Filter");
 		auto rockOn_Back_Walk = RockOn_Back_Filter->AddState("RockOn_Back_Walk");
 		auto rockOn_Back_Run = RockOn_Back_Filter->AddState("RockOn_Back_Run");
+
+		// ステップ移動
+		auto rockOn_Left_Step = filter->AddState("RockOn_Left_Step");
+		auto rockOn_Right_Step = filter->AddState("RockOn_Right_Step");
+		auto rockOn_Back_Step = filter->AddState("RockOn_Back_Step");
 
 		// ジャンプ切り
 		auto attack_Jump = filter->AddState("Attack_Jump");
@@ -114,7 +127,7 @@ void RabitAnimationController::Initialize()
 				transition->AddConditionTrigger(attack_Trigger);
 			});
 		};
-
+		
 		// RockOn_Filter
 		{
 			RockOn_Filter->AddTransition(Idle_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
@@ -169,7 +182,33 @@ void RabitAnimationController::Initialize()
 				transition->AddConditionFloat(walkValue, Greater, 0.1f);
 				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Back);
 			});
-			
+
+			filter->AddTransition(rockOn_Left_Step, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger);
+				transition->AddConditionBool(isRockOn, true);
+				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Left);
+			});
+			filter->AddTransition(rockOn_Right_Step, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger);
+				transition->AddConditionBool(isRockOn, true);
+				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Right);
+			});
+			filter->AddTransition(rockOn_Back_Step, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger);
+				transition->AddConditionBool(isRockOn, true);
+				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Back);
+			});
+			filter->AddTransition(weapon_Change, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(weapon_Change_Trigger);
+			});
 
 			// RockOn_Left_Filter
 			RockOn_Left_Filter->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
@@ -188,8 +227,7 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.1f, false);
 				transition->AddConditionFloat(walkValue, Greater, 0.1f);
 				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Back);
-			});
-			
+			});	
 
 
 			// RockOn_Right_Filter
@@ -235,17 +273,99 @@ void RabitAnimationController::Initialize()
 				transition->AddConditionFloat(walkValue, Greater, 0.5f);
 				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Left);
 			});
+			// 左ステップ
+			
+			rockOn_Left_Step->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});
+			/*rockOn_Left_Step->AddTransition(rockOn_Left_Run, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, true);
+				transition->AddConditionFloat(walkValue, Greater, 0.5f);
+			});*/
+			rockOn_Left_Step->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, true);
+			});
+			rockOn_Left_Step->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionBool(isRockOn, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+			});
+
 			rockOn_Right_Walk->AddTransition(rockOn_Right_Run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
 				transition->AddConditionFloat(walkValue, Greater, 0.5f);
 				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Right);
 			});
+
+			// 右ステップ
+			
+			rockOn_Right_Step->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});
+			/*rockOn_Right_Step->AddTransition(rockOn_Right_Run, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, true);
+				transition->AddConditionFloat(walkValue, Greater, 0.5f);
+			});*/
+			rockOn_Right_Step->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, true);
+			});
+			rockOn_Right_Step->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, false);
+			});
+
 			rockOn_Back_Walk->AddTransition(rockOn_Back_Run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
 				transition->AddConditionFloat(walkValue, Greater, 0.5f);
 				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Back);
+			});
+
+			// バックステップ
+			
+			/*rockOn_Back_Step->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});*/
+			/*rockOn_Back_Step->AddTransition(rockOn_Back_Run, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, true);
+				transition->AddConditionFloat(walkValue, Greater, 0.5f);
+			});*/
+			rockOn_Back_Step->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, true);
+			});
+			rockOn_Back_Step->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionTrigger(step_Trigger_Land);
+				transition->AddConditionBool(isRockOn, false);
 			});
 		}
 
@@ -264,6 +384,34 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.1f, true);
 			});
+			attack_Jump_Land->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.1f, false);
+				transition->AddConditionBool(isFall, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});
+		}
+		// Weapon_Change
+		{
+			weapon_Change->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.05f, true);
+			});
+
+			StateAttackTransition(weapon_Change, attack_Inside_1, PlayerActor::AttackType::Inside, 0);
+			StateAttackTransition(weapon_Change, attack_Outside_1, PlayerActor::AttackType::Outside, 0);
+			StateAttackTransition(weapon_Change, attack_Upper_1, PlayerActor::AttackType::Upper, 0);
+			StateAttackTransition(weapon_Change, attack_Thrust_1, PlayerActor::AttackType::Thrust, 0);
+
+			StateAttackTransition(weapon_Change, attack_Inside_2, PlayerActor::AttackType::Inside, 1);
+			StateAttackTransition(weapon_Change, attack_Outside_2, PlayerActor::AttackType::Outside, 1);
+			StateAttackTransition(weapon_Change, attack_Upper_2, PlayerActor::AttackType::Upper, 1);
+			StateAttackTransition(weapon_Change, attack_Thrust_2, PlayerActor::AttackType::Thrust, 1);
+
+			StateAttackTransition(weapon_Change, attack_Inside_3, PlayerActor::AttackType::Inside, 2);
+			StateAttackTransition(weapon_Change, attack_Outside_3, PlayerActor::AttackType::Outside, 2);
+			StateAttackTransition(weapon_Change, attack_Upper_3, PlayerActor::AttackType::Upper, 2);
+			StateAttackTransition(weapon_Change, attack_Thrust_3, PlayerActor::AttackType::Thrust, 2);
 		}
 
 		// Attack_Filter
@@ -274,28 +422,6 @@ void RabitAnimationController::Initialize()
 				transition->AddConditionFloat(walkValue, Less, 0.1f);
 				transition->AddConditionBool(isRockOn, true);
 			});
-			/*Attack_Filter->AddTransition(rockOn_Left_Run, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.2f, true, 0.7f);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
-				transition->AddConditionBool(isRockOn, true);
-				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Left);
-			});
-			Attack_Filter->AddTransition(rockOn_Right_Run, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.2f, true, 0.7f);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
-				transition->AddConditionBool(isRockOn, true);
-				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Right);
-			});
-			Attack_Filter->AddTransition(rockOn_Back_Run, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.2f, true, 0.7f);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
-				transition->AddConditionBool(isRockOn, true);
-				transition->AddConditionInt(RockOnDirection, (int)PlayerActor::Direction::Back);
-			});*/
-
 			Attack_Filter->AddTransition(Idle_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.2f, true, 0.7f);
