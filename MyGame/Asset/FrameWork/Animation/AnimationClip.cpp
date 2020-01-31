@@ -108,39 +108,94 @@ void AnimationClip::UpdateAnimation(Transform * const transform)
 void AnimationClip::UpdateFrame()
 {
 	frameCnt += speed * Time::DeltaTime();
-	if (frameCnt >= 0.0f && frameCnt < (float)maxFrame)
+	if (frameCnt >= 0.0f && frameCnt <= (float)maxFrame)
 	{
 		isEnd = false;
 
-		if (oldFrameCnt != (int)frameCnt)
+		int diffCnt = (int)frameCnt - (int)oldFrameCnt;
+		if (diffCnt > 0)
 		{
-			if (callBackFuncMap.count((int)frameCnt) > 0)
+			for (int i = 1; i <= diffCnt; i++)
 			{
-				callBackFuncMap[(int)frameCnt]();
+				int cnt = (int)oldFrameCnt + i;
+				if (callBackFuncMap.count(cnt) > 0)
+				{
+					callBackFuncMap[cnt]();
+				}
 			}
-
+			oldFrameCnt = (int)frameCnt;
+		}
+		else if(diffCnt < 0)
+		{
+			for (int i = 1; i <= -diffCnt; i++)
+			{
+				int cnt = (int)oldFrameCnt - i;
+				if (callBackFuncMap.count(cnt) > 0)
+				{
+					callBackFuncMap[cnt]();
+				}
+			}
 			oldFrameCnt = (int)frameCnt;
 		}
 	}
 	else
 	{
 		isEnd = true;
-		frameCnt = (frameCnt < 0.0f) ? 0.0f : (float)maxFrame;
 
-		if (oldFrameCnt != (int)frameCnt)
+		
+		// ãtçƒê∂
+		if (frameCnt < 0.0f)
 		{
-			if (callBackFuncMap.count((int)frameCnt) > 0)
+			frameCnt = 0.0f;
+
+			int diffCnt = (int)oldFrameCnt - (int)frameCnt;
+
+			if (diffCnt != 0)
 			{
-				callBackFuncMap[(int)frameCnt]();
+				for (int i = 1; i <= diffCnt; i++)
+				{
+					int cnt = (int)oldFrameCnt - i;
+					if (callBackFuncMap.count(cnt) > 0)
+					{
+						callBackFuncMap[cnt]();
+					}
+				}
+
+				if (isLoop)
+				{
+					frameCnt = (float)maxFrame;
+					oldFrameCnt = maxFrame + 1;
+				}
 			}
-
-			oldFrameCnt = (int)frameCnt;
 		}
-
-		if (isLoop)
+		// í èÌçƒê∂
+		else
 		{
-			frameCnt = (frameCnt != 0.0f) ? 0.0f : (float)maxFrame;
+			frameCnt = (float)maxFrame;
+
+			int diffCnt = (int)frameCnt - (int)oldFrameCnt;
+
+			if (diffCnt != 0)
+			{
+				for (int i = 1; i <= diffCnt; i++)
+				{
+					int cnt = (int)oldFrameCnt + i;
+					if (callBackFuncMap.count(cnt) > 0)
+					{
+						callBackFuncMap[cnt]();
+					}
+				}
+
+				if (isLoop)
+				{
+					frameCnt = 0.0f;
+					oldFrameCnt = -1;
+				}
+			}
 		}
+		
+
+		
 	}
 }
 

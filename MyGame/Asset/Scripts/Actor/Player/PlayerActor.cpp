@@ -95,53 +95,52 @@ void PlayerActor::OnUpdate()
 			cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
 	}
 
-	if (!handSword.expired() && handSword.lock()->IsActive())
+	if (animator.lock()->IsCurrentAnimation("Idle")
+		|| animator.lock()->IsCurrentAnimation("Walk")
+		|| animator.lock()->IsCurrentAnimation("Run")
+		|| animator.lock()->IsCurrentAnimation("Land")
+		|| animator.lock()->IsCurrentAnimation("RockOn_Left_Step")
+		|| animator.lock()->IsCurrentAnimation("RockOn_Right_Step")
+		//|| animator.lock()->IsCurrentAnimation("RockOn_Back_Step")
+		|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
+		|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
+		|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
+		|| animator.lock()->IsCurrentAnimation("RockOn_Back_Filter"))
 	{
-		if (animator.lock()->IsCurrentAnimation("Idle")
-			|| animator.lock()->IsCurrentAnimation("Walk")
-			|| animator.lock()->IsCurrentAnimation("Run")
-			|| animator.lock()->IsCurrentAnimation("Land")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Step")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Step")
-			//|| animator.lock()->IsCurrentAnimation("RockOn_Back_Step")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Back_Filter"))
+		if (!handSword.expired() && handSword.lock()->IsActive())
 		{
 			if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(0.1f);
 		}
-		else
-		{
-			if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(-0.1f);
-		}
-	}
-	if (!handShield.expired() && handShield.lock()->IsActive())
-	{
-		if (animator.lock()->IsCurrentAnimation("Idle")
-			|| animator.lock()->IsCurrentAnimation("Walk")
-			|| animator.lock()->IsCurrentAnimation("Run")
-			|| animator.lock()->IsCurrentAnimation("Land")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Step")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Step")
-			//|| animator.lock()->IsCurrentAnimation("RockOn_Back_Step")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Filter")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Left_Filter")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Right_Filter")
-			|| animator.lock()->IsCurrentAnimation("RockOn_Back_Filter"))
+		
+		if (!handShield.expired() && handShield.lock()->IsActive())
 		{
 			if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(0.1f);
 
-			if (Input::Keyboad::IsPress('2'))
+			if (!shieldRock_HandContorller.expired())
 			{
-				if (!shieldRock_HandContorller.expired()) shieldRock_HandContorller.lock()->SetWeight(0.3f);
+				if (Input::Keyboad::IsPress('2'))
+				{
+					shieldRock_HandContorller.lock()->SetWeight(0.3f);
+				}
+				else
+				{
+					shieldRock_HandContorller.lock()->SetWeight(-0.3f);
+				}
 			}
 		}
-		else
+	}
+	else
+	{
+		if (!handSword.expired() && handSword.lock()->IsActive())
+		{
+			if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(-0.1f);
+		}
+
+		if (!handShield.expired() && handShield.lock()->IsActive())
 		{
 			if (!shield_HandContorller.expired()) shield_HandContorller.lock()->SetWeight(-0.1f);
 
-			if (!shieldRock_HandContorller.expired() && !Input::Keyboad::IsPress('2')) shieldRock_HandContorller.lock()->SetWeight(-0.3f);
+			if (!shieldRock_HandContorller.expired()) shieldRock_HandContorller.lock()->SetWeight(-0.3f);
 		}
 	}
 
