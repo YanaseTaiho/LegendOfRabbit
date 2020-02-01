@@ -11,6 +11,7 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 	actor->rigidbody.lock()->AddForce(force);
 
 	actor->animator.lock()->SetTrigger("Attack_Jump_Trigger");
+	actor->animator.lock()->SetTrigger("Attack_Jump_Land_Trigger", false);
 
 	actor->animator.lock()->SetAnimationCallBack("Attack_Jump_Land", 20, [=]()
 	{
@@ -21,13 +22,14 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 
 void PlayerAttackJump::OnUpdate(PlayerActor * actor)
 {
-	if (actor->rigidbody.lock()->velocity.y <= 0.0f)
+	if (actor->onGround && actor->rigidbody.lock()->velocity.y <= 0.0f)
 		actor->animator.lock()->SetTrigger("Attack_Jump_Land_Trigger");	// 着地モーショントリガー
 	else
 		actor->horizontalRegistance = 1.0f;
 
 	if (!actor->animator.lock()->IsCurrentAnimation("Attack_Jump")
-	 && !actor->animator.lock()->IsCurrentAnimation("Attack_Jump_Land"))
+		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Jump_Land")
+		&& !actor->animator.lock()->IsCurrentAnimation("Weapon_Change"))
 	{
 		actor->ChangeState(PlayerActor::State::Idle);
 	}

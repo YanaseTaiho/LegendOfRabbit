@@ -397,6 +397,11 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.05f, true);
 			});
+			weapon_Change->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.05f, false);
+				transition->AddConditionTrigger(attack_Jump_Trigger);
+			});
 
 			StateAttackTransition(weapon_Change, attack_Inside_1, PlayerActor::AttackType::Inside, 0);
 			StateAttackTransition(weapon_Change, attack_Outside_1, PlayerActor::AttackType::Outside, 0);

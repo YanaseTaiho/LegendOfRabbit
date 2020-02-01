@@ -53,7 +53,17 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 	{
 		if (Input::Keyboad::IsTrigger('R'))
 		{
-			actor->ChangeState(PlayerActor::State::AttackJump);
+			if (actor->isWeaponHold)
+			{
+				actor->ChangeState(PlayerActor::State::AttackJump);
+			}
+			else
+			{
+				actor->WeaponHold([=]()
+				{
+					actor->ChangeState(PlayerActor::State::AttackJump);
+				});
+			}
 			return;
 		}
 	}

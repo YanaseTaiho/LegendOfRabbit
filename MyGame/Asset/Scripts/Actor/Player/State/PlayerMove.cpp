@@ -103,7 +103,19 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 				// ジャンプ切り
 			case PlayerActor::Direction::Forward:
 
-				actor->ChangeState(PlayerActor::State::AttackJump);
+				if (actor->isWeaponHold)
+				{
+					actor->ChangeState(PlayerActor::State::AttackJump);
+				}
+				else
+				{
+					actor->WeaponHold([=]()
+					{
+						actor->ChangeState(PlayerActor::State::AttackJump);
+					});
+					actor->ChangeState(PlayerActor::State::Idle);
+				}
+				
 				return;
 
 				// サイドステップ
