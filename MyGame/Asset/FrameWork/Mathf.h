@@ -45,8 +45,10 @@ namespace FrameWork
 			return from * (1.0f - t) + to * t;
 		}
 
-		static float Min(float value, float min) { return (value < min) ? min : value; }
-		static float Max(float value, float max) { return (value > max) ? max : value; }
+		template <typename T>
+		static T Min(T value, T min) { return (value < min) ? min : value; }
+		template <typename T>
+		static T Max(T value, T max) { return (value > max) ? max : value; }
 
 		static float Sinf(float value) { return sinf(value); }
 		static float ASinf(float value) { return asinf(value); }

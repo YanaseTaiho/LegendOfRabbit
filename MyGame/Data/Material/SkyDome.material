@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 0,
+                "cereal_class_version": 1,
                 "name": "SkyDome",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -52,7 +52,8 @@
                 },
                 "texName": "",
                 "normalName": "",
-                "heightName": ""
+                "heightName": "",
+                "value0": 0
             }
         }
     }

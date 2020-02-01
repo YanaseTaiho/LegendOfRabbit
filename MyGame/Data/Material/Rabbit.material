@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 0,
+                "cereal_class_version": 1,
                 "name": "Rabbit",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -44,7 +44,7 @@
                 },
                 "shader": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "MyDirectX::SkinMeshShader",
+                    "polymorphic_name": "MyDirectX::MeshShader",
                     "ptr_wrapper": {
                         "id": 2147483650,
                         "data": {}
@@ -52,7 +52,8 @@
                 },
                 "texName": "Asset/Art/Model/Rabit_Base.png",
                 "normalName": "",
-                "heightName": ""
+                "heightName": "",
+                "value0": 1
             }
         }
     }

@@ -36,7 +36,7 @@ namespace MyDirectX
 			RendererSystem::GetDeviceContext()->OMSetBlendState(pPixelShaderInfo.lock()->m_pBlendState, blendFactor, 0xFFFFFFFF);
 
 			// ラスタライザセット
-			RendererSystem::GetDeviceContext()->RSSetState(pPixelShaderInfo.lock()->m_pRasterizerState);
+			//RendererSystem::GetDeviceContext()->RSSetState(pPixelShaderInfo.lock()->m_pRasterizerState);
 
 			// 頂点シェーダーレイアウト設定
 			RendererSystem::GetDeviceContext()->IASetInputLayout(pVertexShaderInfo.lock()->m_pVtxLayout);
@@ -67,7 +67,7 @@ namespace MyDirectX
 			RendererSystem::GetDeviceContext()->OMSetBlendState(pixelShader.lock()->m_pBlendState, blendFactor, 0xFFFFFFFF);
 
 			// ラスタライザセット
-			RendererSystem::GetDeviceContext()->RSSetState(pixelShader.lock()->m_pRasterizerState);
+			//RendererSystem::GetDeviceContext()->RSSetState(pixelShader.lock()->m_pRasterizerState);
 
 			// 頂点シェーダーレイアウト設定
 			RendererSystem::GetDeviceContext()->IASetInputLayout(vertexShader.lock()->m_pVtxLayout);

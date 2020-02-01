@@ -12,6 +12,7 @@
 #include "Actor/Player/PlayerActor.h"
 
 #include "RotationFixedController.h"
+#include "LocusController.h"
 
 #endif // ! __COMMON_SCRIPTS__H__
 

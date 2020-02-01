@@ -18,6 +18,8 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, MeshRenderer);
 	REGISTER_COMPONENT(componentList, SkinMeshRenderer);
 	REGISTER_COMPONENT(componentList, CanvasRenderer);
+	REGISTER_COMPONENT(componentList, LocusRenderer);
+	// 
 	REGISTER_COMPONENT(componentList, DXCamera);
 	REGISTER_COMPONENT(componentList, Animator);
 	REGISTER_COMPONENT(componentList, Rigidbody);
@@ -32,6 +34,7 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, PlayerActor);
 	REGISTER_COMPONENT(componentList, CameraController);
 	REGISTER_COMPONENT(componentList, RotationFixedController);
+	REGISTER_COMPONENT(componentList, LocusController);
 
 	// シェーダー
 	BindClass<Shader> shaderList;
@@ -1210,7 +1213,7 @@ void EditorScene::DrawHierarchy()
 							Singleton<MeshManager>::Instance()->SaveMesh(DATA_FOLDER_PATH);
 							Singleton<MaterialManager>::Instance()->SaveMaterial(DATA_FOLDER_PATH);
 							Singleton<TextureManager>::Instance()->SaveTexture(DATA_FOLDER_PATH);
-							prefab.Save(DATA_FOLDER_PATH);
+							//prefab.Save(DATA_FOLDER_PATH);
 							Singleton<SceneManager>::Instance()->SaveSceneData();
 							ImGui::CloseCurrentPopup();
 						}

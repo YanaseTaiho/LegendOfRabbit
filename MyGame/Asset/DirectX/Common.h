@@ -19,6 +19,7 @@
 #include "Renderer/MeshRenderer.h"
 #include "Renderer/SkinMeshRenderer.h"
 #include "Renderer/CanvasRenderer.h"
+#include "Renderer/LocusRenderer.h"
 
 // ƒJƒƒ‰
 #include "Camera/DXCamera.h"

@@ -7,6 +7,8 @@
 
 namespace FrameWork
 {
+	class SceneData;
+
 	// シングルトンクラス
 	class GameObjectManager
 	{
@@ -15,6 +17,9 @@ namespace FrameWork
 		~GameObjectManager() {}*/
 
 	public:
+		// シーンのデータのオブジェクトを登録
+		void RegisterSceneDataGameObjects(const std::shared_ptr<SceneData> & sceneData);
+
 		// 新しくオブジェクトを作る
 		std::weak_ptr<GameObject> CreateGameObject(GameObject * gameObject);
 		// オブジェクトのコピーを生成
@@ -53,7 +58,7 @@ namespace FrameWork
 		};
 
 		void EraseGameObject(std::weak_ptr<GameObject> & object);
-		void RegisterGameObject(const std::shared_ptr<GameObject> & object);
+		void RegisterGameObject(const std::shared_ptr<GameObject> & object, bool isSceneData);
 
 		std::list<std::shared_ptr<GameObject>> gameObjectList;
 		std::list<DestroyGameObjectData> destroyObjects;

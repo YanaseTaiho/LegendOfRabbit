@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 0,
+                "cereal_class_version": 1,
                 "name": "Sword_Grip",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -52,7 +52,8 @@
                 },
                 "texName": "Asset\\Art\\Model\\RabbitLink\\KokiriSword_Texture\\Grip_Base_Color.png",
                 "normalName": "Asset\\Art\\Model\\RabbitLink\\KokiriSword_Texture\\Grip_Normal_DirectX.png",
-                "heightName": ""
+                "heightName": "",
+                "value0": 0
             }
         }
     }

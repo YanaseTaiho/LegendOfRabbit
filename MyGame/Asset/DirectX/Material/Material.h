@@ -26,6 +26,9 @@ namespace MyDirectX
 				CEREAL_NVP(texName),
 				CEREAL_NVP(normalName),
 				CEREAL_NVP(heightName));
+
+			if (version >= 1)
+				archive(rasterizer);
 		}
 		template <typename Archive>
 		void load(Archive & archive, std::uint32_t const version)
@@ -35,6 +38,9 @@ namespace MyDirectX
 				CEREAL_NVP(texName),
 				CEREAL_NVP(normalName),
 				CEREAL_NVP(heightName));
+
+			if (version >= 1)
+				archive(rasterizer);
 
 			LoadSerialize(texName, normalName, heightName);
 		}
@@ -57,6 +63,7 @@ namespace MyDirectX
 		void SetHeightTexture(std::string fileName);
 
 		std::shared_ptr<Shader> shader;
+		Rasterizer rasterizer;
 		std::string name;
 		CB_MATERIAL materialParam;
 		std::weak_ptr<Texture> pTexture;
@@ -65,6 +72,6 @@ namespace MyDirectX
 	};
 }
 
-CEREAL_CLASS_VERSION(MyDirectX::Material, 0)
+CEREAL_CLASS_VERSION(MyDirectX::Material, 1)
 
 #endif //!__MATERIAL_H__

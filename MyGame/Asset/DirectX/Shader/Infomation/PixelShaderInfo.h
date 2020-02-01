@@ -14,10 +14,9 @@ namespace MyDirectX
 
 		void Initialize();
 		void CreateShader(const std::wstring pixelPath);
-		void CreateRasterizerState(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode);
+		//void CreateRasterizerState(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode);
 
 		ID3D11PixelShader *m_pPixelShader;
-		ID3D11RasterizerState *m_pRasterizerState;
 		ID3D11BlendState *m_pBlendState;
 	private:
 

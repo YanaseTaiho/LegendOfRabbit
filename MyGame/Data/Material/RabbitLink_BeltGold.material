@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 0,
+                "cereal_class_version": 1,
                 "name": "RabbitLink_BeltGold",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -52,7 +52,8 @@
                 },
                 "texName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkBeltGold_Base_Color.png",
                 "normalName": "",
-                "heightName": ""
+                "heightName": "",
+                "value0": 0
             }
         }
     }

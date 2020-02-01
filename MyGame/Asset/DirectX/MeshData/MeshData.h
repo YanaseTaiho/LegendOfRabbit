@@ -80,7 +80,11 @@ namespace MyDirectX
 	void MeshData<VTX> ::CreateVertexBuffer(const std::vector<VTX> * vertex)
 	{
 		if (m_pVtxBuf)
-			MessageBox(NULL, "既に頂点情報が登録されています！！", "", MB_OK);
+		{
+			//MessageBox(NULL, "既に頂点情報が登録されています！！", "", MB_OK);
+			std::vector<VTX>().swap(this->vertex);
+			m_pVtxBuf->Release();
+		}
 
 		this->vertex = std::vector<VTX>(*vertex);
 
@@ -111,8 +115,11 @@ namespace MyDirectX
 	void MeshData<VTX>::CreateIndexBuffer(const std::vector<unsigned short> * index)
 	{
 		if (m_pIdxBuf)
-			MessageBox(NULL, "既に頂点番号が登録されています！！", "", MB_OK);
-
+		{
+			//MessageBox(NULL, "既に頂点番号が登録されています！！", "", MB_OK);
+			std::vector<unsigned short>().swap(this->index);
+			m_pIdxBuf->Release();
+		}
 		this->index = std::vector<unsigned short>(*index);
 
 		D3D11_BUFFER_DESC desc = { 0 };

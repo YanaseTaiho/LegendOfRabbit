@@ -37,6 +37,7 @@
     <ClCompile Include="Asset\DirectX\MeshData\PlaneMesh\PlaneMesh.cpp" />
     <ClCompile Include="Asset\DirectX\MeshData\SkinMesh\SkinMeshManager.cpp" />
     <ClCompile Include="Asset\DirectX\Renderer\CanvasRenderer.cpp" />
+    <ClCompile Include="Asset\DirectX\Renderer\LocusRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\ConstantBuffer.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\Infomation\GeometryShaderInfo.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\Infomation\VertexShaderInfo.cpp" />
@@ -91,6 +92,7 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerStep.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
+    <ClCompile Include="Asset\Scripts\LocusController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
     <ClCompile Include="Asset\Tool\Menu.cpp" />
     <ClCompile Include="Asset\Scene\Editor\EditorScene.cpp" />
@@ -144,6 +146,7 @@
     <ClInclude Include="Asset\DirectX\MeshData\PlaneMesh\PlaneMesh.h" />
     <ClInclude Include="Asset\DirectX\MeshData\SkinMesh\SkinMeshManager.h" />
     <ClInclude Include="Asset\DirectX\Renderer\CanvasRenderer.h" />
+    <ClInclude Include="Asset\DirectX\Renderer\LocusRenderer.h" />
     <ClInclude Include="Asset\DirectX\Shader\ConstantBuffer.h" />
     <ClInclude Include="Asset\DirectX\Shader\Infomation\GeometryShaderInfo.h" />
     <ClInclude Include="Asset\DirectX\Shader\Shader.h" />
@@ -236,6 +239,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Common.h" />
+    <ClInclude Include="Asset\Scripts\LocusController.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Scripts\RotationFixedController.h" />
     <ClInclude Include="Asset\Tool\Menu.h" />
     <ClInclude Include="Asset\Scene\Editor\EditorScene.h" />

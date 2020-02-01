@@ -17,6 +17,23 @@ namespace MyDirectX
 	class Texture;
 	class Shadow;
 
+	enum class Rasterizer : int
+	{
+		FILL_SOLID_AND_CULL_BACK,
+		FILL_SOLID_AND_CULL_NONE,
+		MAX_NUM
+	};
+
+	static std::string enum_to_string(Rasterizer rasterizer)
+	{
+		switch (rasterizer)
+		{
+		case Rasterizer::FILL_SOLID_AND_CULL_BACK: return "FILL_SOLID_AND_CULL_BACK";
+		case Rasterizer::FILL_SOLID_AND_CULL_NONE:  return "FILL_SOLID_AND_CULL_NONE";
+		}
+		return "";
+	}
+
 	class RendererSystem
 	{
 	private:
@@ -37,6 +54,8 @@ namespace MyDirectX
 
 		static ID3D11DepthStencilState* m_DepthStateEnable;
 		static ID3D11DepthStencilState* m_DepthStateDisable;
+
+		static ID3D11RasterizerState *m_RasterizerStates[(int)Rasterizer::MAX_NUM];
 
 		static ID3D11SamplerState* m_SamplerState;
 
@@ -65,6 +84,8 @@ namespace MyDirectX
 
 		static void SetDefaultOption();	// 通常のレンダリング
 		static void SetShadowOption();	// 影に使う深度テクスチャのレンダリング
+
+		static void SetRasterizerState(Rasterizer type);
 
 		static void SetShadowTexture();
 		static ID3D11ShaderResourceView* GetShadowTexture();

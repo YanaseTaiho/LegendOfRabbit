@@ -356,19 +356,10 @@ void SceneManager::DeleteSceneData(std::shared_ptr<SceneData>& deleteData)
 
 void SceneManager::CreateSceneData(std::shared_ptr<SceneData>& createData)
 {
+	// ここでシーンデータを上書き
 	currentScene->sceneData = createData;
-
-	// 追加用リストを作成
-	std::list<std::weak_ptr<GameObject>> addList = currentScene->sceneData->gameObjectList;
-
-	if (addList.size() == 0) return;
-	// ここでシーンデータはクリア
-	currentScene->sceneData->gameObjectList.clear();
-	// 新しいシーンのオブジェクトをインスタンス生成
-	for (auto & object : addList)
-	{
-		Singleton<GameObjectManager>::Instance()->Instantiate(object);
-	}
+	// 新しいシーンのオブジェクトをマネージャーに登録
+	Singleton<GameObjectManager>::Instance()->RegisterSceneDataGameObjects(currentScene->sceneData);
 }
 
 void SceneManager::SetOriginalName(std::string * original)

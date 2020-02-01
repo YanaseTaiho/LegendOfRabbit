@@ -5,7 +5,6 @@ using namespace MyDirectX;
 PixelShaderInfo::~PixelShaderInfo()
 {
 	if (m_pPixelShader)     m_pPixelShader->Release();
-	if (m_pRasterizerState) m_pRasterizerState->Release();
 	if (m_pBlendState)      m_pBlendState->Release();
 }
 
@@ -24,16 +23,16 @@ void PixelShaderInfo::CreateShader(const std::wstring pixelPath)
 	pCompilePS->Release();
 }
 
-void PixelShaderInfo::CreateRasterizerState(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode)
-{
-	D3D11_RASTERIZER_DESC rdc = {};
-
-	rdc.FillMode = fillMode;
-	rdc.CullMode = cullMode;
-	rdc.FrontCounterClockwise = FALSE;
-
-	RendererSystem::GetDevice()->CreateRasterizerState(&rdc, &m_pRasterizerState);
-}
+//void PixelShaderInfo::CreateRasterizerState(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode)
+//{
+//	D3D11_RASTERIZER_DESC rdc = {};
+//
+//	rdc.FillMode = fillMode;
+//	rdc.CullMode = cullMode;
+//	rdc.FrontCounterClockwise = FALSE;
+//
+//	RendererSystem::GetDevice()->CreateRasterizerState(&rdc, &m_pRasterizerState);
+//}
 
 void PixelShaderInfo::CreateBlendState()
 {

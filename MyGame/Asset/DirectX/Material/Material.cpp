@@ -30,6 +30,24 @@ void Material::DrawImGui(int & id)
 {
 	if (!this->shader) return;
 
+	ImGui::Text("Rasterizer"); ImGui::SameLine();
+	if (ImGui::Button(enum_to_string(rasterizer).c_str()))
+	{
+		ImGui::OpenPopup("Rasterizer##PopUp");
+	}
+
+	if (ImGui::BeginPopup("Rasterizer##PopUp"))
+	{
+		for (int i = 0; i < (int)Rasterizer::MAX_NUM; i++)
+		{
+			if (ImGui::MenuItem(enum_to_string((Rasterizer)i).c_str()))
+			{
+				rasterizer = (Rasterizer)i;
+			}
+		}
+		ImGui::EndPopup();
+	}
+
 	shader->DrawImGui(this, id);
 }
 
@@ -48,6 +66,10 @@ void Material::SetOption() const
 	if (!shader)return;
 
 	shader->SetOption(this);
+
+	// ラスタライザセット
+	RendererSystem::SetRasterizerState(rasterizer);
+
 	shader->SetShader();
 }
 

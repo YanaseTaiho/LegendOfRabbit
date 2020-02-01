@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 0,
+                "cereal_class_version": 1,
                 "name": "RabbitLink_Clothes",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -52,7 +52,8 @@
                 },
                 "texName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Base_Color.png",
                 "normalName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Normal_DirectX.png",
-                "heightName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Height.png"
+                "heightName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Height.png",
+                "value0": 0
             }
         }
     }

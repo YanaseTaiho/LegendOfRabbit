@@ -161,49 +161,42 @@ void ShaderFormatManager::CreatePixelShader()
 	{
 		int type = (int)PIXEL_SHADER_TYPE::MESH_NONE_TEXTURE;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_NoneTexture.hlsl"));
 	}
 	// メッシュ（テクスチャあり）
 	{
 		int type = (int)PIXEL_SHADER_TYPE::MESH_TEXTURE;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Texture.hlsl"));
 	}
 	// メッシュ（テクスチャ＆ノーマルテクスチャ）
 	{
 		int type = (int)PIXEL_SHADER_TYPE::MESH_NORMAL_TEXTURE;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_NormalTexture.hlsl"));
 	}
 	// メッシュ（トゥーン＆ノーマルテクスチャ）
 	{
 		int type = (int)PIXEL_SHADER_TYPE::MESH_TOON_TEXTURE;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Toon.hlsl"));
 	}
 	// ライン
 	{
 		int type = (int)PIXEL_SHADER_TYPE::LINE;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Line.hlsl"));
 	}
 	// シャドウ
 	{
 		int type = (int)PIXEL_SHADER_TYPE::SHADOW;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Shadow.hlsl"));
 	}
 	// スカイドーム
 	{
 		int type = (int)PIXEL_SHADER_TYPE::SKYDOME;
 		pPixelFormats[type]->Initialize();
-		pPixelFormats[type]->CreateRasterizerState(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_SkyDome.hlsl"));
 	}
 }

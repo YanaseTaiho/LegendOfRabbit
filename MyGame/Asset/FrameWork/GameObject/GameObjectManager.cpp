@@ -12,6 +12,14 @@
 
 using namespace FrameWork;
 
+void GameObjectManager::RegisterSceneDataGameObjects(const std::shared_ptr<SceneData>& sceneData)
+{
+	for (auto object : sceneData->gameObjectList)
+	{
+		RegisterGameObject(object.lock(), true);
+	}
+}
+
 std::weak_ptr<GameObject> GameObjectManager::CreateGameObject(GameObject * gameObject)
 {
 	if (!Singleton<SceneManager>::Instance()->GetCurrentScene()->IsSceneData())
@@ -84,7 +92,7 @@ std::weak_ptr<GameObject> GameObjectManager::Instantiate(const std::weak_ptr<Gam
 		object->transform.lock()->worldMatrix = object->transform.lock()->localMatrix;
 
 		// 子オブジェクトを含め全てをリストに登録
-		this->RegisterGameObject(object);
+		this->RegisterGameObject(object, false);
 	}
 
 	return object;
@@ -114,7 +122,7 @@ std::weak_ptr<GameObject> GameObjectManager::Instantiate(const std::string & fil
 	{
 		cereal::BinaryInputArchive i_archive(ifs);
 		i_archive(object);
-		if (object) this->RegisterGameObject(object);
+		if (object) this->RegisterGameObject(object, false);
 	}
 
 	ifs.close();
@@ -227,11 +235,14 @@ void GameObjectManager::EraseGameObject(std::weak_ptr<GameObject>& object)
 	}
 }
 
-void GameObjectManager::RegisterGameObject(const std::shared_ptr<GameObject>& object)
+void GameObjectManager::RegisterGameObject(const std::shared_ptr<GameObject>& object, bool isSceneData)
 {
 	// リストに登録
 	gameObjectList.emplace_back(object);
-	Singleton<SceneManager>::Instance()->GetCurrentScene()->AddSceneGameObject(object);
+
+	// シーンのデータから登録していた場合は無視
+	if(!isSceneData)
+		Singleton<SceneManager>::Instance()->GetCurrentScene()->AddSceneGameObject(object);
 	// コンポーネントの登録
 	object->LoadSerialized();
 
@@ -241,6 +252,6 @@ void GameObjectManager::RegisterGameObject(const std::shared_ptr<GameObject>& ob
 		if (child.lock()->gameObject.expired())
 			continue;
 
-		this->RegisterGameObject(child.lock()->gameObject.lock());
+		this->RegisterGameObject(child.lock()->gameObject.lock(), isSceneData);
 	}
 }

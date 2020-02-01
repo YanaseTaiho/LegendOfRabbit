@@ -21,6 +21,8 @@ D3D11_VIEWPORT* RendererSystem::m_viewPort = NULL;
 ID3D11DepthStencilState* RendererSystem::m_DepthStateEnable;
 ID3D11DepthStencilState* RendererSystem::m_DepthStateDisable;
 
+ID3D11RasterizerState* RendererSystem::m_RasterizerStates[(int)Rasterizer::MAX_NUM];
+
 ID3D11SamplerState * RendererSystem::m_SamplerState;
 
 Shadow * RendererSystem::m_Shadow;
@@ -161,6 +163,26 @@ void RendererSystem::Init()
 	m_D3DDevice->CreateDepthStencilState( &depthStencilDesc, &m_DepthStateDisable );//深度無効ステート
 
 	m_ImmediateContext->OMSetDepthStencilState( m_DepthStateEnable, NULL );
+
+	// ラスタライザ生成
+	{
+		D3D11_RASTERIZER_DESC rdc = {};
+
+		rdc.FillMode = D3D11_FILL_SOLID;
+		rdc.CullMode = D3D11_CULL_BACK;
+		rdc.FrontCounterClockwise = FALSE;
+
+		RendererSystem::GetDevice()->CreateRasterizerState(&rdc, &m_RasterizerStates[(int)Rasterizer::FILL_SOLID_AND_CULL_BACK]);
+	}
+	{
+		D3D11_RASTERIZER_DESC rdc = {};
+
+		rdc.FillMode = D3D11_FILL_SOLID;
+		rdc.CullMode = D3D11_CULL_NONE;
+		rdc.FrontCounterClockwise = FALSE;
+
+		RendererSystem::GetDevice()->CreateRasterizerState(&rdc, &m_RasterizerStates[(int)Rasterizer::FILL_SOLID_AND_CULL_NONE]);
+	}
 
 	// サンプラーステート設定
 	D3D11_SAMPLER_DESC samplerDesc;
@@ -382,6 +404,12 @@ void RendererSystem::SetShadowOption()
 	m_Shadow->SetViewPort();
 	m_Shadow->SetRenderTarget();
 	m_Shadow->SetResources();
+}
+
+void RendererSystem::SetRasterizerState(Rasterizer type)
+{
+	// ラスタライザセット
+	m_ImmediateContext->RSSetState(m_RasterizerStates[(int)type]);
 }
 
 void MyDirectX::RendererSystem::SetShadowTexture()
