@@ -355,7 +355,7 @@ bool CollisionJudge::Box_VS_Box(CollisionBox * a, CollisionBox * b)
 	return false;
 }
 
-Vector3 CollisionJudge::Point_VS_Line(Vector3 & p, Vector3 & lp1, Vector3 & lp2)
+Vector3 CollisionJudge::Point_VS_Line(const Vector3 & p, const Vector3 & lp1, const Vector3 & lp2)
 {
 	Vector3 v1 = lp2 - lp1;
 	Vector3 v2 = p - lp1;

@@ -68,7 +68,8 @@ float CollisionSphere::GetRadius()
 
 void CollisionSphere::Draw()
 {
-	MyDirectX::DebugLine::DrawLine("Sphere", worldMatrix, Color(0.0f, 1.0f, 1.0f, 1.0f));
+	Matrix4 sMat(worldMatrix.position(), Vector3::one() * this->radius, worldMatrix.rotation());
+	MyDirectX::DebugLine::DrawLine("Sphere", sMat, Color(0.0f, 1.0f, 1.0f, 1.0f));
 }
 
 bool CollisionSphere::CollisionJudge(Collision * other)

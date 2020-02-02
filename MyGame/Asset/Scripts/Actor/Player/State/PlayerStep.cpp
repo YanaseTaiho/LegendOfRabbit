@@ -9,7 +9,7 @@ void PlayerStep::OnStart(PlayerActor * actor)
 
 void PlayerStep::OnUpdate(PlayerActor * actor)
 {
-	actor->horizontalRegistance = 1.0f;
+	actor->horizontalRegistance = 1.02f;
 
 	if (!actor->animator.lock()->IsCurrentAnimation("RockOn_Back_Step"))
 	{

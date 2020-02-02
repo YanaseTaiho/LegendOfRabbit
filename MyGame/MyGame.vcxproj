@@ -59,6 +59,7 @@
     <ClCompile Include="Asset\FrameWork\Animation\AnimationState.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationTake.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationTransition.cpp" />
+    <ClCompile Include="Asset\FrameWork\Component\Collision\Mesh\MeshCast.cpp" />
     <ClCompile Include="Asset\FrameWork\Component\Component.cpp" />
     <ClCompile Include="Asset\FrameWork\Component\MonoBehaviour\MonoBehaviour.cpp" />
     <ClCompile Include="Asset\FrameWork\Component\Camera\Camera.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Asset\FrameWork\Component\Collision\Mesh\CollisionMesh.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Mesh\CollisionMeshInfo.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Mesh\CollisionMeshInfoManager.h" />
+    <ClInclude Include="Asset\FrameWork\Component\Collision\Mesh\MeshCast.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Ray\Ray.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Ray\RayCast.h" />
     <ClInclude Include="Asset\FrameWork\Color.h" />
@@ -479,7 +481,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <OmitFramePointers>false</OmitFramePointers>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>

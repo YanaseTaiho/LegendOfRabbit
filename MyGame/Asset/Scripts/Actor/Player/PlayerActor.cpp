@@ -301,7 +301,7 @@ void PlayerActor::CheckGround()
 
 	if (rigidbody.expired()) return;
 
-	if (RayCast::JudgeAllCollision(&downRay, &castGroundInfo))
+	if (RayCast::JudgeAllCollision(&downRay, &castGroundInfo, this->gameObject))
 	{
 		float h = castGroundInfo.point.y + height;
 		//if (h + 1.0f >= pos.y)
@@ -332,13 +332,13 @@ void PlayerActor::CheckCliff()
 	// 前方に飛ばすレイ
 	ray.Set(pos + Vector3(0.0f, cliffRayStartY_Front, 0.0f), transform.lock()->forward(), cliffRayLength_Front);
 	DebugLine::DrawRay(ray.start, ray.end, Color::red());
-	if (RayCast::JudgeAllCollision(&ray, &castCliffWallInfo))
+	if (RayCast::JudgeAllCollision(&ray, &castCliffWallInfo, this->gameObject))
 	{
 	}
 	// 前方の下に飛ばすレイ
 	ray.Set(pos + Vector3(0.0f, cliffRayStartY_Down, 0.0f) + transform.lock()->forward() * cliffRayStartZ_Down, Vector3::down(), cliffRayStartY_Down - cliffRayStartY_Front);
 	DebugLine::DrawRay(ray.start, ray.end, Color::red());
-	if (RayCast::JudgeAllCollision(&ray, &castCliffGroundInfo))
+	if (RayCast::JudgeAllCollision(&ray, &castCliffGroundInfo, this->gameObject))
 	{
 
 	}

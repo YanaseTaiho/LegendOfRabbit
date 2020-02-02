@@ -33,6 +33,9 @@ public:
 	LocusController() {};
 	~LocusController();
 
+	std::weak_ptr<Transform> locusTransform3;
+	std::weak_ptr<Transform> locusTransform4;
+
 	std::weak_ptr<LocusRenderer> locusRenderer;
 	std::weak_ptr<Transform> locusTransform1;
 	std::weak_ptr<Transform> locusTransform2;

@@ -18,7 +18,7 @@ namespace FrameWork
 		static bool Box_VS_Box(CollisionBox * a, CollisionBox * b);
 
 		// 点と線分の最短ベクトルを返す
-		static Vector3 Point_VS_Line(Vector3 & p, Vector3 & lp1, Vector3 & lp2);
+		static Vector3 Point_VS_Line(const Vector3 & p, const Vector3 & lp1, const Vector3 & lp2);
 
 	private:
 

@@ -137,6 +137,16 @@ namespace FrameWork
 		static Vector2 left() { return Vector2(-1.0f, 0.0f); }
 	};
 
+	inline Vector2 operator* (const float f, const class Vector2 & v)
+	{
+		return Vector2(f * v.x, f * v.y);
+	}
+
+	inline Vector2 operator/ (const float f, const class Vector2 & v)
+	{
+		return Vector2(f / v.x, f / v.y);
+	}
+
 	class Vector3
 	{
 	private:

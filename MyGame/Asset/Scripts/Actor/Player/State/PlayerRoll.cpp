@@ -40,7 +40,7 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 		downRay.Set(pos + Vector3(0.0f, actor->rayStart * 0.2f, 0.0f), forward, actor->cliffRayLength_Front * 1.0f);
 		DebugLine::DrawRay(downRay.start, downRay.end, Color::red());
 
-		if (RayCast::JudgeAllCollision(&downRay, &info) && Vector3::Dot(-info.normal, forward) > 0.8f)
+		if (RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) && Vector3::Dot(-info.normal, forward) > 0.8f)
 		{
 			actor->ChangeState(PlayerActor::State::RollStop);
 			return;
@@ -59,7 +59,7 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 		Vector3 pos = actor->transform.lock()->GetWorldPosition() + actor->transform.lock()->forward();
 		downRay.Set(pos + Vector3(0.0f, actor->rayStart, 0.0f), Vector3::down(), actor->rayLength * 1.3f);
 		DebugLine::DrawRay(downRay.start, downRay.end, Color::yellow());
-		if (!RayCast::JudgeAllCollision(&downRay, &info) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
+		if (!RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
 		{
 			actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
 			actor->animator.lock()->SetTrigger("JumpTrigger");

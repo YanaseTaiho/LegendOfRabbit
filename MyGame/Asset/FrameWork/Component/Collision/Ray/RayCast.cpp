@@ -1,18 +1,58 @@
 #include "RayCast.h"
 #include "../Collision.h"
 #include "../Mesh/CollisionMesh.h"
+#include "../Sphere/CollisionSphere.h"
 
 using namespace FrameWork;
 
-bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo)
+bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<GameObject> myObject)
 {
 	bool hit = false;
+	Vector3 rayCenter = Vector3::Lerp(ray->start, ray->end, 0.5f);
+	float rayRadiusSq = (ray->end - ray->start).LengthSq() * 0.5f;
 
 	for (int i = 0; i < (int)Layer::MAX; i++)
 	{
 		for (auto & collision : Collision::CollisionList(i))
 		{
 			Collision * col = collision.lock().get();
+
+			if (!col->IsEnable()) continue;
+
+			// 自身のオブジェクトか確認する
+			if (!myObject.expired())
+			{
+				// 自身のコリジョンだった場合は判定をしない
+				if (col->gameObject.lock() == myObject.lock()) continue;
+			}
+
+			// 球の判定をする
+			if (col->GetType() == typeid(CollisionSphere))
+			{
+				RayCastInfo addInfo;
+				if (JudgeSphere(*ray, col->worldMatrix.position(), col->scaleRadius, &addInfo))
+				{
+					if (!hit)
+					{
+						addInfo.collision = collision;
+						*castInfo = addInfo;
+						hit = true;
+					}
+					else if (castInfo->distance > addInfo.distance)
+					{
+						addInfo.collision = collision;
+						*castInfo = addInfo;
+					}
+				}
+				continue;
+			}
+			else
+			{
+				float rayDistSq = (rayCenter - col->worldMatrix.position()).LengthSq();
+				float radiusSq = col->scaleRadius * col->scaleRadius + rayRadiusSq;
+				if (rayDistSq > radiusSq)
+					continue;
+			}
 
 			// 相手がメッシュコリジョンの場合
 			if (col->GetType() == typeid(CollisionMesh))
@@ -28,32 +68,37 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo)
 				RayCastInfo addInfo;
 				if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), &addInfo)) continue;
 
+				// ワールド系に戻してから格納
+				addInfo.point = col->worldMatrix * addInfo.point;
+				addInfo.distance = (addInfo.point - ray->start).Length();
+
 				if (!hit)
 				{
 					addInfo.collision = collision;
 					*castInfo = addInfo;
 					hit = true;
+
+					// 法線はポジションを 0 の位置にしてから計算
+					Matrix4 matrix = col->worldMatrix;
+					matrix.matrix(0, 3) = 0.0f; matrix.matrix(1, 3) = 0.0f; matrix.matrix(2, 3) = 0.0f;
+					castInfo->normal = matrix * castInfo->normal;
+					castInfo->normal.Normalize();
 				}
 				else if (castInfo->distance > addInfo.distance)
 				{
 					addInfo.collision = collision;
 					*castInfo = addInfo;
+
+					// 法線はポジションを 0 の位置にしてから計算
+					Matrix4 matrix = col->worldMatrix;
+					matrix.matrix(0, 3) = 0.0f; matrix.matrix(1, 3) = 0.0f; matrix.matrix(2, 3) = 0.0f;
+					castInfo->normal = matrix * castInfo->normal;
+					castInfo->normal.Normalize();
 				}
+
+				continue;
 			}
 		}
-	}
-
-	if (hit)
-	{
-		// ワールド系に戻してから格納
-		castInfo->point = castInfo->collision.lock()->worldMatrix * castInfo->point;
-		castInfo->distance = (castInfo->point - ray->start).Length();
-
-		// 法線はポジションを 0 の位置にしてから計算
-		Matrix4 matrix = castInfo->collision.lock()->worldMatrix;
-		matrix.matrix(0, 3) = 0.0f; matrix.matrix(1, 3) = 0.0f; matrix.matrix(2, 3) = 0.0f;
-		castInfo->normal = matrix * castInfo->normal;
-		castInfo->normal.Normalize();
 	}
 
 	return hit;
@@ -108,11 +153,14 @@ bool RayCast::JudgeSphere(const Ray & ray, const Vector3 & pos, const float radi
 		return false; // 衝突していない
 
 	s = sqrtf(s);
-	float a1 = (B - s) / A;
-	float a2 = (B + s) / A;
+	float a1 = (B - s) / A;	// 一つ目の衝突点までの長さ
+	float a2 = (B + s) / A;	// 二つ目の衝突点までの長さ
 
 	if (a1 < 0.0f || a2 < 0.0f)
 		return false; // レイの反対で衝突
+
+	if (a1 > 1.0f)
+		return false;
 
 	castInfo->point = ray.start + a1 * rayDir;
 	castInfo->normal = castInfo->point - pos; castInfo->normal.Normalize();

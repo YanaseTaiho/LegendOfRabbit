@@ -1,5 +1,6 @@
 #include "Rigidbody.h"
 #include "../Collision/Collision.h"
+#include "../Collision/Sphere/CollisionSphere.h"
 #include "../../GameObject/GameObject.h"
 
 using namespace FrameWork;
@@ -154,6 +155,17 @@ void Rigidbody::JudgeNormalCollision()
 			for (auto & normalCol : Collision::NormalCollisionList(i))
 			{
 				if (!normalCol.lock()->IsEnable()) continue;
+
+				// 大まかな判定をする ( 球同士の判定以外 )
+				if (rigidCol.lock()->GetType() != typeid(CollisionSphere)
+					|| normalCol.lock()->GetType() != typeid(CollisionSphere))
+				{
+					float distSq = (rigidCol.lock()->worldMatrix.position()- normalCol.lock()->worldMatrix.position()).LengthSq();
+					float radSq = rigidCol.lock()->scaleRadius * rigidCol.lock()->scaleRadius + normalCol.lock()->scaleRadius * normalCol.lock()->scaleRadius;
+					// 衝突の可能性が無かったら判定終了
+					if (distSq > radSq) continue;
+				}
+
 				// 衝突判定
 				if (rigidCol.lock()->CollisionJudge(normalCol.lock().get()))
 					HitCollision(rigidCol, normalCol);
@@ -170,6 +182,17 @@ void Rigidbody::JudgeRigidbody(std::weak_ptr<Rigidbody> rigidbody)
 		for (auto & rigidCol2 : rigidbody.lock()->collisions)
 		{
 			if (!rigidCol2.lock()->IsEnable()) continue;
+
+			// 大まかな判定をする ( 球同士の判定以外 )
+			if (rigidCol1.lock()->GetType() != typeid(CollisionSphere)
+				|| rigidCol2.lock()->GetType() != typeid(CollisionSphere))
+			{
+				float distSq = (rigidCol1.lock()->worldMatrix.position() - rigidCol2.lock()->worldMatrix.position()).LengthSq();
+				float radSq = rigidCol1.lock()->scaleRadius * rigidCol1.lock()->scaleRadius + rigidCol2.lock()->scaleRadius * rigidCol2.lock()->scaleRadius;
+				// 衝突の可能性が無かったら判定終了
+				if (distSq > radSq) continue;
+			}
+
 			// 衝突判定
 			if (rigidCol1.lock()->CollisionJudge(rigidCol2.lock().get()))
 			{

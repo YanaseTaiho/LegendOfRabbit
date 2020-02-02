@@ -41,7 +41,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		Vector3 pos = actor->transform.lock()->GetWorldPosition() + actor->transform.lock()->forward();
 		downRay.Set(pos + Vector3(0.0f, actor->rayStart, 0.0f), Vector3::down(), actor->rayLength * 1.3f);
 		DebugLine::DrawRay(downRay.start, downRay.end, Color::yellow());
-		if (!RayCast::JudgeAllCollision(&downRay, &info) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
+		if (!RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
 		{
 			actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
 			actor->animator.lock()->SetTrigger("JumpTrigger");
@@ -124,7 +124,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 
 			{
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.50f;
-				force += actor->moveDir * 1000.0f * Time::DeltaTime();
+				force += actor->moveDir * 200.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);
@@ -134,7 +134,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			case PlayerActor::Direction::Back:
 			{
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.75f;
-				force += actor->moveDir * 150.0f * Time::DeltaTime();
+				force += actor->moveDir * 100.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);

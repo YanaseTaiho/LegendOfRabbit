@@ -18,6 +18,7 @@
 #include "Component/Collision/Capsule/CollisionCapsule.h"
 #include "Component/Collision/Box/CollisionBox.h"
 #include "Component/Collision/Ray/RayCast.h"
+#include "Component/Collision/Mesh/MeshCast.h"
 
 #include "Scene/SceneManager.h"
 #include "Scene/SceneBase.h"

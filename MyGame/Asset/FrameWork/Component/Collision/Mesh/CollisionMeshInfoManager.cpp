@@ -14,7 +14,7 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 		return collisionMeshMap[meshData->name];
 
 	CollisionMeshInfo * addInfo = new CollisionMeshInfo();
-	float maxRad = 0.0f;
+	Vector3 maxPos;
 
 	for (const auto & node : meshData->meshNode)
 	{
@@ -32,15 +32,13 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 			faceInfo.point[2] = vertex[v + 2].pos;
 
 			// ‚±‚ÌƒƒbƒVƒ…‚ÌÅ‘å‚Ì‘å‚«‚³‚ð’²‚×‚é
-			if (faceInfo.point[0].x > maxRad) maxRad = faceInfo.point[0].x;
-			if (faceInfo.point[0].y > maxRad) maxRad = faceInfo.point[0].y;
-			if (faceInfo.point[0].z > maxRad) maxRad = faceInfo.point[0].z;
-			if (faceInfo.point[1].x > maxRad) maxRad = faceInfo.point[1].x;
-			if (faceInfo.point[1].y > maxRad) maxRad = faceInfo.point[1].y;
-			if (faceInfo.point[1].z > maxRad) maxRad = faceInfo.point[1].z;
-			if (faceInfo.point[2].x > maxRad) maxRad = faceInfo.point[2].x;
-			if (faceInfo.point[2].y > maxRad) maxRad = faceInfo.point[2].y;
-			if (faceInfo.point[2].z > maxRad) maxRad = faceInfo.point[2].z;
+			
+			for (auto point : faceInfo.point)
+			{
+				if (abs(point.x) > maxPos.x) maxPos.x = abs(point.x);
+				if (abs(point.y) > maxPos.y) maxPos.y = abs(point.y);
+				if (abs(point.z) > maxPos.z) maxPos.z = abs(point.z);
+			}
 
 			Vector3 vecAB = faceInfo.point[1] - faceInfo.point[0];
 			Vector3 vecBC = faceInfo.point[2] - faceInfo.point[1];
@@ -51,7 +49,7 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 		}
 	}
 	addInfo->name = meshData->name;
-	addInfo->scaleRadius = maxRad;
+	addInfo->scaleRadius = maxPos.Length() * 1.1f;	// ‚È‚º‚©‚¿‚å‚Á‚Æ‘å‚«‚³‚ª‘«‚è‚È‚©‚Á‚½‚Ì‚Å­‚µ‘å‚«‚ß‚ÉÝ’è
 
 	return collisionMeshMap[meshData->name] = std::shared_ptr<CollisionMeshInfo>(addInfo);
 }
