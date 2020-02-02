@@ -13,6 +13,7 @@ void Material::LoadSerialize(std::string tex, std::string nor, std::string hei)
 
 Material::Material()
 {
+	rasterizer = Rasterizer::FILL_SOLID_AND_CULL_BACK;
 }
 
 Material::~Material()

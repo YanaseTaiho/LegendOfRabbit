@@ -181,6 +181,12 @@ void ShaderFormatManager::CreatePixelShader()
 		pPixelFormats[type]->Initialize();
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Toon.hlsl"));
 	}
+	// メッシュ（環境マッピング）
+	{
+		int type = (int)PIXEL_SHADER_TYPE::MESH_ENVIROMENT_MAPPING_TEXTURE;
+		pPixelFormats[type]->Initialize();
+		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_EnvironmentMapping.hlsl"));
+	}
 	// ライン
 	{
 		int type = (int)PIXEL_SHADER_TYPE::LINE;

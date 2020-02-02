@@ -309,6 +309,9 @@
     <ClCompile Include="Asset\FrameWork\Component\Collision\Mesh\MeshCast.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Asset\DirectX\Shader\EnviromentMappingShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\FrameWork\debugPrintf.h">
@@ -737,6 +740,9 @@
     <ClInclude Include="Asset\FrameWork\Component\Collision\Mesh\MeshCast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\DirectX\Shader\EnviromentMappingShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Asset\Shader\PixelShader\PS_Texture.hlsl" />
@@ -754,6 +760,7 @@
     <FxCompile Include="Asset\Shader\PixelShader\PS_SkyDome.hlsl" />
     <FxCompile Include="Asset\Shader\GeometryShader\GS_Line.hlsl" />
     <FxCompile Include="Asset\Shader\PixelShader\PS_Toon.hlsl" />
+    <FxCompile Include="Asset\Shader\PixelShader\PS_EnvironmentMapping.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyGame.rc">

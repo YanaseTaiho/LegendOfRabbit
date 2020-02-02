@@ -39,6 +39,7 @@
     <ClCompile Include="Asset\DirectX\Renderer\CanvasRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Renderer\LocusRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\ConstantBuffer.cpp" />
+    <ClCompile Include="Asset\DirectX\Shader\EnviromentMappingShader.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\Infomation\GeometryShaderInfo.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\Infomation\VertexShaderInfo.cpp" />
     <ClCompile Include="Asset\DirectX\MeshData\SkinMesh\SkinMesh.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Asset\DirectX\Renderer\CanvasRenderer.h" />
     <ClInclude Include="Asset\DirectX\Renderer\LocusRenderer.h" />
     <ClInclude Include="Asset\DirectX\Shader\ConstantBuffer.h" />
+    <ClInclude Include="Asset\DirectX\Shader\EnviromentMappingShader.h" />
     <ClInclude Include="Asset\DirectX\Shader\Infomation\GeometryShaderInfo.h" />
     <ClInclude Include="Asset\DirectX\Shader\Shader.h" />
     <ClInclude Include="Asset\DirectX\Shader\MeshShader.h" />
@@ -297,6 +299,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Asset\Shader\PixelShader\PS_EnvironmentMapping.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Asset\Shader\PixelShader\PS_Line.hlsl">

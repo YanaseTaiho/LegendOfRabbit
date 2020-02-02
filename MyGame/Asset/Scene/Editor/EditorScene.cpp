@@ -42,6 +42,7 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(shaderList, SkinMeshShader);
 	REGISTER_COMPONENT(shaderList, SkyDomeShader);
 	REGISTER_COMPONENT(shaderList, ToonMeshShader);
+	REGISTER_COMPONENT(shaderList, EnviromentMappingShader);
 	Singleton<MaterialManager>::Instance()->CreateShaderList(shaderList);
 
 	// アニメションコントローラー
@@ -1356,24 +1357,77 @@ void EditorScene::DrawHierarchy()
 								}
 								if (isHit) continue;
 
-								// シリアル化
 								std::shared_ptr<GameObject> copyObject = select.lock()->transform.lock()->gameObject.lock();
+								auto transform = copyObject->transform.lock();
+								auto parent = transform->GetParent();
+
+								Translation3f translation = transform->translation;
+								Scaling3f scaling = transform->scaling;
+								Quaternion rotate = transform->rotate;
+								// 一旦親を退避
+								if (!parent.expired())
+								{
+									transform->parent.reset();
+									Matrix4 localMat = transform->worldMatrix;
+									Vector3 pos = localMat.position();
+									Vector3 sca = localMat.scale();
+									transform->translation = Translation3f(pos.x, pos.y, pos.z);
+									transform->scaling = Scaling3f(sca.x, sca.y, sca.z);
+									transform->rotate = localMat.rotation();
+								}
+								// シリアル化
 								std::stringstream *ss = new std::stringstream();
 								{
 									cereal::BinaryOutputArchive o_archive(*ss);
 									o_archive(copyObject);
 								}
+								// コピー後退避した親を再度セット
+								if (!parent.expired())
+								{
+									transform->parent = parent;
+
+									transform->translation = translation;
+									transform->scaling = scaling;
+									transform->rotate = rotate;
+								}
+
 								copyDataList.emplace_back(ss);
 							}
 						}
 						else if (!selectPopupObject.expired())
 						{
-							// シリアル化
 							std::shared_ptr<GameObject> copyObject = selectPopupObject.lock()->transform.lock()->gameObject.lock();
+							auto transform = copyObject->transform.lock();
+							auto parent = transform->GetParent();
+
+							Translation3f translation = transform->translation;
+							Scaling3f scaling = transform->scaling;
+							Quaternion rotate = transform->rotate;
+							// 一旦親を退避
+							if (!parent.expired())
+							{
+								transform->parent.reset();
+								Matrix4 localMat = transform->worldMatrix;
+								Vector3 pos = localMat.position();
+								Vector3 sca = localMat.scale();
+								transform->translation = Translation3f(pos.x, pos.y, pos.z);
+								transform->scaling = Scaling3f(sca.x, sca.y, sca.z);
+								transform->rotate = localMat.rotation();
+							}
+							// シリアル化
 							std::stringstream *ss = new std::stringstream();
 							{
 								cereal::BinaryOutputArchive o_archive(*ss);
 								o_archive(copyObject);
+							}
+							// コピー後退避した親を再度セット
+							if (!parent.expired())
+							{
+								transform->parent = parent;
+
+								transform->translation = translation;
+								transform->scaling = scaling;
+								transform->rotate = rotate;
 							}
 							copyDataList.emplace_back(ss);
 							selectPopupObject.reset();
