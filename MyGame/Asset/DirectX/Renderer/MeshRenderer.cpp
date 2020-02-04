@@ -99,3 +99,13 @@ void MeshRenderer::LoadModel()
 	materialArray.clear();
 	materialArray.resize(model.lock()->GetMaterialNum());
 }
+
+std::weak_ptr<Material> MeshRenderer::GetMaterial(int num)
+{
+	if (materialArray.size() > num)
+	{
+		return materialArray[num];
+	}
+
+	return std::weak_ptr<Material>();
+}

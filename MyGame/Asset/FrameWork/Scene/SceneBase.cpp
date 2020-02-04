@@ -112,28 +112,32 @@ void SceneBase::Draw()
 			}
 		}
 
-#if defined(DEBUG) || defined(_DEBUG)
+//#if defined(DEBUG) || defined(_DEBUG)
 
-		for (const auto & com : MonoBehaviour::ComponentList())
+		if (isDebug)
 		{
-			if (!com.lock()->IsEnable()) continue;
-			com.lock()->Draw();
-		}
-		for (int i = 0; i < (int)Layer::MAX; i++)
-		{
-			for (const auto & col : Collision::CollisionList(i))
+			for (const auto & com : MonoBehaviour::ComponentList())
 			{
-				if (!col.lock()->IsEnable()) continue;
-				col.lock()->Draw();
+				if (!com.lock()->IsEnable()) continue;
+				com.lock()->Draw();
 			}
+			for (int i = 0; i < (int)Layer::MAX; i++)
+			{
+				for (const auto & col : Collision::CollisionList(i))
+				{
+					if (!col.lock()->IsEnable()) continue;
+					col.lock()->Draw();
+				}
+			}
+
+			MyDirectX::DebugLine::DrawRayAll();
 		}
 
-		MyDirectX::DebugLine::DrawRayAll();
-
-#endif // DEBUG || _DEBAG
+//#endif // DEBUG || _DEBAG
 	}
 
-	MyDirectX::DebugLine::DrawDataReset();
+	if (isDebug)
+		MyDirectX::DebugLine::DrawDataReset();
 }
 
 void SceneBase::AddSceneGameObject(std::weak_ptr<GameObject> addObject)
@@ -141,4 +145,9 @@ void SceneBase::AddSceneGameObject(std::weak_ptr<GameObject> addObject)
 	if (!sceneData) return;
 
 	sceneData->gameObjectList.emplace_back(addObject);
+}
+
+std::weak_ptr<GameObject> SceneBase::GetPrefabGameObject(std::string name)
+{
+	return prefab.FindGameObject(name);
 }

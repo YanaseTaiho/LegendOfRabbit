@@ -382,6 +382,18 @@ void Prefab::DrawImGui()
 	}
 }
 
+std::weak_ptr<GameObject> Prefab::FindGameObject(std::string name)
+{
+	for (auto obj : prefabList)
+	{
+		if (obj->name == name)
+		{
+			return obj;
+		}
+	}
+	return std::weak_ptr<GameObject>();
+}
+
 void Prefab::RegisterGameObject(const std::shared_ptr<GameObject>& object)
 {
 	// ƒŠƒXƒg‚É“o˜^

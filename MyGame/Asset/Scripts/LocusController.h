@@ -33,9 +33,6 @@ public:
 	LocusController() {};
 	~LocusController();
 
-	std::weak_ptr<Transform> locusTransform3;
-	std::weak_ptr<Transform> locusTransform4;
-
 	std::weak_ptr<LocusRenderer> locusRenderer;
 	std::weak_ptr<Transform> locusTransform1;
 	std::weak_ptr<Transform> locusTransform2;
@@ -48,9 +45,15 @@ public:
 	int remainCnt = 0;
 	bool isStart = false;
 
+	void SetCollision(std::weak_ptr<GameObject> myObject, std::function<void(MeshCastInfo)> hitFunc);
+
 	void LocusStart();
 
 private:
+
+	std::weak_ptr<GameObject> myObject;
+	std::function<void(MeshCastInfo hitInfo)> CollisionFunc = nullptr;	// これをセットすると当たり判定を行う
+
 	//void Start() override;
 	//void Update() override;
 	void LateUpdate() override;

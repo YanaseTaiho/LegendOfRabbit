@@ -16,6 +16,9 @@ private:
 		archive(cereal::make_nvp("MonoBehaviour", cereal::base_class<MonoBehaviour>(this)));
 		archive(cameraTransform, targetTransform, playerActor);
 		archive(targetDistance, distanceSpeed, offsetHeight);
+
+		if (version >= 1)
+			archive(verticalTransform);
 	}
 
 	template<class Archive>
@@ -24,6 +27,9 @@ private:
 		archive(cereal::make_nvp("MonoBehaviour", cereal::base_class<MonoBehaviour>(this)));
 		archive(cameraTransform, targetTransform, playerActor);
 		archive(targetDistance, distanceSpeed, offsetHeight);
+
+		if(version >= 1) 
+			archive(verticalTransform);
 	}
 
 	void DrawImGui(int id) override;
@@ -44,6 +50,7 @@ public:
 	void ChangePlugin(Plugin key);
 
 	std::weak_ptr<Transform> cameraTransform;	// カメラのトランスフォーム
+	std::weak_ptr<Transform> verticalTransform;	// カメラの極位方向の回転用トランスフォーム
 	std::weak_ptr<Transform> targetTransform;	// カメラの注視点のトランスフォーム
 	std::weak_ptr<PlayerActor> playerActor;		// プレイヤーコンポーネント
 
@@ -59,7 +66,7 @@ private:
 	void UpdateDistance(float distance, float speed);
 };
 
-CEREAL_CLASS_VERSION(CameraController, 0)
+CEREAL_CLASS_VERSION(CameraController, 1)
 CEREAL_REGISTER_TYPE(CameraController)
 
 #endif // !_CAMERACONTROLLER_H_

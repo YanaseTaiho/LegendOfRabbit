@@ -142,7 +142,6 @@ void AnimationClip::UpdateFrame()
 	{
 		isEnd = true;
 
-		
 		// ‹tÄ¶
 		if (frameCnt < 0.0f)
 		{
@@ -160,12 +159,11 @@ void AnimationClip::UpdateFrame()
 						callBackFuncMap[cnt]();
 					}
 				}
-
-				if (isLoop)
-				{
-					frameCnt = (float)maxFrame;
-					oldFrameCnt = maxFrame + 1;
-				}
+			}
+			if (isLoop)
+			{
+				frameCnt = (float)maxFrame;
+				oldFrameCnt = maxFrame + 1;
 			}
 		}
 		// ’ÊíÄ¶
@@ -185,17 +183,14 @@ void AnimationClip::UpdateFrame()
 						callBackFuncMap[cnt]();
 					}
 				}
+			}
 
-				if (isLoop)
-				{
-					frameCnt = 0.0f;
-					oldFrameCnt = -1;
-				}
+			if (isLoop)
+			{
+				frameCnt = 0.0f;
+				oldFrameCnt = -1;
 			}
 		}
-		
-
-		
 	}
 }
 

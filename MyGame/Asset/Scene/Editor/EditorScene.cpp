@@ -31,7 +31,9 @@ void EditorScene::CreateComponentList()
 
 	// スクリプト
 	REGISTER_COMPONENT(componentList, GameSceneSystem);
+	REGISTER_COMPONENT(componentList, ActorContainer);
 	REGISTER_COMPONENT(componentList, PlayerActor);
+	REGISTER_COMPONENT(componentList, SmallGomaActor);
 	REGISTER_COMPONENT(componentList, CameraController);
 	REGISTER_COMPONENT(componentList, RotationFixedController);
 	REGISTER_COMPONENT(componentList, LocusController);
@@ -56,6 +58,8 @@ EditorScene::EditorScene()
 {
 	state = State::Stop;
 	mode = Mode::Edit;
+
+	isDebug = true;
 
 	CreateComponentList();
 
@@ -210,6 +214,12 @@ void EditorScene::Start()
 
 void EditorScene::Update()
 {
+	// フレームレート表示
+	int fps = (int)(Time::GetFPS() + 0.1);
+	ImGui::Text("%.3f, FPS %1.f", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+	if (ImGui::RadioButton("Collision Draw", isDebug)) isDebug = !isDebug;
+
 	if (mode == Mode::Edit)
 	{
 		for (auto & com : editorCameraObject->behaviours)
@@ -240,10 +250,6 @@ void EditorScene::Update()
 
 void EditorScene::Draw()
 {
-	// フレームレート表示
-	int fps = (int)(Time::GetFPS() + 0.1);
-	ImGui::Text("%.3f, FPS %1.f", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
 	// エディタカメラのビューポート更新
 	RECT wRect;
 	GetClientRect(RendererSystem::hWnd, &wRect);
@@ -353,8 +359,11 @@ void EditorScene::Draw()
 		DrawImGui();
 		DrawManipulator();
 
-		DebugLine::DrawRayAll();
-		DebugLine::DrawDataReset();
+		if (isDebug)
+		{
+			DebugLine::DrawRayAll();
+			DebugLine::DrawDataReset();
+		}
 	}
 	else if (mode == Mode::Game)
 	{
@@ -453,19 +462,22 @@ void EditorScene::DrawScene()
 		}
 	}
 
-	editorCamera.lock()->Draw();
+	if (isDebug)
+	{
+		editorCamera.lock()->Draw();
 
-	for (const auto & com : MonoBehaviour::ComponentList())
-	{
-		if (!com.lock()->IsEnable()) continue;
-		com.lock()->Draw();
-	}
-	for (int i = 0; i < (int)Layer::MAX; i++)
-	{
-		for (const auto & col : Collision::CollisionList(i))
+		for (const auto & com : MonoBehaviour::ComponentList())
 		{
-			if (!col.lock()->IsEnable()) continue;
-			col.lock()->Draw();
+			if (!com.lock()->IsEnable()) continue;
+			com.lock()->Draw();
+		}
+		for (int i = 0; i < (int)Layer::MAX; i++)
+		{
+			for (const auto & col : Collision::CollisionList(i))
+			{
+				if (!col.lock()->IsEnable()) continue;
+				col.lock()->Draw();
+			}
 		}
 	}
 }

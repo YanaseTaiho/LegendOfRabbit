@@ -3,23 +3,20 @@
 void LocusController::DrawImGui(int id)
 {
 	std::string strId = "##" + std::to_string(id);
+	ImGui::Text("locusRenderer");
 	MyImGui::DropTargetComponent(locusRenderer, strId);
 
 	if (locusRenderer.expired()) return;
 
-	ImGui::Text("locusTransform 1");
+	ImGui::Text("locusPoint 1");
 	MyImGui::DropTargetComponent(locusTransform1, strId);
-	ImGui::Text("locusTransform 2");
+	ImGui::Text("locusPoint 2");
 	MyImGui::DropTargetComponent(locusTransform2, strId);
 
-	//テスト
-	ImGui::Text("locusTransform 3");
-	MyImGui::DropTargetComponent(locusTransform3, strId);
-	ImGui::Text("locusTransform 4");
-	MyImGui::DropTargetComponent(locusTransform4, strId);
 
 	if (ImGui::DragInt(("Frame Max" + strId).c_str(), &frameMax))
 	{
+		frameMax = Mathf::Min(frameMax, 0);
 		framePos1.resize(frameMax);
 		framePos2.resize(frameMax);
 		locusRenderer.lock()->CreateMesh(frameMax);
@@ -36,6 +33,12 @@ LocusController::~LocusController()
 {
 }
 
+void LocusController::SetCollision(std::weak_ptr<GameObject> myObject, std::function<void(MeshCastInfo)> hitFunc)
+{
+	this->myObject = myObject;
+	this->CollisionFunc = hitFunc;
+}
+
 void LocusController::LocusStart()
 {
 	startFrameCnt = 0;
@@ -48,35 +51,37 @@ void LocusController::LateUpdate()
 {
 	if (locusRenderer.expired() || locusTransform1.expired() || locusTransform2.expired()) return;
 
-	if (!locusTransform3.expired() && !locusTransform4.expired())
-	{
-		Vector3 p[4] = 
-		{
-			locusTransform1.lock()->GetWorldPosition(),
-			locusTransform2.lock()->GetWorldPosition(),
-			locusTransform3.lock()->GetWorldPosition(),
-			locusTransform4.lock()->GetWorldPosition()
-		};
-		if (MeshCast::JudgeAllCollision(p))
-		{
-			ImGui::Text("Hit");
-		}
-	}
-
 	if (!isStart || startFrameCnt >= frameMax - 1)
 	{
 		locusRenderer.lock()->SetEnable(false);
 		isStart = false;
 		return;
 	}
-	
-	
-	
+
+
 	locusRenderer.lock()->SetEnable(true);
 
 	// フレーム毎にターゲットの座標を保存する
 	framePos1[endFrameCnt] = locusTransform1.lock()->GetWorldPosition();
 	framePos2[endFrameCnt] = locusTransform2.lock()->GetWorldPosition();
+
+	// 当たり判定を行う
+	if (CollisionFunc)
+	{
+		int colMeshNum = endFrameCnt - startFrameCnt;
+		if (colMeshNum > 1)
+		{
+			std::vector<MeshPoints> points(1);
+			// メッシュの先頭から末端のポイントを当たり判定に設定
+			points[0].point[0] = framePos1[startFrameCnt];
+			points[0].point[1] = framePos2[startFrameCnt];
+			points[0].point[2] = framePos1[endFrameCnt];
+			points[0].point[3] = framePos2[endFrameCnt];
+
+			MeshCast::JudgeAllCollision(points, CollisionFunc, myObject);
+		}
+	}
+
 
 	// ここで軌跡描画コンポーネントにセット
 	locusRenderer.lock()->SetMesh(framePos1, framePos2, startFrameCnt, endFrameCnt);

@@ -1,5 +1,6 @@
 #include "PlayerAttack.h"
 #include "../../../RotationFixedController.h"
+#include "../../../LocusController.h"
 
 void PlayerAttack::OnStart(PlayerActor * actor)
 {
@@ -55,6 +56,12 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 
 void PlayerAttack::Attack(PlayerActor * actor)
 {
+	// 軌跡スタート
+	if (!actor->locusController.expired())
+	{
+		actor->locusController.lock()->LocusStart();
+	}
+
 	CheckAttackType(actor);
 
 	actor->animator.lock()->SetTrigger("Attack_Trigger");

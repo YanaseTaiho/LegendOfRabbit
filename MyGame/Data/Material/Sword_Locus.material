@@ -1,10 +1,10 @@
 {
-    "Stage": {
+    "Sword_Locus": {
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
                 "cereal_class_version": 1,
-                "name": "Stage",
+                "name": "Sword_Locus",
                 "materialParam": {
                     "cereal_class_version": 0,
                     "ambient": {
@@ -14,16 +14,16 @@
                         "a": 0.0
                     },
                     "diffuse": {
-                        "r": 0.9999994039535523,
+                        "r": 1.0,
                         "g": 1.0,
-                        "b": 0.9999899864196777,
+                        "b": 1.0,
                         "a": 1.0
                     },
                     "emissive": {
                         "r": 0.0,
                         "g": 0.0,
                         "b": 0.0,
-                        "a": 0.4399999976158142
+                        "a": 0.8700000047683716
                     },
                     "bump": {
                         "r": 1.0,
@@ -35,11 +35,11 @@
                         "r": 0.25,
                         "g": 0.25,
                         "b": 0.25,
-                        "a": 4.949999809265137
+                        "a": 0.3199999928474426
                     },
                     "specularFactor": 1.0,
                     "shininess": 1.0,
-                    "reflection": 21.610000610351564,
+                    "reflection": 0.0,
                     "height": 0.0
                 },
                 "shader": {
@@ -50,10 +50,10 @@
                         "data": {}
                     }
                 },
-                "texName": "Asset\\Art\\Model\\RabbitLink\\KokiriSword_Texture\\Grip_Base_Color.png",
-                "normalName": "Asset\\Art\\Texture\\Ground_normal6.jpg",
+                "texName": "Asset\\Art\\Texture\\Sword_Locus.png",
+                "normalName": "",
                 "heightName": "",
-                "value0": 0
+                "value0": 1
             }
         }
     }

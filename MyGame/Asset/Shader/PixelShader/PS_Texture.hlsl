@@ -84,13 +84,18 @@ struct VS_OUTPUT {
 	float4 lightViewPos : POSITION1;		// ライトビューの深度テクスチャ座標
 };
 
+static const float2 offset = float2(0.0f, 0.0f);
+static const float2 telling = float2(1.0f, 1.0f);
+
 // エントリポイント
 [earlydepthstencil]	// 最初にＺテストを行う
 float4 main(VS_OUTPUT input) : SV_Target
 {
-    float4 outColor;
+	float4 outColor;
 
-    outColor = Texture.Sample(Sampler, input.uv);
+	float2 texCoord = offset + input.uv * telling;
+	float4 texColor = Texture.Sample(Sampler, texCoord);
+	outColor = texColor; 
 	outColor *= Material.diffuse;
 	outColor += Material.ambient;
 
@@ -170,7 +175,7 @@ float4 main(VS_OUTPUT input) : SV_Target
 	outColor += Material.emissive;
 	outColor = outColor * Material.emissive.w;
 
-	outColor.a = Material.diffuse.a;
+	outColor.a = Material.diffuse.a * texColor.a;
 	outColor *= BaseColor;
 
     return outColor;

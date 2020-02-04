@@ -18,9 +18,15 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 
 	for (const auto & node : meshData->meshNode)
 	{
-		const std::vector<VTX_MESH> & vertex = node.meshData.vertex;
+		MeshData<VTX_MESH> & meshData = (MeshData<VTX_MESH>&)node.meshData;
+		const std::vector<VTX_MESH> & vertex = meshData.vertex;
 		UINT vtxCnt = (UINT)vertex.size();
 		UINT faceCnt = vtxCnt / 3;
+
+		int materialCnt = 0;
+		const Subset * subset = nullptr;
+		if (node.subsetArray.size() > 0)
+			subset = &node.subsetArray[materialCnt];
 
 		for (UINT i = 0; i < faceCnt; i++)
 		{
@@ -32,7 +38,6 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 			faceInfo.point[2] = vertex[v + 2].pos;
 
 			// このメッシュの最大の大きさを調べる
-			
 			for (auto point : faceInfo.point)
 			{
 				if (abs(point.x) > maxPos.x) maxPos.x = abs(point.x);
@@ -44,6 +49,24 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 			Vector3 vecBC = faceInfo.point[2] - faceInfo.point[1];
 			Vector3 normal = Vector3::Cross(vecAB, vecBC);
 			faceInfo.normal = normal.Normalize();
+
+			// このメッシュのマテリアル番号
+			if (subset)
+			{
+				faceInfo.materialIndex = materialCnt;
+
+				// 次のマテリアルがある場合
+				if (node.subsetArray.size() > materialCnt + 1)
+				{
+					if ((unsigned int)(subset->startIndex + subset->indexNum - 1) <= v)
+					{
+						materialCnt++;
+						subset = &node.subsetArray[materialCnt];
+					}
+				}
+			}
+			else
+				faceInfo.materialIndex = -1;
 
 			addInfo->faceInfoArray.emplace_back(faceInfo);
 		}

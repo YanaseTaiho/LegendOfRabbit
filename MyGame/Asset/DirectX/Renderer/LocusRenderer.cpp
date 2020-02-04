@@ -33,7 +33,7 @@ void LocusRenderer::CreateMesh(int frameMax)
 		int vtx1 = i * 2;
 		int vtx2 = i * 2 + 1;
 
-		float u1 = Mathf::Lerp(0.0f, 1.0f, (float)vtx1 / (float)frameMax);
+		float u1 = Mathf::Lerp(0.0f, 1.0f, (float)i / (float)(frameMax - 1));
 		float v1 = 0.0f;
 		float u2 = u1;
 		float v2 = 1.0f;
@@ -69,7 +69,7 @@ void LocusRenderer::Draw()
 	if (material.expired() || indexNum <= 0 || meshData.vertex.size() == 0) return;
 
 	// ƒpƒ‰ƒ[ƒ^‚ÌŽó‚¯“n‚µ
-	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_WORLD, transform.lock()->GetWorldMatrix());
+	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_WORLD, Matrix4::Identity());
 	ConstantBuffer::SetVSRegister(0, CB_TYPE::CB_WORLD);
 
 	RendererSystem::GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

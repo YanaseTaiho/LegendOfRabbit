@@ -312,6 +312,21 @@
     <ClCompile Include="Asset\DirectX\Shader\EnviromentMappingShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\SmallGomaActor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaIdle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaMove.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\ActorContainer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaChase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\FrameWork\debugPrintf.h">
@@ -741,6 +756,21 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Asset\DirectX\Shader\EnviromentMappingShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\SmallGomaActor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaIdle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaMove.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\ActorContainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaChase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

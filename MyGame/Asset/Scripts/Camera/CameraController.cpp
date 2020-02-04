@@ -8,6 +8,8 @@ void CameraController::DrawImGui(int id)
 {
 	ImGui::Text("Camera Transform");
 	MyImGui::DropTargetComponent(cameraTransform, std::to_string(id));
+	ImGui::Text("Vertical Transform");
+	MyImGui::DropTargetComponent(verticalTransform, std::to_string(id));
 	ImGui::Text("Target Transform");
 	MyImGui::DropTargetComponent(targetTransform, std::to_string(id));
 	ImGui::Text("Player Actor");

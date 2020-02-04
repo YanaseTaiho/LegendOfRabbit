@@ -20,6 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <direct.h>
+#include <time.h>
 
 using namespace MyDirectX;
 
@@ -34,6 +35,11 @@ const std::string CManager::dataFolderPath = dataFolderName + "/";
 
 void CManager::Init()
 {
+	// 乱数設定 
+	// rand関数を空実行することで予測できない値にする
+	srand((unsigned int)time(0));
+	rand(); rand(); rand(); rand(); rand();	
+
 	// データ用のフォルダ作成
 	_mkdir(dataFolderName.c_str());
 

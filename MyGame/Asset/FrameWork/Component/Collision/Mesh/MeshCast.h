@@ -2,18 +2,41 @@
 #define _MESH_CAST_H_
 
 #include "../../../Vector.h"
+//#include "../../../../DirectX/Material/Material.h"
+#include <functional>
+#include <memory>
+
+namespace MyDirectX
+{
+	class Material;
+}
 
 namespace FrameWork
 {
+	class Collision;
 	class CollisionSphere;
+	class GameObject;
+
+	struct MeshCastInfo
+	{
+		Vector3 point;
+		Vector3 normal;
+		std::weak_ptr<Collision> collision;
+		std::weak_ptr<MyDirectX::Material> material;
+	};
+
+	struct MeshPoints
+	{
+		Vector3 point[4];
+	};
 
 	class MeshCast
 	{
 	public:
 
-		static bool JudgeAllCollision(const Vector3 point[4]);
+		static bool JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std::function<void(MeshCastInfo hitInfo)> callBack = nullptr, std::weak_ptr<GameObject> myObject = std::weak_ptr<GameObject>());
 
-		static bool Sphere_VS_Mesh(const CollisionSphere * a, const Vector3 point[4]);
+		static bool Sphere_VS_Mesh(const CollisionSphere * a, const Vector3 point[3]);
 		
 
 		static int pointInTriangle2D(const Vector2 &p, const Vector2 &a, const Vector2 &b, const Vector2 &c)

@@ -10,6 +10,7 @@
 #include "Scene/GameSceneSystem.h"
 
 #include "Actor/Player/PlayerActor.h"
+#include "Actor/Enemy/SmallGoma/SmallGomaActor.h"
 
 #include "RotationFixedController.h"
 #include "LocusController.h"

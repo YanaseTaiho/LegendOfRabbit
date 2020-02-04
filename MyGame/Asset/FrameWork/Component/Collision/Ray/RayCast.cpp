@@ -18,6 +18,7 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 			Collision * col = collision.lock().get();
 
 			if (!col->IsEnable()) continue;
+			if (col->isTrigger) continue;	// トリガーがオンの場合は無視
 
 			// 自身のオブジェクトか確認する
 			if (!myObject.expired())

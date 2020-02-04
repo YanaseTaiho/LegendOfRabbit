@@ -6,6 +6,7 @@
 
 class RotationFixedController;
 class CameraController;
+class LocusController;
 
 class PlayerActor : public BaseActor
 {
@@ -20,6 +21,9 @@ private:
 		archive(rayStart, rayLength, height, jumpForce, moveForce, forceMax);
 		archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
 		archive(sword_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
+
+		if (version >= 1)
+			archive(locusController);
 	}
 
 	template<class Archive>
@@ -31,6 +35,9 @@ private:
 		archive(rayStart, rayLength, height, jumpForce, moveForce, forceMax);
 		archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
 		archive(sword_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
+
+		if (version >= 1)
+			archive(locusController);
 	}
 
 	void DrawImGui(int id) override;
@@ -91,6 +98,9 @@ public:
 	RayCastInfo castCliffWallInfo;	// 掴める崖の壁のデータ
 	RayCastInfo castCliffGroundInfo;	// 掴める崖の地面のデータ
 
+	// ソードの軌跡コントローラー
+	std::weak_ptr<LocusController> locusController;
+
 	float rayStart = 5.0f;
 	float rayLength = 10.0f;
 	float height = 0.0f;
@@ -128,12 +138,13 @@ private:
 	float horizontal = 0.0f;
 	float vertical = 0.0f;
 	
+	void AttackSwordHit(MeshCastInfo hitInfo);
 	void UpdateInput();
 	void CheckGround();
 	void CheckCliff();
 };
 
-CEREAL_CLASS_VERSION(PlayerActor, 0)
+CEREAL_CLASS_VERSION(PlayerActor, 1)
 CEREAL_REGISTER_TYPE(PlayerActor)
 
 #endif // !_PLAYERACTOR_H_

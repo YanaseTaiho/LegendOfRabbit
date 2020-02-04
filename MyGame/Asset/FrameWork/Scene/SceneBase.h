@@ -26,11 +26,15 @@ namespace FrameWork
 		const type_info& GetType() { return typeid(*this); }
 		bool IsStart() { return isStart; }
 
+		std::weak_ptr<GameObject> GetPrefabGameObject(std::string name);
+
 		Prefab prefab;
 
 	protected:
 		bool isStart = false;
 		std::shared_ptr<SceneData> sceneData;
+
+		bool isDebug = false;
 	};
 }
 

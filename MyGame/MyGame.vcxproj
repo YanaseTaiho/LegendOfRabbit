@@ -85,6 +85,11 @@
     <ClCompile Include="Asset\FrameWork\Scene\SceneManager.cpp" />
     <ClCompile Include="Asset\Main\audio_clip.cpp" />
     <ClCompile Include="Asset\FrameWork\Scene\Prefab.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\ActorContainer.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\SmallGomaActor.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaChase.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaIdle.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaMove.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttack.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttackJump.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.cpp" />
@@ -213,6 +218,14 @@
     <ClInclude Include="Asset\FrameWork\GameObject\GameObject.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Collision.h" />
     <ClInclude Include="Asset\FrameWork\Scene\Prefab.h" />
+    <ClInclude Include="Asset\Scripts\Actor\ActorContainer.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\SmallGomaActor.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaChase.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaIdle.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaMove.h" />
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerAttack.h">
       <SubType>
       </SubType>
@@ -493,7 +506,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <OmitFramePointers>false</OmitFramePointers>
       <BasicRuntimeChecks>UninitializedLocalUsageCheck</BasicRuntimeChecks>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
@@ -527,7 +540,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\cereal-1.2.2\include;D:\ドキュメント\LegendOfRabbit\MyGame\Asset;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

@@ -23,7 +23,7 @@
                         "r": 9.999999974752428e-7,
                         "g": 9.999899930335233e-7,
                         "b": 9.999899930335233e-7,
-                        "a": 0.7300000190734863
+                        "a": 1.2699999809265137
                     },
                     "bump": {
                         "r": 1.0,
@@ -44,13 +44,13 @@
                 },
                 "shader": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "MyDirectX::MeshShader",
+                    "polymorphic_name": "MyDirectX::EnviromentMappingShader",
                     "ptr_wrapper": {
                         "id": 2147483650,
                         "data": {}
                     }
                 },
-                "texName": "Asset\\Art\\Model\\RabbitLink\\KokiriSword_Texture\\Blade_Base_Color.png",
+                "texName": "Asset\\Art\\Texture\\earthenvmap.png",
                 "normalName": "",
                 "heightName": "",
                 "value0": 0

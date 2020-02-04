@@ -10,6 +10,7 @@ namespace FrameWork
 	{	
 		Vector3 point[3];
 		Vector3 normal;
+		int materialIndex;
 
 	private:
 		friend cereal::access;

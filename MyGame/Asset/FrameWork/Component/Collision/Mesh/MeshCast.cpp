@@ -2,23 +2,33 @@
 #include "../Mesh/CollisionMesh.h"
 #include "../Sphere/CollisionSphere.h"
 #include "../CollisionJudge.h"
+#include "../../../../DirectX/Renderer/MeshRenderer.h"
 
 using namespace FrameWork;
+using namespace MyDirectX;
 
-bool MeshCast::JudgeAllCollision(const Vector3 point[4])
+bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std::function<void(MeshCastInfo hitInfo)> callBack, std::weak_ptr<GameObject> myObject)
 {
 	bool isHit = false;
 
-	Vector3 center = (point[0] + point[1] + point[2] + point[3]) / 4;
+	Vector3 total;
+	for (auto p : meshPoints)
+	{
+		total += p.point[0] + p.point[1] + p.point[2] + p.point[3];
+	}
+	Vector3 center = total / ((float)meshPoints.size() * 4.0f);
 	float radiusSq = 0.0f;
-	float len = (center - point[0]).LengthSq();
-	if (len > radiusSq) radiusSq = len;
-	len = (center - point[1]).LengthSq();
-	if (len > radiusSq) radiusSq = len;
-	len = (center - point[2]).LengthSq();
-	if (len > radiusSq) radiusSq = len;
-	len = (center - point[3]).LengthSq();
-	if (len > radiusSq) radiusSq = len;
+	for (auto p : meshPoints)
+	{
+		float len = (center - p.point[0]).LengthSq();
+		if (len > radiusSq) radiusSq = len;
+		len = (center - p.point[1]).LengthSq();
+		if (len > radiusSq) radiusSq = len;
+		len = (center - p.point[2]).LengthSq();
+		if (len > radiusSq) radiusSq = len;
+		len = (center - p.point[3]).LengthSq();
+		if (len > radiusSq) radiusSq = len;
+	}
 
 	for (int i = 0; i < (int)Layer::MAX; i++)
 	{
@@ -28,26 +38,56 @@ bool MeshCast::JudgeAllCollision(const Vector3 point[4])
 
 			if (!col->IsEnable()) continue;
 
+			if (!myObject.expired() && myObject.lock() == col->gameObject.lock())
+				continue;
+
+
 			// 球の判定をする
+			float rayDistSq = (center - col->worldMatrix.position()).LengthSq();
+			float RadiusSq = col->scaleRadius * col->scaleRadius + radiusSq;
+			if (rayDistSq > RadiusSq)
+				continue;
+
+			
 			if (col->GetType() == typeid(CollisionSphere))
 			{
 				CollisionSphere * sphere = (CollisionSphere*)col;
-				Vector3 p[3];
-				p[0] = point[0]; p[1] = point[1]; p[2] = point[2];
-				if(Sphere_VS_Mesh(sphere, p))
-					isHit = true;
-				p[0] = point[1]; p[1] = point[2]; p[2] = point[3];
-				if (Sphere_VS_Mesh(sphere, p))
-					isHit = true;
 
+				for (auto points : meshPoints)
+				{
+					Vector3 p[3];
+					p[0] = points.point[0]; p[1] = points.point[1]; p[2] = points.point[2];
+					if (Sphere_VS_Mesh(sphere, p))
+					{
+						isHit = true;
+						if (callBack)
+						{
+							MeshCastInfo hitInfo;
+							hitInfo.collision = collision;
+							hitInfo.point = (p[0] + p[1] + p[2]) / 3;
+							hitInfo.normal = hitInfo.point - collision.lock()->worldMatrix.position();
+							hitInfo.normal.Normalize();
+							callBack(hitInfo);
+						}
+						break;
+					}
+					p[0] = points.point[1]; p[1] = points.point[2]; p[2] = points.point[3];
+					if (Sphere_VS_Mesh(sphere, p))
+					{
+						isHit = true;
+						if (callBack)
+						{
+							MeshCastInfo hitInfo;
+							hitInfo.collision = collision;
+							hitInfo.point = (p[0] + p[1] + p[2]) / 3;
+							hitInfo.normal = hitInfo.point - collision.lock()->worldMatrix.position();
+							hitInfo.normal.Normalize();
+							callBack(hitInfo);
+						}
+						break;
+					}
+				}
 				continue;
-			}
-			else
-			{
-				float rayDistSq = (center - col->worldMatrix.position()).LengthSq();
-				float RadiusSq = col->scaleRadius * col->scaleRadius + radiusSq;
-				if (rayDistSq > RadiusSq)
-					continue;
 			}
 
 			// 相手がメッシュコリジョンの場合
@@ -58,24 +98,67 @@ bool MeshCast::JudgeAllCollision(const Vector3 point[4])
 				// 判定をする相手の逆行列を掛ける
 				Vector3 v[4];
 				Matrix4 invTargetMat = col->worldMatrix.Inverse();
-				v[0] = invTargetMat * point[0];
-				v[1] = invTargetMat * point[1];
-				v[2] = invTargetMat * point[2];
-				v[3] = invTargetMat * point[3];
 
-				for(auto face : colMesh->meshInfo.lock()->faceInfoArray)
+				for (auto points : meshPoints)
 				{
-					Vector3 p[3];
-					p[0] = v[0]; p[1] = v[1]; p[2] = v[2];
-					if (intersectTriangleTriangle(p, face.point))
+					v[0] = invTargetMat * points.point[0];
+					v[1] = invTargetMat * points.point[1];
+					v[2] = invTargetMat * points.point[2];
+					v[3] = invTargetMat * points.point[3];
+
+					bool hit = false;
+
+					for (auto face : colMesh->meshInfo.lock()->faceInfoArray)
 					{
-						isHit = true;
+						Vector3 p[3];
+						p[0] = v[0]; p[1] = v[1]; p[2] = v[2];
+						if (intersectTriangleTriangle(p, face.point))
+						{
+							isHit = true;
+							if (callBack)
+							{
+								MeshCastInfo hitInfo;
+								hitInfo.collision = collision;
+								hitInfo.point = (p[0] + p[1] + p[2]) / 3;
+								hitInfo.normal = face.normal;
+								// マテリアル情報取得
+								auto renderer = hitInfo.collision.lock()->gameObject.lock()->GetComponent<MeshRenderer>();
+								if (!renderer.expired())
+								{
+									hitInfo.material = renderer.lock()->GetMaterial(face.materialIndex);
+								}
+
+								callBack(hitInfo);
+							}
+							hit = true;
+							break;
+						}
+						p[0] = v[1]; p[1] = v[2]; p[2] = v[3];
+						if (intersectTriangleTriangle(p, face.point))
+						{
+							isHit = true;
+							if (callBack)
+							{
+								MeshCastInfo hitInfo;
+								hitInfo.collision = collision;
+								hitInfo.point = (p[0] + p[1] + p[2]) / 3;
+								hitInfo.normal = face.normal;
+
+								// マテリアル情報取得
+								auto renderer = hitInfo.collision.lock()->gameObject.lock()->GetComponent<MeshRenderer>();
+								if (!renderer.expired())
+								{
+									hitInfo.material = renderer.lock()->GetMaterial(face.materialIndex);
+								}
+
+								callBack(hitInfo);
+							}
+							hit = true;
+							break;
+						}
 					}
-					p[0] = v[1]; p[1] = v[2]; p[2] = v[3];
-					if (intersectTriangleTriangle(p, face.point))
-					{
-						isHit = true;
-					}
+
+					if (hit) break;
 				}
 				continue;
 			}
@@ -87,8 +170,6 @@ bool MeshCast::JudgeAllCollision(const Vector3 point[4])
 
 bool MeshCast::Sphere_VS_Mesh(const CollisionSphere * a, const Vector3 point[3])
 {
-	bool isHit = false;
-
 	Vector3 SC = a->worldMatrix.position();	// 球の中心座標
 	Vector3 vecAB = point[1] - point[0];
 	Vector3 vecBC = point[2] - point[1];
@@ -134,18 +215,11 @@ bool MeshCast::Sphere_VS_Mesh(const CollisionSphere * a, const Vector3 point[3])
 		// まだ当たってない場合次に各辺と衝突しているか判定
 		for (int i = 0; i < 3; i++)
 		{
-			Vector3 h, hNor;
-			float def;
+			Vector3 h;
 
 			h = CollisionJudge::Point_VS_Line(SC, point[i], point[(i + 1) % 3]);
-			def = a->scaleRadius - h.Length();
-			if (def > 0)
+			if (a->scaleRadius * a->scaleRadius > h.LengthSq())
 			{
-				//hNor = h.Normalized();
-				//// 辺と球の中心の垂直ベクトルが平面の法線と角度が一定以上なら当たっていないと判定する
-				//float deg = Mathf::RadToDeg(Mathf::ACosf(Vector3::Dot(hNor, normal)));
-				//if (deg >= 45.0f) continue;
-
 				return true;
 			}
 		}

@@ -20,6 +20,9 @@ namespace MyDirectX
 		{
 			archive(cereal::make_nvp("DXRenderer", cereal::base_class<Renderer>(this)));
 		}
+
+		void DrawImGui(int id) override;
+
 	public:
 		CanvasRenderer();
 		CanvasRenderer(std::string imageName);

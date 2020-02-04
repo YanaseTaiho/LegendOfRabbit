@@ -65,6 +65,8 @@ namespace MyDirectX
 		void DrawShadow() override;
 		void LoadModel();	// ƒ‚ƒfƒ‹‚ª•ÏX‚³‚ê‚½‚ÉŒÄ‚Ô
 
+		std::weak_ptr<Material> GetMaterial(int num);
+
 		std::weak_ptr<Mesh> model;
 		std::vector<std::weak_ptr<Material>> materialArray;
 		bool useLight = true;

@@ -27,6 +27,7 @@ namespace FrameWork
 
 		const char * GAMEOBJECT = "GAMEOBJECT";
 
+		std::weak_ptr<GameObject> FindGameObject(std::string name);
 
 		template<class T>
 		std::list<std::weak_ptr<T>> FindComponents()

@@ -99,6 +99,7 @@ float4 main(VS_OUTPUT input) : SV_Target
 
 	float2 texCoord = offset + input.uv * telling;
 
+	float4 texColor = Texture.Sample(Sampler, texCoord);
 	outColor = Material.diffuse;
 	outColor += Material.ambient;
 
@@ -177,14 +178,15 @@ float4 main(VS_OUTPUT input) : SV_Target
 		}
 	}
 
-	outColor *= Texture.Sample(Sampler, texCoord);
+	outColor *= texColor;
+
 	// ‰e‚Ì‰e‹¿“x‚ð”½‰f
 	outColor -= outColor * shadowIntensity;
 	// ƒGƒ~ƒbƒVƒu
 	outColor += Material.emissive;
 	outColor = outColor * Material.emissive.w;
 
-	outColor.a = Material.diffuse.a;
+	outColor.a = Material.diffuse.a * texColor.a;
 	outColor *= BaseColor;
 
 	return outColor;

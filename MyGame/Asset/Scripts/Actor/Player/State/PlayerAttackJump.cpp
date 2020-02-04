@@ -1,4 +1,5 @@
 #include "PlayerAttackJump.h"
+#include "../../../LocusController.h"
 
 void PlayerAttackJump::OnStart(PlayerActor * actor)
 {
@@ -9,6 +10,12 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 	Vector3 force = Vector3::up() * actor->jumpForce * 0.5f;
 	force += actor->transform.lock()->forward() * 80.0f * Time::DeltaTime();
 	actor->rigidbody.lock()->AddForce(force);
+
+	// 軌跡スタート
+	if (!actor->locusController.expired())
+	{
+		actor->locusController.lock()->LocusStart();
+	}
 
 	actor->animator.lock()->SetTrigger("Attack_Jump_Trigger");
 	actor->animator.lock()->SetTrigger("Attack_Jump_Land_Trigger", false);

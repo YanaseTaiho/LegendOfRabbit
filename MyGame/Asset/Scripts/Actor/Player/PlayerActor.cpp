@@ -12,6 +12,7 @@
 
 #include "../../Camera/CameraController.h"
 #include "../../RotationFixedController.h"
+#include "../../LocusController.h"
 #include "../../../DirectX/Common.h"
 
 using namespace MyDirectX;
@@ -21,11 +22,11 @@ void PlayerActor::DrawImGui(int id)
 	std::string strId = "##PlayerActor" + std::to_string(id);
 	ImGui::Text("Camera Controller");
 	MyImGui::DropTargetComponent(cameraController, strId);
-	ImGui::Text("Sorwd Hander");
+	ImGui::Text("Sorwd Handler");
 	MyImGui::DropTargetComponent(sword_HandContorller, strId);
-	ImGui::Text("Shield Hander");
+	ImGui::Text("Shield Handler");
 	MyImGui::DropTargetComponent(shield_HandContorller, strId);
-	ImGui::Text("Shield Rock Hander");
+	ImGui::Text("Shield Rock Handler");
 	MyImGui::DropTargetComponent(shieldRock_HandContorller, strId);
 
 	ImGui::Text("Hand Sword");
@@ -36,6 +37,9 @@ void PlayerActor::DrawImGui(int id)
 	MyImGui::DropTargetGameObject(backSword, strId);
 	ImGui::Text("Back Shield");
 	MyImGui::DropTargetGameObject(backShield, strId);
+
+	ImGui::Text("Locus Controller");
+	MyImGui::DropTargetComponent(locusController, strId);
 
 	ImGui::DragFloat(("Ray Start" + strId).c_str(), &rayStart, 0.01f);
 	ImGui::DragFloat(("Ray Length" + strId).c_str(), &rayLength, 0.01f);
@@ -80,6 +84,12 @@ void PlayerActor::OnStart()
 	rigidbody = this->gameObject.lock()->GetComponent<Rigidbody>();
 
 	ChangeState(State::Idle);
+
+	// Œ•‚Ì“–‚½‚è”»’è‚ÌÝ’è
+	if (!this->locusController.expired())
+	{
+		this->locusController.lock()->SetCollision(this->gameObject, [=](MeshCastInfo hitInfo) { AttackSwordHit(hitInfo); });
+	}
 }
 
 void PlayerActor::OnUpdate()
@@ -227,6 +237,23 @@ void PlayerActor::WeaponNotHold()
 		if (!handShield.expired()) handShield.lock()->SetActive(isWeaponHold);
 		if (!backShield.expired()) backShield.lock()->SetActive(!isWeaponHold);
 	});
+}
+
+void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
+{
+	if (hitInfo.collision.lock()->isTrigger) return;
+
+	// ’n–Ê‚Í”»’è‚µ‚È‚¢
+	if (Vector3::Dot(Vector3::up(), hitInfo.normal) < 0.4f)
+	{
+		rigidbody.lock()->AddForce(transform.lock()->forward() * -20.0f);
+	}
+
+	auto other = hitInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
+	if (!other.expired())
+	{
+		GameObject::Destroy(other.lock()->gameObject);
+	}
 }
 
 void PlayerActor::UpdateInput()

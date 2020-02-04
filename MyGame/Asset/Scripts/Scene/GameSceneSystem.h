@@ -4,6 +4,7 @@
 #include "FrameWork/Component/MonoBehaviour/MonoBehaviour.h"
 #include "../Actor/Player/PlayerActor.h"
 #include "../Camera/CameraController.h"
+#include "../Actor/ActorContainer.h"
 
 //#include "Main/audio_clip.h"
 
@@ -16,6 +17,9 @@ private:
 	{
 		archive(cereal::make_nvp("MonoBehaviour", cereal::base_class<MonoBehaviour>(this)));
 		archive(CEREAL_NVP(player), CEREAL_NVP(cameraController));
+
+		if (version >= 1)
+			archive(enemyContainer);
 	}
 
 	template<class Archive>
@@ -23,6 +27,9 @@ private:
 	{
 		archive(cereal::make_nvp("MonoBehaviour", cereal::base_class<MonoBehaviour>(this)));
 		archive(CEREAL_NVP(player), CEREAL_NVP(cameraController));
+
+		if (version >= 1)
+			archive(enemyContainer);
 	}
 
 public:
@@ -40,11 +47,10 @@ public:
 private:
 	std::weak_ptr<PlayerActor> player;
 	std::weak_ptr<CameraController> cameraController;
-
-	//CAudioClip * clip;
+	std::weak_ptr<ActorContainer> enemyContainer;
 };
 
-CEREAL_CLASS_VERSION(GameSceneSystem, 0)
+CEREAL_CLASS_VERSION(GameSceneSystem, 1)
 CEREAL_REGISTER_TYPE(GameSceneSystem)
 
 #endif // !_GAMESCENESYSTEM_H_

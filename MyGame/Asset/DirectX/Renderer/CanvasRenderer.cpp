@@ -3,6 +3,12 @@
 
 using namespace MyDirectX;
 
+void CanvasRenderer::DrawImGui(int id)
+{
+	std::string strId = "##CanvasRenderer" + std::to_string(id);
+	Singleton<TextureManager>::Instance()->DropTargetImGuiTexture(model->material->pTexture, Vector2(30.0f, 30.0f), strId);
+}
+
 CanvasRenderer::CanvasRenderer()
 {
 	model = std::make_shared<PlaneMesh>();
