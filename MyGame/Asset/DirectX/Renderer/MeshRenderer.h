@@ -77,7 +77,6 @@ namespace MyDirectX
 
 CEREAL_CLASS_VERSION(MyDirectX::MeshRenderer, 0)
 CEREAL_REGISTER_TYPE(MyDirectX::MeshRenderer)
-//CEREAL_REGISTER_POLYMORPHIC_RELATION(FrameWork::Component, MyDirectX::MeshRenderer)
 
 #endif // !_MESHRENDERER_H_
 

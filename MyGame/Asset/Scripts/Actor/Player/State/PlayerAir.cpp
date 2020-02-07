@@ -53,7 +53,7 @@ void PlayerAir::OnUpdate(PlayerActor * actor)
 	if (!isCliffJump)
 	{
 		// ƒWƒƒƒ“ƒvØ‚è
-		if (Input::Keyboad::IsTrigger('R'))
+		if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
 		{
 			if (actor->isWeaponHold)
 			{

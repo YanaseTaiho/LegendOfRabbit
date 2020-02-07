@@ -26,10 +26,14 @@ void PlayerCliffGrap::OnUpdate(PlayerActor * actor)
 		actor->ChangeState(PlayerActor::State::Air);
 	}
 
-	if (Input::Keyboad::IsTrigger('W'))
+	if (actor->moveAmount > 0.3f)
 	{
-		actor->animator.lock()->SetBool("IsCliff_Grap", false);
-		actor->animator.lock()->SetTrigger("Cliff_Up_Trigger");
-		isUp = true;
+		float moveDot = Vector3::Dot(actor->transform.lock()->forward(), actor->moveDir);
+		if (moveDot > 0.5f)
+		{
+			actor->animator.lock()->SetBool("IsCliff_Grap", false);
+			actor->animator.lock()->SetTrigger("Cliff_Up_Trigger");
+			isUp = true;
+		}
 	}
 }

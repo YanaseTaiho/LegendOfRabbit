@@ -2,6 +2,8 @@
 
 #define THUMB_VALUE (65535/4)
 
+using namespace Input;
+
 XINPUT_STATE GamePad::g_XInputState;				//XBOXコントローラーの状態を格納する
 XINPUT_VIBRATION GamePad::g_Vibration;			//XBOXコントローラーのバイブレーション
 bool GamePad::g_bEnable = false;

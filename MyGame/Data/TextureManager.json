@@ -12,6 +12,7 @@
         "Asset\\Art\\Texture\\Ground_normal2.jpg",
         "Asset\\Art\\Texture\\Rock_Displacement.png",
         "Asset\\Art\\Texture\\block.jpg",
+        "Asset\\Art\\Texture\\target.png",
         "Asset\\Art\\Texture\\Ground_normal4.jpg",
         "Asset\\Art\\Texture\\Ground_normal.jpg",
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Base_Color.png",
@@ -49,6 +50,7 @@
         "Asset\\Art\\Model\\DekuShield\\Shield_Base_Color.png",
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkBeltGold_Base_Color.png",
         "Asset\\Art\\Model\\DekuShield\\Shield_Height.png",
+        "Asset\\Art\\Texture\\boss.png",
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Normal_DirectX.png",
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkBelt_Base_Color.png",
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Base_Color.png",
@@ -58,6 +60,8 @@
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkHair_Base_Color.png",
         "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Hair_Height.png",
         "Asset\\Art\\Texture\\earthenvmap.png",
-        "Asset\\Art\\Texture\\Gold_v5.png"
+        "Asset\\Art\\Texture\\tree1.png",
+        "Asset\\Art\\Texture\\Gold_v5.png",
+        "Asset\\Art\\Texture\\born.png"
     ]
 }

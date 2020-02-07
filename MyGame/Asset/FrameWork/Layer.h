@@ -15,6 +15,7 @@ namespace FrameWork
 		Camera,
 		Player,
 		Ground,
+		Effect,
 		Canvas,
 		MAX // Н≈Се31
 	};
@@ -27,6 +28,7 @@ namespace FrameWork
 		case Layer::Camera:  return "Camera";
 		case Layer::Player:  return "Player";
 		case Layer::Ground:  return "Ground";
+		case Layer::Effect:  return "Effect";
 		case Layer::Canvas:  return "Canvas";
 		}
 		return "";

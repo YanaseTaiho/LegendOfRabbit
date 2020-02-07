@@ -7,6 +7,9 @@
 class RotationFixedController;
 class CameraController;
 class LocusController;
+class TargetImageController;
+
+using namespace Input;
 
 class PlayerActor : public BaseActor
 {
@@ -22,8 +25,8 @@ private:
 		archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
 		archive(sword_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
 
-		if (version >= 1)
-			archive(locusController);
+		if (version >= 1) archive(locusController);
+		if (version >= 2) archive(targetImageController);
 	}
 
 	template<class Archive>
@@ -36,8 +39,8 @@ private:
 		archive(cliffJumpForce, cliffRayStartY_Front, cliffRayLength_Front, cliffRayStartY_Down, cliffRayStartZ_Down);
 		archive(sword_HandContorller, shield_HandContorller, shieldRock_HandContorller, backSword, backShield, handSword, handShield);
 
-		if (version >= 1)
-			archive(locusController);
+		if (version >= 1) archive(locusController);
+		if (version >= 2) archive(targetImageController);
 	}
 
 	void DrawImGui(int id) override;
@@ -101,6 +104,10 @@ public:
 	// ソードの軌跡コントローラー
 	std::weak_ptr<LocusController> locusController;
 
+	std::weak_ptr<Transform> targetTransform;
+
+	std::weak_ptr<TargetImageController> targetImageController; // 注目しているターゲットの位置に現す画像
+
 	float rayStart = 5.0f;
 	float rayLength = 10.0f;
 	float height = 0.0f;
@@ -129,6 +136,10 @@ public:
 	void OnLateUpdate() override;
 	void Draw() override;
 
+	// 物理的に当たっている間は呼ばれる
+	void OnCollisionStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;
+	void OnTriggerStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;
+
 	void ChangeState(State state);
 
 	void WeaponHold(std::function<void()> func = nullptr);
@@ -144,7 +155,7 @@ private:
 	void CheckCliff();
 };
 
-CEREAL_CLASS_VERSION(PlayerActor, 1)
+CEREAL_CLASS_VERSION(PlayerActor, 2)
 CEREAL_REGISTER_TYPE(PlayerActor)
 
 #endif // !_PLAYERACTOR_H_

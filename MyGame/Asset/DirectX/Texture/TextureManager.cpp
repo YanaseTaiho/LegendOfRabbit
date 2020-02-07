@@ -179,7 +179,7 @@ bool TextureManager::DropTargetImGuiTexture(std::weak_ptr<Texture> & texture, co
 			{
 				auto & payload_n = *(std::weak_ptr<Texture>*)payload->Data;
 				texture = payload_n;
-				return true;
+				return !texture.expired();
 			}
 		}
 		return false;

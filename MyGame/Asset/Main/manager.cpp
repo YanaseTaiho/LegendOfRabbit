@@ -56,6 +56,7 @@ void CManager::Init()
 	ImGui::StyleColorsDark();
 
 	Input::Mouse::Initialize();
+	Input::GamePad::Initialize();
 
 	Singleton<TextureManager>::Create();
 	Singleton<MaterialManager>::Create();
@@ -77,6 +78,7 @@ void CManager::Update()
 {
 	Input::Keyboad::Update();
 	Input::Mouse::Update();
+	Input::GamePad::Update();
 
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -133,4 +135,6 @@ void CManager::Uninit()
 	RendererSystem::Uninit();
 
 	CAudioClip::Uninit();
+
+	Input::GamePad::Finalize();
 }

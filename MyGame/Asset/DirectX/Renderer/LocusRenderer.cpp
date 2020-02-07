@@ -56,7 +56,7 @@ void LocusRenderer::SetMesh(const std::vector<Vector3>& pos1, const std::vector<
 	startNum = startFrame * 2;
 	indexNum = endFrame * 2;
 
-	for (int i = startFrame; i < endFrame; i++)
+	for (int i = startFrame; i <= endFrame; i++)
 	{
 		int num = i * 2;
 		meshData.vertex[num].pos = pos1[i];

@@ -4,6 +4,7 @@
 
 #include "../../Shader/ConstantBuffer.h"
 #include "../../MeshData/LineMesh/DebugLine.h"
+#include "../../MeshData/PlaneMesh/PlaneMesh.h"
 
 using namespace MyDirectX;
 
@@ -211,12 +212,16 @@ void RendererSystem::Init()
 	// ‰e‚Ì•`‰æ‚É•K—v‚È‰Šú‰»
 	m_Shadow = new Shadow();
 	m_Shadow->Initialize();
+
+	// ”Âƒ|ƒŠƒSƒ“‰Šú‰»
+	PlaneMesh::CreateMesh();
 }
 
 
 
 void RendererSystem::Uninit()
 {
+	PlaneMesh::ReleaseMesh();
 //#if defined(_DEBUG) || defined(DEBUG)
 	DebugLine::Release();
 //#endif

@@ -17,7 +17,7 @@ void RayMesh::Draw(const Vector3& start, const Vector3& end, const Color& color,
 	meshData.vertex[1].pos = end.XMFLOAT();
 
 	// ƒpƒ‰ƒ[ƒ^‚Ìó‚¯“n‚µ
-	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_WORLD, Matrix4());
+	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_WORLD, Matrix4::Identity());
 	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_COLOR, color);
 
 	ConstantBuffer::SetVSRegister(0, CB_TYPE::CB_WORLD);

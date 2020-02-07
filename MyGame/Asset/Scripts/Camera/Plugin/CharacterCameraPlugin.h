@@ -13,6 +13,7 @@ public:
 	void OnLateUpdate(CameraController * controller) override;
 
 private:
+	float defaultDistance = 0.0f;
 	float lookSpeed;
 	float moveSpeed;
 

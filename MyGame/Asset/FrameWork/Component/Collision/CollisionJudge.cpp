@@ -72,6 +72,7 @@ bool CollisionJudge::Sphere_VS_Box(CollisionSphere * a, CollisionBox * b)
 bool CollisionJudge::Sphere_VS_Mesh(CollisionSphere * a, CollisionMesh * b)
 {
 	if (b->meshInfo.expired()) return false;
+	if (a->isTrigger) return false;	// ‹…‚ªƒgƒŠƒK[‚È‚çd‚¢‚Ì‚Å“–‚½‚è”»’è‚ğ‚µ‚È‚¢
 
 	bool isHit = false;
 

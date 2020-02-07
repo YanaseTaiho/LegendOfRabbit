@@ -5,6 +5,7 @@
 
 CharacterCameraPlugin::CharacterCameraPlugin()
 {
+	this->defaultDistance = 55.0f;
 	this->lookSpeed = 20.0f;
 	this->moveSpeed = 5.0f;
 
@@ -175,4 +176,11 @@ void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 	cameraLook = Quaternion::LookRotation(playerPos - camera->GetWorldPosition());
 	cameraLook = Quaternion::Slerp(camera->GetWorldRotation(), cameraLook, Time::DeltaTime() * 1.0f);
 	camera->SetWorldRotation(cameraLook);
+
+	controller->targetDistance = defaultDistance;
+
+	if (!controller->CollisionCheck())
+	{
+		controller->UpdateDistance(controller->targetDistance, controller->distanceSpeed);
+	}
 }

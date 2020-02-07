@@ -9,7 +9,8 @@ void PlayerAttack::OnStart(PlayerActor * actor)
 	actor->rigidbody.lock()->velocity.x = 0.0f;
 	actor->rigidbody.lock()->velocity.z = 0.0f;
 
-	OnUpdate(actor);
+	Attack(actor);
+	//OnUpdate(actor);
 }
 
 void PlayerAttack::OnUpdate(PlayerActor * actor)
@@ -29,7 +30,7 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Upper_Filter")
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Thrust_Filter"))
 	{
-		if (Input::Keyboad::IsTrigger('E'))
+		if (Input::Keyboad::IsTrigger('E')|| GamePad::IsTrigger(GamePad::Button::A))
 		{
 			Attack(actor);	
 		}
@@ -56,6 +57,9 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 
 void PlayerAttack::Attack(PlayerActor * actor)
 {
+	// フレームリセット
+	frameCnt = 0;
+
 	// 軌跡スタート
 	if (!actor->locusController.expired())
 	{
@@ -74,7 +78,7 @@ void PlayerAttack::Attack(PlayerActor * actor)
 		Vector3 forward = actor->transform.lock()->forward();
 		float attackDot = Vector3::Dot(forward, actor->moveDir);
 		if (attackDot < 0.3f) attackDot = 0.3f;
-		Vector3 force = forward * attackDot * Time::DeltaTime() * 150.0f;
+		Vector3 force = forward * attackDot * Time::DeltaTime() * 200.0f;
 		actor->rigidbody.lock()->AddForce(force);
 	}
 	// 通常時
@@ -91,7 +95,13 @@ void PlayerAttack::Attack(PlayerActor * actor)
 		}
 	}
 
-	if (combo == 2)
+	if (combo == 1)
+	{
+		Vector3 forward = actor->transform.lock()->forward();
+		Vector3 force = forward * Time::DeltaTime() * 50.0f;
+		actor->rigidbody.lock()->AddForce(force);
+	}
+	else if (combo == 2)
 	{
 		Vector3 forward = actor->transform.lock()->forward();
 		Vector3 force = forward * Time::DeltaTime() * 100.0f;
@@ -125,11 +135,11 @@ void PlayerAttack::CheckAttackType(PlayerActor * actor)
 		}
 		else if (!isRight && attackDir > -0.5f && attackDir < 0.5f)
 		{
-			SetAttackType(PlayerActor::AttackType::Outside);
+			SetAttackType(PlayerActor::AttackType::Inside);
 		}
 		else if (isRight && attackDir > -0.5f && attackDir < 0.5f)
 		{
-			SetAttackType(PlayerActor::AttackType::Inside);
+			SetAttackType(PlayerActor::AttackType::Outside);
 		}
 		else if (attackDir <= -0.5f)
 		{

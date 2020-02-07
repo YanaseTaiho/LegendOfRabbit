@@ -36,6 +36,7 @@
     <ClCompile Include="Asset\DirectX\MeshData\Mesh\MeshManager.cpp" />
     <ClCompile Include="Asset\DirectX\MeshData\PlaneMesh\PlaneMesh.cpp" />
     <ClCompile Include="Asset\DirectX\MeshData\SkinMesh\SkinMeshManager.cpp" />
+    <ClCompile Include="Asset\DirectX\Renderer\BillboardRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Renderer\CanvasRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Renderer\LocusRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\ConstantBuffer.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
     <ClCompile Include="Asset\Scripts\LocusController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
+    <ClCompile Include="Asset\Scripts\TargetImageController.cpp" />
     <ClCompile Include="Asset\Tool\Menu.cpp" />
     <ClCompile Include="Asset\Scene\Editor\EditorScene.cpp" />
     <ClCompile Include="Asset\Scene\GameScene.cpp" />
@@ -152,6 +154,7 @@
     <ClInclude Include="Asset\DirectX\MeshData\Mesh\MeshManager.h" />
     <ClInclude Include="Asset\DirectX\MeshData\PlaneMesh\PlaneMesh.h" />
     <ClInclude Include="Asset\DirectX\MeshData\SkinMesh\SkinMeshManager.h" />
+    <ClInclude Include="Asset\DirectX\Renderer\BillboardRenderer.h" />
     <ClInclude Include="Asset\DirectX\Renderer\CanvasRenderer.h" />
     <ClInclude Include="Asset\DirectX\Renderer\LocusRenderer.h" />
     <ClInclude Include="Asset\DirectX\Shader\ConstantBuffer.h" />
@@ -206,6 +209,7 @@
     <ClInclude Include="Asset\FrameWork\Layer.h" />
     <ClInclude Include="Asset\FrameWork\Mathf.h" />
     <ClInclude Include="Asset\FrameWork\MyImGui.h" />
+    <ClInclude Include="Asset\FrameWork\Rect.h" />
     <ClInclude Include="Asset\FrameWork\Scene\SceneData.h" />
     <ClInclude Include="Asset\FrameWork\SetType.h" />
     <ClInclude Include="Asset\FrameWork\Singleton.h" />
@@ -261,6 +265,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\RotationFixedController.h" />
+    <ClInclude Include="Asset\Scripts\TargetImageController.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Tool\Menu.h" />
     <ClInclude Include="Asset\Scene\Editor\EditorScene.h" />
     <ClInclude Include="Asset\Scene\GameScene.h" />
@@ -540,7 +548,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\cereal-1.2.2\include;D:\ドキュメント\LegendOfRabbit\MyGame\Asset;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

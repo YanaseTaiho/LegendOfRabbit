@@ -22,19 +22,24 @@ namespace MyDirectX
 		}
 	};
 
+	// ‚ ‚Ü‚è‚æ‚­‚È‚¢‚¯‚ÇŠÔŠÔ‚ª‚È‚¢‚Ì‚Å’†g‚ğÃ“I‚É‚·‚é
 	class PlaneMesh
 	{
 	public:
-		PlaneMesh();
-		~PlaneMesh();
+		//PlaneMesh();
+		//~PlaneMesh();
 
-		std::string name;
-		MeshData<VTX_PLANE_MESH> meshData;
-		std::shared_ptr<Material> material;
+		static void CreateMesh();
+		static void ReleaseMesh();
 
-		void Draw(Transform * transform);
-		void CanvasDraw(float left, float right, float top, float bottom);
-		void DrawShadow(Transform * transform);
+		static std::weak_ptr<Material> GetMaterial();
+		static void SetTexture(std::weak_ptr<Texture> texture);
+		static void SetUV(float u1, float v1, float u2, float v2);
+		static void Draw(float left, float right, float top, float bottom);
+
+	private:
+		static MeshData<VTX_PLANE_MESH> meshData;
+		static std::shared_ptr<Material> material;
 	};
 }
 

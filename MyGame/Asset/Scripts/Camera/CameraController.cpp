@@ -36,11 +36,6 @@ void CameraController::OnLateUpdate()
 {
 	if (currentPlugin.expired()) return;
 	currentPlugin.lock()->OnLateUpdate(this);
-
-	if (!CollisionCheck())
-	{
-		UpdateDistance(this->targetDistance, this->distanceSpeed);
-	}
 }
 
 void CameraController::AddPlugin(Plugin key, CameraPlugin * plugin)
@@ -75,14 +70,16 @@ bool CameraController::CollisionCheck()
 	Vector3 dir = cTr->GetWorldPosition() - playerPos;
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
 	
-	if (RayCast::JudgeAllCollision(&ray, &castInfo))
+	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
+		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
 		finalDistance = castInfo.distance;
 	}
 	dir = cTr->GetWorldPosition() + cTr->right() * 1.0f - playerPos;
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
 
-	if (RayCast::JudgeAllCollision(&ray, &castInfo))
+	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
+		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
 		if(finalDistance < 0.0f || finalDistance > castInfo.distance)
 			finalDistance = castInfo.distance;
@@ -90,7 +87,8 @@ bool CameraController::CollisionCheck()
 	dir = cTr->GetWorldPosition() - cTr->right() * 1.0f - playerPos;
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
 
-	if (RayCast::JudgeAllCollision(&ray, &castInfo))
+	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
+		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
 		if (finalDistance < 0.0f || finalDistance > castInfo.distance)
 			finalDistance = castInfo.distance;

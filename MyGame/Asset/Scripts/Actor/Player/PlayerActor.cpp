@@ -13,6 +13,7 @@
 #include "../../Camera/CameraController.h"
 #include "../../RotationFixedController.h"
 #include "../../LocusController.h"
+#include "../../TargetImageController.h"
 #include "../../../DirectX/Common.h"
 
 using namespace MyDirectX;
@@ -40,6 +41,9 @@ void PlayerActor::DrawImGui(int id)
 
 	ImGui::Text("Locus Controller");
 	MyImGui::DropTargetComponent(locusController, strId);
+
+	ImGui::Text("Target Image Transform");
+	MyImGui::DropTargetComponent(targetImageController, strId);
 
 	ImGui::DragFloat(("Ray Start" + strId).c_str(), &rayStart, 0.01f);
 	ImGui::DragFloat(("Ray Length" + strId).c_str(), &rayLength, 0.01f);
@@ -94,15 +98,22 @@ void PlayerActor::OnStart()
 
 void PlayerActor::OnUpdate()
 {
-	if (Input::Keyboad::IsTrigger('F'))
+	if (Input::Keyboad::IsTrigger('F')
+		|| GamePad::IsTrigger(GamePad::Button::LEFT_SHOULDER))
 	{
 		isRockOn = !isRockOn;
 
 		animator.lock()->SetBool("IsRockOn", isRockOn);
 		if (isRockOn)
+		{
+			targetTransform.reset();
 			cameraController.lock()->ChangePlugin(CameraController::Plugin::RockOn);
+		}
 		else
+		{
+			targetTransform.reset();
 			cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
+		}
 	}
 
 	if (animator.lock()->IsCurrentAnimation("Idle")
@@ -128,7 +139,8 @@ void PlayerActor::OnUpdate()
 
 			if (!shieldRock_HandContorller.expired())
 			{
-				if (Input::Keyboad::IsPress('2'))
+				if (Input::Keyboad::IsPress('2')
+					|| GamePad::IsPress(GamePad::Button::RIGHT_SHOULDER))
 				{
 					shieldRock_HandContorller.lock()->SetWeight(0.3f);
 				}
@@ -176,6 +188,22 @@ void PlayerActor::OnUpdate()
 	rigidbody.lock()->velocity = Vector3(force.x, rigidbody.lock()->velocity.y, force.y);
 
 	forceAmount = forceLen / forceMax;
+
+	// ターゲット画像の設定
+	if (!targetTransform.expired() && !targetImageController.expired())
+	{
+		if (!targetImageController.lock()->gameObject.lock()->IsActive())
+		{
+			targetImageController.lock()->TargetStart();
+			targetImageController.lock()->gameObject.lock()->SetActive(true);
+		}
+		targetImageController.lock()->transform.lock()->SetWorldPosition(targetTransform.lock()->GetWorldPosition());
+	}
+	else if(!targetImageController.expired())
+	{
+		targetImageController.lock()->gameObject.lock()->SetActive(false);
+	}
+	targetTransform.reset();
 }
 
 void PlayerActor::OnLateUpdate()
@@ -188,6 +216,28 @@ void PlayerActor::Draw()
 {
 	//CheckGround();
 	//CheckCliff();
+}
+
+void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
+{
+}
+
+void PlayerActor::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
+{
+	if (targetTransform.expired())
+	{
+		auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
+		if (!actor.expired())
+		{
+			targetTransform = actor.lock()->transform;
+
+			//if (!targetImageController.expired())
+			//{
+			//	targetImageController.lock()->TargetStart();
+			//	//targetImageController.lock()->gameObject.lock()->SetActive(true);
+			//}
+		}
+	}
 }
 
 void PlayerActor::ChangeState(State state)
@@ -243,16 +293,24 @@ void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
 {
 	if (hitInfo.collision.lock()->isTrigger) return;
 
-	// 地面は判定しない
-	if (Vector3::Dot(Vector3::up(), hitInfo.normal) < 0.4f)
-	{
-		rigidbody.lock()->AddForce(transform.lock()->forward() * -20.0f);
-	}
-
 	auto other = hitInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
 	if (!other.expired())
 	{
-		GameObject::Destroy(other.lock()->gameObject);
+		auto rb = other.lock()->gameObject.lock()->GetComponent<Rigidbody>();
+		if (!rb.expired())
+		{
+			Vector3 dir = other.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
+			rb.lock()->AddForce(dir.Normalized() * 7.0f);
+		}
+		GameObject::Destroy(other.lock()->gameObject, 0.5f);
+	}
+	// 地面は判定しない
+	else if (Vector3::Dot(Vector3::up(), hitInfo.normal) < 0.4f)
+	{
+		Vector3 normal = hitInfo.normal;
+		normal.y = 0.0f;
+		normal.Normalize();
+		rigidbody.lock()->AddForce(normal * 200.0f);
 	}
 }
 
@@ -290,8 +348,18 @@ void PlayerActor::UpdateInput()
 		moveAmount *= 0.5f;
 	}
 
-	//if (Mathf::Absf(vertical) < 0.01f) vertical = 0.0f;
-	//if (Mathf::Absf(horizontal) < 0.01f) horizontal = 0.0f;
+	// ゲームパッドの入力
+	float padX = GamePad::ThumbLX();
+	float padY = GamePad::ThumbLY();
+	float absPadX = abs(padX);
+	float absPadY = abs(padY);
+
+	if (absPadX > 0.15f || absPadY > 0.15f)
+	{
+		moveAmount = Mathf::Clamp01(absPadX + absPadY);
+		horizontal = padX;
+		vertical = padY;
+	}
 
 	if (moveAmount > 0.1f)
 	{

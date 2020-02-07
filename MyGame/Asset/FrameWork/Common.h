@@ -27,9 +27,11 @@
 
 #include "Time.h"
 #include "debugPrintf.h"
+#include "Rect.h"
 
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
+#include "Input/GamePad.h"
 
 #include "Singleton.h"
 

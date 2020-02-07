@@ -107,7 +107,7 @@ namespace FrameWork
 		float& w() { return quaternion.w(); }
 
 
-		//========== 自分で作った奴だけどもう使わない ==========//
+		//========== Eigenを使うのでもう使わない ==========//
 		/*
 		Quaternion() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 		// 軸( axis ) 回転角度( angle( ラジアン角 ) )

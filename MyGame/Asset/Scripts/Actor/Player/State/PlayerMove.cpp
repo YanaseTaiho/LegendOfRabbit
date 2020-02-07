@@ -32,25 +32,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		actor->ChangeState(PlayerActor::State::Idle);
 		return;
 	}
-	// 空中
-	if (!actor->onGround)
-	{
-		//ジャンプ処理
-		Ray downRay;
-		RayCastInfo info;
-		Vector3 pos = actor->transform.lock()->GetWorldPosition() + actor->transform.lock()->forward();
-		downRay.Set(pos + Vector3(0.0f, actor->rayStart, 0.0f), Vector3::down(), actor->rayLength * 1.3f);
-		DebugLine::DrawRay(downRay.start, downRay.end, Color::yellow());
-		if (!RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
-		{
-			actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
-			actor->animator.lock()->SetTrigger("JumpTrigger");
-		}
-
-		actor->ChangeState(PlayerActor::State::Air);
-		return;
-	}
-	if (Input::Keyboad::IsTrigger('E'))
+	if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
 	{
 		if (actor->isWeaponHold)
 		{
@@ -76,7 +58,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		&& Vector3::Dot(actor->castCliffGroundInfo.normal, Vector3::up()) > 0.7f)	// 掴める崖の角度を確認)
 	{
 		frameCnt++;
-		if (frameCnt > 10)
+		if (frameCnt > 15)
 		{
 			frameCnt = 0;
 			actor->ChangeState(PlayerActor::State::CliffJump);
@@ -94,9 +76,21 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 	// ロックオン中
 	if (actor->isRockOn)
 	{
+		// ターゲットがいればそっちを向く
+		if (!actor->targetTransform.expired())
+		{
+			Vector3 dir = actor->targetTransform.lock()->GetWorldPosition() - actor->transform.lock()->GetWorldPosition();
+			dir.y = 0.0f;
+			Quaternion look = Quaternion::LookRotation(dir);
+			Quaternion rot = actor->transform.lock()->GetWorldRotation();
+			rot = rot.Slerp(look, Time::DeltaTime() * 10.0f);
+			actor->transform.lock()->SetWorldRotation(rot);
+		}
+
 		CheckDirection(actor);
 
-		if (actor->moveDir != Vector3::zero() && Input::Keyboad::IsTrigger('R'))
+		if (actor->moveDir != Vector3::zero()
+			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B)))
 		{
 			switch (moveDirection)
 			{
@@ -134,15 +128,15 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			case PlayerActor::Direction::Back:
 			{
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.75f;
-				force += actor->moveDir * 100.0f * Time::DeltaTime();
+				force += actor->moveDir * 70.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);
 				return;
 			}
 
-			}	// !switch (moveDirection)
-		}	// !actor->moveDir != Vector3::zero() && Input::Keyboad::IsTrigger('Q')
+			}
+		}
 		
 		// 移動処理
 		Vector3 force;
@@ -153,8 +147,28 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 	// 通常
 	else
 	{
+		// 空中
+		if (!actor->onGround)
+		{
+			//ジャンプ処理
+			Ray downRay;
+			RayCastInfo info;
+			Vector3 pos = actor->transform.lock()->GetWorldPosition() + actor->transform.lock()->forward();
+			downRay.Set(pos + Vector3(0.0f, actor->rayStart, 0.0f), Vector3::down(), actor->rayLength * 1.3f);
+			DebugLine::DrawRay(downRay.start, downRay.end, Color::yellow());
+			if (!RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
+			{
+				actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
+				actor->animator.lock()->SetTrigger("JumpTrigger");
+			}
+
+			actor->ChangeState(PlayerActor::State::Air);
+			return;
+		}
+
 		// 転がる
-		if (Input::Keyboad::IsTrigger('R') && actor->moveAmount > 0.1f)
+		if (actor->moveAmount > 0.1f
+			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B)))
 		{
 			actor->ChangeState(PlayerActor::State::Roll);
 			return;
@@ -186,19 +200,21 @@ void PlayerMove::CheckDirection(PlayerActor * actor)
 	float attackDir = Vector3::Dot(actor->transform.lock()->forward(), actor->moveDir);
 	bool isRight = Vector3::Dot(actor->transform.lock()->right(), actor->moveDir) >= 0;
 
-	if (attackDir >= 0.9f)
+	float boundar = 0.95f;
+
+	if (attackDir >= boundar)
 	{
 		moveDirection = PlayerActor::Direction::Forward;
 	}
-	else if (!isRight && attackDir > -0.9f && attackDir < 0.9f)
+	else if (!isRight && attackDir > -boundar && attackDir < boundar)
 	{
 		moveDirection = PlayerActor::Direction::Left;
 	}
-	else if (isRight && attackDir > -0.9f && attackDir < 0.9f)
+	else if (isRight && attackDir > -boundar && attackDir < boundar)
 	{
 		moveDirection = PlayerActor::Direction::Right;
 	}
-	else if (attackDir <= -0.9f)
+	else if (attackDir <= -boundar)
 	{
 		moveDirection = PlayerActor::Direction::Back;
 	}

@@ -21,6 +21,7 @@
 #include "Renderer/SkinMeshRenderer.h"
 #include "Renderer/CanvasRenderer.h"
 #include "Renderer/LocusRenderer.h"
+#include "Renderer/BillboardRenderer.h"
 
 // ƒJƒƒ‰
 #include "Camera/DXCamera.h"

@@ -1,5 +1,5 @@
-#ifndef _CANVASRENDERER_H_
-#define _CANVASRENDERER_H_
+#ifndef _BILLBOARD_RENDERER_H_
+#define _BILLBOARD_RENDERER_H_
 
 #include "../../FrameWork/Component/Renderer/Renderer.h"
 #include "../MeshData/PlaneMesh/PlaneMesh.h"
@@ -7,7 +7,7 @@
 
 namespace MyDirectX
 {
-	class CanvasRenderer : public Renderer
+	class BillboardRenderer : public Renderer
 	{
 	private:
 		friend cereal::access;
@@ -16,22 +16,22 @@ namespace MyDirectX
 		{
 			std::string texName = (!texture.expired()) ? texture.lock()->GetName() : "";
 			archive(cereal::base_class<Renderer>(this));
-			archive(texName, rotation, rect, uv1, uv2);
+			archive(texName, rotation, rect, uv1, uv2, isDepthEnable);
 		}
 		template<class Archive>
 		void load(Archive & archive, std::uint32_t const version)
 		{
 			std::string texName;
 			archive(cereal::base_class<Renderer>(this));
-			archive(texName, rotation, rect, uv1, uv2);
+			archive(texName, rotation, rect, uv1, uv2, isDepthEnable);
 			texture = Singleton<TextureManager>::Instance()->Load(texName);
 		}
 
 		void DrawImGui(int id) override;
 
 	public:
-		CanvasRenderer();
-		~CanvasRenderer();
+		BillboardRenderer() : uv1(0.0f, 0.0f), uv2(1.0f, 1.0f), isDepthEnable(true){};
+		~BillboardRenderer() {};
 
 		void Draw() override;
 
@@ -40,11 +40,14 @@ namespace MyDirectX
 		Rectf rect;
 		Vector2 uv1;
 		Vector2 uv2;
+		bool isDepthEnable;
+	private:
+
 	};
 }
 
-CEREAL_CLASS_VERSION(MyDirectX::CanvasRenderer, 0)
-CEREAL_REGISTER_TYPE(MyDirectX::CanvasRenderer)
+CEREAL_CLASS_VERSION(MyDirectX::BillboardRenderer, 0)
+CEREAL_REGISTER_TYPE(MyDirectX::BillboardRenderer)
 
-#endif // !_CANVASRENDERER_H_
+#endif // !_BILLBOARD_RENDERER_H_
 

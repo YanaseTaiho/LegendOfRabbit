@@ -7,24 +7,6 @@
 
 namespace MyDirectX
 {
-	struct Rect
-	{
-		Rect() {}
-		Rect(int left, int right, int top, int bottom) :left(left), right(right), top(top), bottom(bottom) {}
-		int left;
-		int top;
-		int right;
-		int bottom;
-
-	private:
-		friend cereal::access;
-		template<class Archive>
-		void serialize(Archive & archive)
-		{
-			archive(CEREAL_NVP(left), CEREAL_NVP(top), CEREAL_NVP(right), CEREAL_NVP(bottom));
-		}
-	};
-
 	class DXCamera : public FrameWork::Camera
 	{
 	private:

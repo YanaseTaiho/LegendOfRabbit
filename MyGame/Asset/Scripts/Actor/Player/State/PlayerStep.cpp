@@ -11,9 +11,22 @@ void PlayerStep::OnUpdate(PlayerActor * actor)
 {
 	actor->horizontalRegistance = 1.02f;
 
+
+	// ターゲットがいればそっちを向く
+	if (!actor->targetTransform.expired())
+	{
+		Vector3 dir = actor->targetTransform.lock()->GetWorldPosition() - actor->transform.lock()->GetWorldPosition();
+		dir.y = 0.0f;
+		Quaternion look = Quaternion::LookRotation(dir);
+		Quaternion rot = actor->transform.lock()->GetWorldRotation();
+		rot = rot.Slerp(look, Time::DeltaTime() * 10.0f);
+		actor->transform.lock()->SetWorldRotation(rot);
+	}
+
+
 	if (!actor->animator.lock()->IsCurrentAnimation("RockOn_Back_Step"))
 	{
-		if (Input::Keyboad::IsTrigger('E'))
+		if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
 		{
 			if (actor->isWeaponHold)
 			{

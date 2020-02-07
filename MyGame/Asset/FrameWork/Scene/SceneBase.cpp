@@ -136,7 +136,7 @@ void SceneBase::Draw()
 //#endif // DEBUG || _DEBAG
 	}
 
-	if (isDebug)
+	//if (isDebug)
 		MyDirectX::DebugLine::DrawDataReset();
 }
 

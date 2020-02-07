@@ -49,21 +49,21 @@ public:
 	void AddPlugin(Plugin key, CameraPlugin * plugin);
 	void ChangePlugin(Plugin key);
 
+	bool CollisionCheck();
+	void UpdateDistance(float distance, float speed);
+
 	std::weak_ptr<Transform> cameraTransform;	// カメラのトランスフォーム
 	std::weak_ptr<Transform> verticalTransform;	// カメラの極位方向の回転用トランスフォーム
 	std::weak_ptr<Transform> targetTransform;	// カメラの注視点のトランスフォーム
 	std::weak_ptr<PlayerActor> playerActor;		// プレイヤーコンポーネント
 
-	float targetDistance = 30.0f;
+	float targetDistance = 150.0f;
 	float distanceSpeed = 1.0f;
 	float offsetHeight = 4.0f;
 private:
 
 	std::unordered_map<Plugin,std::shared_ptr<CameraPlugin>> pluginMap;
 	std::weak_ptr<CameraPlugin> currentPlugin;
-
-	bool CollisionCheck();
-	void UpdateDistance(float distance, float speed);
 };
 
 CEREAL_CLASS_VERSION(CameraController, 1)

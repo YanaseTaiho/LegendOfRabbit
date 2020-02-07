@@ -19,6 +19,7 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, SkinMeshRenderer);
 	REGISTER_COMPONENT(componentList, CanvasRenderer);
 	REGISTER_COMPONENT(componentList, LocusRenderer);
+	REGISTER_COMPONENT(componentList, BillboardRenderer);
 	// 
 	REGISTER_COMPONENT(componentList, DXCamera);
 	REGISTER_COMPONENT(componentList, Animator);
@@ -37,6 +38,7 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, CameraController);
 	REGISTER_COMPONENT(componentList, RotationFixedController);
 	REGISTER_COMPONENT(componentList, LocusController);
+	REGISTER_COMPONENT(componentList, TargetImageController);
 
 	// シェーダー
 	BindClass<Shader> shaderList;
@@ -362,8 +364,8 @@ void EditorScene::Draw()
 		if (isDebug)
 		{
 			DebugLine::DrawRayAll();
-			DebugLine::DrawDataReset();
 		}
+		DebugLine::DrawDataReset();
 	}
 	else if (mode == Mode::Game)
 	{
@@ -1785,7 +1787,7 @@ void EditorScene::DrawGameObject(std::weak_ptr<NodeTransform> node, std::string 
 			AddSelectableObject(node);
 
 			// インスペクタのオブジェクトを登録
-			inspectorTransform = node;
+			//inspectorTransform = node;
 		}
 	}
 	// 右クリック時のポップアップ用の選択オブジェクト
@@ -1917,12 +1919,12 @@ void EditorScene::DrawInspector()
 
 void EditorScene::InspectorGameObject()
 {
-	if (inspectorTransform.expired()) return;
+	if (selectNodeTransformList.size() == 0) return;
 
 	const char* popupName1 = "Popup##Inspector";
 	const char* popupName2 = "Popup_AddComponent##Inspector";
 
-	auto & object = inspectorTransform.lock()->transform.lock()->gameObject;
+	auto & object = selectNodeTransformList.front().lock()->transform.lock()->gameObject;
 	object.lock()->DrawImGui();
 
 	int cnt = 0;
@@ -1936,11 +1938,11 @@ void EditorScene::InspectorGameObject()
 
 		ImGui::SameLine();
 		bool isOnMouse = false;
-		if (ImGui::TreeNode((com.lock()->ClassName() + strId).c_str()))
+		if (ImGui::TreeNodeEx((com.lock()->ClassName() + strId).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			isOnMouse = ImGui::IsItemHovered();
 
-			if ((com.lock()->ClassName().c_str(), ""))
+			//if ((com.lock()->ClassName().c_str(), ""))
 			{
 				com.lock()->DrawImGui(cnt);
 			}

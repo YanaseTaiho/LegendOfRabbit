@@ -82,12 +82,12 @@ void LocusController::LateUpdate()
 		}
 	}
 
+	endFrameCnt++;
+	endFrameCnt = Mathf::Max(endFrameCnt, frameMax - 1);
 
 	// ここで軌跡描画コンポーネントにセット
 	locusRenderer.lock()->SetMesh(framePos1, framePos2, startFrameCnt, endFrameCnt);
 
-	endFrameCnt++;
-	endFrameCnt = Mathf::Max(endFrameCnt, frameMax - 1);
 
 	remainCnt--;
 	if (remainCnt <= 0)
