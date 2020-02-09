@@ -100,6 +100,7 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerStep.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
+    <ClCompile Include="Asset\Scripts\CollisionObserver.cpp" />
     <ClCompile Include="Asset\Scripts\LocusController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
     <ClCompile Include="Asset\Scripts\TargetImageController.cpp" />
@@ -256,6 +257,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\CollisionObserver.h">
       <SubType>
       </SubType>
     </ClInclude>

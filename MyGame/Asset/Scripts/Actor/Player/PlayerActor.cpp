@@ -14,6 +14,7 @@
 #include "../../RotationFixedController.h"
 #include "../../LocusController.h"
 #include "../../TargetImageController.h"
+#include "../../CollisionObserver.h"
 #include "../../../DirectX/Common.h"
 
 using namespace MyDirectX;
@@ -94,28 +95,93 @@ void PlayerActor::OnStart()
 	{
 		this->locusController.lock()->SetCollision(this->gameObject, [=](MeshCastInfo hitInfo) { AttackSwordHit(hitInfo); });
 	}
+
+	// ロックオン対象についての処理
+	auto observer = this->gameObject.lock()->GetComponent<CollisionObserver>();
+	if (!observer.expired())
+	{
+		//	相手がプレイヤーのロックオン範囲内に入った時
+		observer.lock()->SetTriggerEnter([=](std::weak_ptr<Collision> other)
+		{
+			auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
+			if (actor.expired()) return;
+			targetTriggerList.emplace_back(actor);
+		});
+
+		//	相手がプレイヤーのロックオンから外れた時
+		observer.lock()->SetTriggerExit([=](std::weak_ptr<Collision> other)
+		{
+			auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
+			if (actor.expired()) return;
+
+			// ターゲット中の相手ならロックオン解除
+			if (isRockOn && !targetTransform.expired()
+				&& targetTransform.lock()->gameObject.lock() == other.lock()->gameObject.lock())
+			{
+				RockOn(false);
+			}
+			
+			for (auto itr = targetTriggerList.begin(), end = targetTriggerList.end(); itr != end; ++itr)
+			{
+				if (itr->lock() == actor.lock())
+				{
+					targetTriggerList.erase(itr);
+					return;
+				}
+			}
+		});
+	}
 }
 
 void PlayerActor::OnUpdate()
 {
+	// リストにある対象が既に死んでいないかチェック
+	for (auto itr = targetTriggerList.begin(), end = targetTriggerList.end(); itr != end;)
+	{
+		if (itr->expired()) itr = targetTriggerList.erase(itr);
+		else ++itr;
+	}
+
+	ImGui::Text("TargetTrigger");
+	ImGui::Indent();
+	for (auto & c : targetTriggerList)
+	{
+		ImGui::Text(c.lock()->gameObject.lock()->name.c_str());
+	}
+	ImGui::Unindent();
+
+	// ロックオン処理
 	if (Input::Keyboad::IsTrigger('F')
 		|| GamePad::IsTrigger(GamePad::Button::LEFT_SHOULDER))
 	{
-		isRockOn = !isRockOn;
+		RockOn(!isRockOn);
+	}
+	//  ターゲットがいない場合は長押ししていないとロックオン状態を解除する
+	if (isRockOn && targetTransform.expired())
+	{
+		if(!GamePad::IsPress(GamePad::Button::LEFT_SHOULDER))
+			RockOn(false);
+	}
 
-		animator.lock()->SetBool("IsRockOn", isRockOn);
-		if (isRockOn)
+	// ターゲット画像の設定
+	if (!targetImageController.expired())
+	{
+		if (!targetTransform.expired())
 		{
-			targetTransform.reset();
-			cameraController.lock()->ChangePlugin(CameraController::Plugin::RockOn);
+			if (!targetImageController.lock()->gameObject.lock()->IsActive())
+			{
+				targetImageController.lock()->TargetStart();
+				targetImageController.lock()->gameObject.lock()->SetActive(true);
+			}
+			targetImageController.lock()->transform.lock()->SetWorldPosition(targetTransform.lock()->GetWorldPosition());
 		}
 		else
 		{
-			targetTransform.reset();
-			cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
+			targetImageController.lock()->gameObject.lock()->SetActive(false);
 		}
 	}
 
+	// 装備している時のボーンの位置操作
 	if (animator.lock()->IsCurrentAnimation("Idle")
 		|| animator.lock()->IsCurrentAnimation("Walk")
 		|| animator.lock()->IsCurrentAnimation("Run")
@@ -142,11 +208,11 @@ void PlayerActor::OnUpdate()
 				if (Input::Keyboad::IsPress('2')
 					|| GamePad::IsPress(GamePad::Button::RIGHT_SHOULDER))
 				{
-					shieldRock_HandContorller.lock()->SetWeight(0.3f);
+					shieldRock_HandContorller.lock()->SetWeight(0.2f);
 				}
 				else
 				{
-					shieldRock_HandContorller.lock()->SetWeight(-0.3f);
+					shieldRock_HandContorller.lock()->SetWeight(-0.2f);
 				}
 			}
 		}
@@ -188,22 +254,6 @@ void PlayerActor::OnUpdate()
 	rigidbody.lock()->velocity = Vector3(force.x, rigidbody.lock()->velocity.y, force.y);
 
 	forceAmount = forceLen / forceMax;
-
-	// ターゲット画像の設定
-	if (!targetTransform.expired() && !targetImageController.expired())
-	{
-		if (!targetImageController.lock()->gameObject.lock()->IsActive())
-		{
-			targetImageController.lock()->TargetStart();
-			targetImageController.lock()->gameObject.lock()->SetActive(true);
-		}
-		targetImageController.lock()->transform.lock()->SetWorldPosition(targetTransform.lock()->GetWorldPosition());
-	}
-	else if(!targetImageController.expired())
-	{
-		targetImageController.lock()->gameObject.lock()->SetActive(false);
-	}
-	targetTransform.reset();
 }
 
 void PlayerActor::OnLateUpdate()
@@ -214,8 +264,6 @@ void PlayerActor::OnLateUpdate()
 
 void PlayerActor::Draw()
 {
-	//CheckGround();
-	//CheckCliff();
 }
 
 void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
@@ -224,20 +272,6 @@ void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<
 
 void PlayerActor::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
 {
-	if (targetTransform.expired())
-	{
-		auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
-		if (!actor.expired())
-		{
-			targetTransform = actor.lock()->transform;
-
-			//if (!targetImageController.expired())
-			//{
-			//	targetImageController.lock()->TargetStart();
-			//	//targetImageController.lock()->gameObject.lock()->SetActive(true);
-			//}
-		}
-	}
 }
 
 void PlayerActor::ChangeState(State state)
@@ -287,6 +321,41 @@ void PlayerActor::WeaponNotHold()
 		if (!handShield.expired()) handShield.lock()->SetActive(isWeaponHold);
 		if (!backShield.expired()) backShield.lock()->SetActive(!isWeaponHold);
 	});
+}
+
+void PlayerActor::RockOn(bool flag)
+{
+	isRockOn = flag;
+
+	animator.lock()->SetBool("IsRockOn", isRockOn);
+
+	// ロックオン時
+	if (flag)
+	{
+		// ロックオンする一番近い対象を探す
+		for (auto & t : targetTriggerList)
+		{
+			if (targetTransform.expired())
+			{
+				targetTransform = t.lock()->transform;
+				continue;
+			}
+			float dist1 = (targetTransform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition()).LengthSq();
+			float dist2 = (t.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition()).LengthSq();
+			if (dist1 > dist2)
+			{
+				targetTransform = t.lock()->transform;
+			}
+		}
+
+		cameraController.lock()->ChangePlugin(CameraController::Plugin::RockOn);
+	}
+	// ロックオン解除
+	else
+	{
+		targetTransform.reset();
+		cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
+	}
 }
 
 void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)

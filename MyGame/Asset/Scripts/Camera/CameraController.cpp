@@ -64,16 +64,18 @@ bool CameraController::CollisionCheck()
 	// プレイヤーとカメラの間に障害物があるか探す
 	Ray ray;
 	RayCastInfo castInfo;
+	Vector3 hitPoint;
 	float finalDistance = -1.0f;
-	float curDist = -cTr->GetLocalPosition().z;
 	Vector3 playerPos = pTr->GetWorldPosition() + Vector3(0.0f, offsetHeight, 0.0f);
 	Vector3 dir = cTr->GetWorldPosition() - playerPos;
+	float curDist = dir.Length();
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
 	
 	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
 		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
 		finalDistance = castInfo.distance;
+		hitPoint = castInfo.point;
 	}
 	dir = cTr->GetWorldPosition() + cTr->right() * 1.0f - playerPos;
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
@@ -81,8 +83,10 @@ bool CameraController::CollisionCheck()
 	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
 		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
-		if(finalDistance < 0.0f || finalDistance > castInfo.distance)
+		if (finalDistance < 0.0f || finalDistance > castInfo.distance) {
 			finalDistance = castInfo.distance;
+			hitPoint = castInfo.point;
+		}
 	}
 	dir = cTr->GetWorldPosition() - cTr->right() * 1.0f - playerPos;
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
@@ -90,17 +94,21 @@ bool CameraController::CollisionCheck()
 	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
 		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
-		if (finalDistance < 0.0f || finalDistance > castInfo.distance)
+		if (finalDistance < 0.0f || finalDistance > castInfo.distance) {
 			finalDistance = castInfo.distance;
+			hitPoint = castInfo.point;
+		}
 	}
 
 	if (finalDistance > 0)
 	{
+		// 最終的に当たったポイントとカメラの軸との距離を目的の距離に決定
+		finalDistance = (hitPoint - transform.lock()->GetWorldPosition()).Length();
 		if (finalDistance < this->targetDistance + 0.5f)
 		{
 			UpdateDistance(finalDistance, 50.0f);
+			return true;
 		}
-		return true;
 	}
 
 	return false;
@@ -108,11 +116,14 @@ bool CameraController::CollisionCheck()
 
 void CameraController::UpdateDistance(float distance, float speed)
 {
-	Transform* cTr = cameraTransform.lock().get();
-	float curDist = -cTr->GetLocalPosition().z;
+	Vector3 pivotPos = transform.lock()->GetWorldPosition();
+	Vector3 cameraDir = cameraTransform.lock()->GetWorldPosition() - pivotPos;
+	float curDist = cameraDir.Length();
+	cameraDir.Normalize();
 
 	float t = speed * Time::DeltaTime();
 	float dist = Mathf::Lerp(curDist, distance, t);
 
-	cTr->SetLocalPosition(Vector3(0.0f, 0.0f, -dist));
+	Vector3 pos = pivotPos + cameraDir * dist;
+	cameraTransform.lock()->SetWorldPosition(pos);
 }

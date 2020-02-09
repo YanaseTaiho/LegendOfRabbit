@@ -16,11 +16,11 @@ void Transform::DrawImGui(int id)
 	if (ImGui::DragFloat3("Scale", scale, 0.05f))
 		SetLocalScale(scale);
 
-	Vector3 rot = GetLocalRotation().GetEulerAngles();
+	Vector3 rot = GetLocalRotation().Normalized().GetEulerAngles();
 	Vector3 inRot = rot;
 	if (ImGui::DragFloat3("Rotation", inRot, 0.05f))
 	{
-		SetLocalRotation(Quaternion::EulerAngles(inRot));
+		SetLocalRotation(Quaternion::EulerAngles(inRot).Normalized());
 	}
 }
 

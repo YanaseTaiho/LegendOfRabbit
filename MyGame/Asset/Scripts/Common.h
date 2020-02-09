@@ -15,6 +15,7 @@
 #include "RotationFixedController.h"
 #include "LocusController.h"
 #include "TargetImageController.h"
+#include "CollisionObserver.h"
 
 #endif // ! __COMMON_SCRIPTS__H__
 

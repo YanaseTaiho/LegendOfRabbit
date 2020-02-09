@@ -62,6 +62,9 @@
         "Asset\\Art\\Texture\\earthenvmap.png",
         "Asset\\Art\\Texture\\tree1.png",
         "Asset\\Art\\Texture\\Gold_v5.png",
-        "Asset\\Art\\Texture\\born.png"
+        "Asset\\Art\\Texture\\born.png",
+        "Asset\\Art\\Texture\\Gold_v4.png",
+        "Asset\\Art\\Texture\\Rainbow.png",
+        "Asset\\Art\\Texture\\Silver_v2.png"
     ]
 }

@@ -2,6 +2,7 @@
 #define __RockOnCameraPlugin__H__
 
 #include "../CameraPlugin.h"
+#include "../../../FrameWork/Common.h"
 
 class RockOnCameraPlugin : public CameraPlugin
 {
@@ -12,6 +13,7 @@ public:
 private:
 
 	float defaultDistance = 0.0f;
+	Quaternion rotation;
 };
 
 #endif // !__RockOnCameraPlugin__H__

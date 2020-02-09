@@ -95,6 +95,7 @@ public:
 	std::weak_ptr<BaseFSM<PlayerActor>> state;
 	std::weak_ptr<Animator> animator;
 	std::weak_ptr<Rigidbody> rigidbody;
+	std::list<std::weak_ptr<BaseActor>> targetTriggerList;	// プレイヤーのロックオン対象のリスト
 
 	State currentState;
 	RayCastInfo castGroundInfo;
@@ -144,6 +145,8 @@ public:
 
 	void WeaponHold(std::function<void()> func = nullptr);
 	void WeaponNotHold();
+
+	void RockOn(bool flag);
 
 private:
 	float horizontal = 0.0f;

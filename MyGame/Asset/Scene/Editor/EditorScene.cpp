@@ -29,6 +29,7 @@ void EditorScene::CreateComponentList()
 	// コリジョン
 	REGISTER_COMPONENT(componentList, CollisionSphere);
 	REGISTER_COMPONENT(componentList, CollisionMesh);
+	REGISTER_COMPONENT(componentList, CollisionObserver);
 
 	// スクリプト
 	REGISTER_COMPONENT(componentList, GameSceneSystem);
@@ -221,6 +222,8 @@ void EditorScene::Update()
 	ImGui::Text("%.3f, FPS %1.f", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	if (ImGui::RadioButton("Collision Draw", isDebug)) isDebug = !isDebug;
+
+	ImGui::Separator();
 
 	if (mode == Mode::Edit)
 	{

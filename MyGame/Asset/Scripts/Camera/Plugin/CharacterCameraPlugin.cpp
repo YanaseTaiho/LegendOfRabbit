@@ -5,7 +5,7 @@
 
 CharacterCameraPlugin::CharacterCameraPlugin()
 {
-	this->defaultDistance = 55.0f;
+	this->defaultDistance = 50.0f;
 	this->lookSpeed = 20.0f;
 	this->moveSpeed = 5.0f;
 
