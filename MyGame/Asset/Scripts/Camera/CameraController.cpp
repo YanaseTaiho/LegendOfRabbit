@@ -70,35 +70,31 @@ bool CameraController::CollisionCheck()
 	Vector3 dir = cTr->GetWorldPosition() - playerPos;
 	float curDist = dir.Length();
 	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
-	
 	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
 		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
 	{
 		finalDistance = castInfo.distance;
 		hitPoint = castInfo.point;
 	}
-	dir = cTr->GetWorldPosition() + cTr->right() * 1.0f - playerPos;
-	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
 
-	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
-		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
+	auto RayCastCheck = [&](const Vector3 & offset)
 	{
-		if (finalDistance < 0.0f || finalDistance > castInfo.distance) {
-			finalDistance = castInfo.distance;
-			hitPoint = castInfo.point;
-		}
-	}
-	dir = cTr->GetWorldPosition() - cTr->right() * 1.0f - playerPos;
-	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
+		dir = cTr->GetWorldPosition() - playerPos;
+		ray.Set(playerPos + offset, dir.Normalized(), curDist * 2.0f);
 
-	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
-		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
-	{
-		if (finalDistance < 0.0f || finalDistance > castInfo.distance) {
-			finalDistance = castInfo.distance;
-			hitPoint = castInfo.point;
+		if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
+			&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
+		{
+			if (finalDistance < 0.0f || finalDistance > castInfo.distance) {
+				finalDistance = castInfo.distance;
+				hitPoint = castInfo.point;
+			}
 		}
-	}
+	};
+
+	RayCastCheck(cTr->right() * 1.0f);
+	RayCastCheck(-cTr->right() * 1.0f);
+	RayCastCheck(-cTr->up() * 1.0f);
 
 	if (finalDistance > 0)
 	{
@@ -122,7 +118,7 @@ void CameraController::UpdateDistance(float distance, float speed)
 	cameraDir.Normalize();
 
 	float t = speed * Time::DeltaTime();
-	float dist = Mathf::Lerp(curDist, distance, t);
+	float dist = Mathf::Lerp(curDist, distance, Mathf::Clamp01(t));
 
 	Vector3 pos = pivotPos + cameraDir * dist;
 	cameraTransform.lock()->SetWorldPosition(pos);

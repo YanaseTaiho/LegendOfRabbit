@@ -78,18 +78,21 @@ void Transform::SetWorldPosition(const Vector3 & position)
 	else
 	{
 		// ワールド座標に直接ポジションを指定
-		worldMatrix.matrix(0, 3) = position.x;
-		worldMatrix.matrix(1, 3) = position.y;
-		worldMatrix.matrix(2, 3) = position.z;
-		// 設定したワールドマトリクスを親の逆行列を掛けてローカルマトリクスに変換
-		localMatrix.matrix = parent.lock()->worldMatrix.matrix.inverse() * worldMatrix.matrix;
-		Vector3 localPosition = localMatrix.position();
-		Vector3 localScale = localMatrix.scale();
-		Quaternion localRotation = localMatrix.rotation().Normalized();
-		this->translation = Translation3f(localPosition.x, localPosition.y, localPosition.z);
-		this->scaling = Scaling3f(localScale.x, localScale.y, localScale.z);
-		this->rotate = localRotation;
+		//worldMatrix.matrix(0, 3) = position.x;
+		//worldMatrix.matrix(1, 3) = position.y;
+		//worldMatrix.matrix(2, 3) = position.z;
+		//// 設定したワールドマトリクスを親の逆行列を掛けてローカルマトリクスに変換
+		//localMatrix.matrix = parent.lock()->worldMatrix.matrix.inverse() * worldMatrix.matrix;
+		//Vector3 localPosition = localMatrix.position();
+		//Vector3 localScale = localMatrix.scale();
+		//Quaternion localRotation = localMatrix.rotation().Normalized();
+		//this->translation = Translation3f(localPosition.x, localPosition.y, localPosition.z);
+		//this->scaling = Scaling3f(localScale.x, localScale.y, localScale.z);
+		//this->rotate = localRotation;
 
+		Vector3 localPosition = parent.lock()->worldMatrix.Inverse() * position;
+		this->translation = Translation3f(localPosition.x, localPosition.y, localPosition.z);
+		SetLocalMatrix();
 		SetWorldMatrix();
 	}
 }

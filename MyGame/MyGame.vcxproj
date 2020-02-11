@@ -61,6 +61,7 @@
     <ClCompile Include="Asset\FrameWork\Animation\AnimationState.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationTake.cpp" />
     <ClCompile Include="Asset\FrameWork\Animation\AnimationTransition.cpp" />
+    <ClCompile Include="Asset\FrameWork\Audio\AudioClipManager.cpp" />
     <ClCompile Include="Asset\FrameWork\Component\Collision\Mesh\MeshCast.cpp" />
     <ClCompile Include="Asset\FrameWork\Component\Component.cpp" />
     <ClCompile Include="Asset\FrameWork\Component\MonoBehaviour\MonoBehaviour.cpp" />
@@ -84,7 +85,7 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
     </ClCompile>
     <ClCompile Include="Asset\FrameWork\Scene\SceneManager.cpp" />
-    <ClCompile Include="Asset\Main\audio_clip.cpp" />
+    <ClCompile Include="Asset\FrameWork\Audio\AudioClip.cpp" />
     <ClCompile Include="Asset\FrameWork\Scene\Prefab.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\ActorContainer.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\SmallGomaActor.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="Asset\FrameWork\Animation\Takes\Takes.h" />
     <ClInclude Include="Asset\FrameWork\Animation\Takes\TakesQuaternion.h" />
     <ClInclude Include="Asset\FrameWork\Animation\Takes\TakesVector3.h" />
+    <ClInclude Include="Asset\FrameWork\Audio\AudioClipManager.h" />
     <ClInclude Include="Asset\FrameWork\BindClass.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\Capsule\CollisionCapsule.h" />
     <ClInclude Include="Asset\FrameWork\Component\Collision\CollisionJudge.h" />
@@ -215,7 +217,7 @@
     <ClInclude Include="Asset\FrameWork\SetType.h" />
     <ClInclude Include="Asset\FrameWork\Singleton.h" />
     <ClInclude Include="Asset\FrameWork\System.h" />
-    <ClInclude Include="Asset\Main\audio_clip.h" />
+    <ClInclude Include="Asset\FrameWork\Audio\AudioClip.h" />
     <ClInclude Include="Asset\Main\Common.h" />
     <ClInclude Include="Asset\FrameWork\Component\Camera\Camera.h" />
     <ClInclude Include="Asset\FrameWork\Component\Component.h" />

@@ -3,14 +3,14 @@
 
 #include "FrameWork/Component/MonoBehaviour/MonoBehaviour.h"
 #include "Scene/TitleScene.h"
-#include "Main/audio_clip.h"
+//#include "Main/audio_clip.h"
 #include "DirectX/Common.h"
 
 class TestMove : public MonoBehaviour
 {
 public:
 	//std::weak_ptr<Transform> camera;
-	//CAudioClip * clip;
+	//AudioClip * clip;
 	//std::weak_ptr<Animator> anim;
 	//std::weak_ptr<Rigidbody> rb;
 
@@ -42,7 +42,7 @@ public:
 	//	rb = gameObject.lock()->GetRigidbody();
 	//	anim = gameObject.lock()->GetAnimator();
 
-	//	clip = new CAudioClip();
+	//	clip = new AudioClip();
 	//	clip->Load("Asset/Battle2.wav");
 	//	clip->Play(true);
 	//}

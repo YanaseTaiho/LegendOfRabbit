@@ -59,6 +59,12 @@ void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 		lookValue += mouse.x * Time::DeltaTime();
 	}
 
+	float thumbRX = GamePad::ThumbRX();
+	if (Mathf::Absf(thumbRX) > 0.2f)
+	{
+		lookValue += 20.0f * thumbRX * Time::DeltaTime();
+	}
+
 	//controller->targetDistance += Input::Mouse::GetHwheel();
 
 	if (!input)
@@ -166,16 +172,17 @@ void CharacterCameraPlugin::OnLateUpdate(CameraController * controller)
 	rootTransform->SetWorldRotation(rootRotation.Normalize());
 
 	// ‹ÉˆÊ•ûŒü‚Ì‰ñ“]
-	Quaternion vQ = Quaternion::EulerAngles(lookVertical, 0.0f, 0.0f);
-	Quaternion vS = Quaternion::Slerp(verticalTransform->GetLocalRotation(), vQ, Time::DeltaTime() * 0.3f);
-	verticalTransform->SetLocalRotation(vS.Normalize());
+	Quaternion cRot = rootTransform->GetWorldRotation();
+	Quaternion vQ = Quaternion::AxisAngle(rootTransform->right(), lookVertical).Normalized() * cRot;
+	Quaternion vS = Quaternion::Slerp(verticalTransform->GetWorldRotation(), vQ, Time::DeltaTime() * 1.5f);
+	verticalTransform->SetWorldRotation(vS.Normalized());
 
 	// ƒJƒƒ‰Ž©‘Ì‚Ì‰ñ“]
 	auto camera = controller->cameraTransform.lock();
 	Quaternion cameraLook;
-	cameraLook = Quaternion::LookRotation(playerPos - camera->GetWorldPosition());
+	cameraLook = Quaternion::LookRotation(playerPos - camera->GetWorldPosition()).Normalized();
 	cameraLook = Quaternion::Slerp(camera->GetWorldRotation(), cameraLook, Time::DeltaTime() * 1.0f);
-	camera->SetWorldRotation(cameraLook);
+	camera->SetWorldRotation(cameraLook.Normalized());
 
 	controller->targetDistance = defaultDistance;
 

@@ -10,9 +10,6 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 	if(!meshData)
 		return std::weak_ptr<CollisionMeshInfo>();
 
-	if (collisionMeshMap.count(meshData->name) > 0) 
-		return collisionMeshMap[meshData->name];
-
 	CollisionMeshInfo * addInfo = new CollisionMeshInfo();
 	Vector3 maxPos;
 
@@ -73,6 +70,13 @@ std::weak_ptr<CollisionMeshInfo> CollisionMeshInfoManager::Load(MyDirectX::Mesh 
 	}
 	addInfo->name = meshData->name;
 	addInfo->scaleRadius = maxPos.Length() * 1.1f;	// ‚È‚º‚©‚¿‚å‚Á‚Æ‘å‚«‚³‚ª‘«‚è‚È‚©‚Á‚½‚Ì‚Å­‚µ‘å‚«‚ß‚ÉÝ’è
+
+	// Šù‚É“o˜^‚³‚ê‚Ä‚¢‚½‚ç’†g‚¾‚¯ã‘‚«
+	if (collisionMeshMap.count(meshData->name) > 0)
+	{
+		*collisionMeshMap[meshData->name] = *addInfo;
+		return collisionMeshMap[meshData->name];
+	}
 
 	return collisionMeshMap[meshData->name] = std::shared_ptr<CollisionMeshInfo>(addInfo);
 }

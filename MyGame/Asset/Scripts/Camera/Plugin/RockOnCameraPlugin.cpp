@@ -35,7 +35,7 @@ void RockOnCameraPlugin::OnLateUpdate(CameraController * controller)
 		float toLen = toDir.Length();
 		controller->targetDistance = defaultDistance + toLen * 0.4f;
  
-		vertical = Mathf::ACosf(Vector3::Dot(toDirNoY.Normalize(), toDir.Normalize())) * Mathf::RadToDeg() * 0.8f;
+		vertical = Mathf::ACosf(Vector3::Dot(toDirNoY.Normalize(), toDir.Normalize())) * Mathf::RadToDeg() * 0.6f;
 		vertical = (hightDiff > 30.0f) ? -vertical : vertical;	// ã‰º‚ÌŠm”F
 		vertical = Mathf::Clamp(vertical, -40.0f, 40.0f);
 
@@ -87,9 +87,9 @@ void RockOnCameraPlugin::OnLateUpdate(CameraController * controller)
 
 	// ƒJƒƒ‰Ž©‘Ì‚Ì‰ñ“]
 	Quaternion cameraLook;
-	cameraLook = Quaternion::LookRotation(rootPos - cameraTransform->GetWorldPosition());
+	cameraLook = Quaternion::LookRotation(rootPos - cameraTransform->GetWorldPosition()).Normalized();
 	cameraLook = Quaternion::Slerp(cameraTransform->GetWorldRotation(), cameraLook, Time::DeltaTime() * 1.0f);
-	cameraTransform->SetWorldRotation(cameraLook);
+	cameraTransform->SetWorldRotation(cameraLook.Normalized());
 
 	if (!controller->CollisionCheck())
 	{

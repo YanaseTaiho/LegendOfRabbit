@@ -29,9 +29,7 @@ void GameSceneSystem::Start()
 
 	enemyContainer.lock()->OnStart();
 
-	/*clip = new CAudioClip();
-	clip->Load("Asset/Art/Sound/Battle2.wav");
-	clip->Play(true);*/
+	Singleton<AudioClipManager>::Instance()->Play(AudioData::BGM_StageBGM01, 1.0f, true);
 }
 
 void GameSceneSystem::Update()
@@ -54,7 +52,5 @@ void GameSceneSystem::LateUpdate()
 
 void GameSceneSystem::OnDestroy()
 {
-	/*clip->Stop();
-	clip->Unload();
-	delete clip;*/
+	Singleton<AudioClipManager>::Instance()->Stop(AudioData::BGM_StageBGM01);
 }

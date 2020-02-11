@@ -15,22 +15,9 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 {
 	actor->horizontalRegistance = 1.0f;
 
-	bool isRool = actor->animator.lock()->IsCurrentAnimation("Roll");
+	//bool isRool = actor->animator.lock()->IsCurrentAnimation("Roll");
 
-	if (!isRool)
-	{
-		if (actor->moveAmount > 0.1f)
-		{
-			actor->ChangeState(PlayerActor::State::Move);
-			return;
-		}
-		else
-		{
-			actor->ChangeState(PlayerActor::State::Idle);
-			return;
-		}
-	}
-	else if(actor->animator.lock()->GetCurrentPercent() < 0.8f)
+	if(actor->animator.lock()->GetCurrentPercent() < 0.8f)
 	{
 		Ray downRay;
 		RayCastInfo info;
@@ -49,6 +36,17 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 	else
 	{
 		actor->horizontalRegistance = 0.8f;
+
+		if (actor->moveAmount > 0.1f)
+		{
+			actor->ChangeState(PlayerActor::State::Move);
+			return;
+		}
+		else
+		{
+			actor->ChangeState(PlayerActor::State::Idle);
+			return;
+		}
 	}
 
 	if (!actor->onGround)
@@ -64,6 +62,7 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 			actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
 			actor->animator.lock()->SetTrigger("JumpTrigger");
 			actor->ChangeState(PlayerActor::State::Air);
+			return;
 		}
 
 		actor->ChangeState(PlayerActor::State::Air);

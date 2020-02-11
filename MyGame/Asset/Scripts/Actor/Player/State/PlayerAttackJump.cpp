@@ -17,6 +17,7 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 
 	actor->animator.lock()->SetAnimationCallBack("Attack_Jump", 10, [=]()
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordSwing01);
 		// 軌跡スタート
 		if (!actor->locusController.expired())
 		{
@@ -24,6 +25,10 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 		}
 	});
 
+	actor->animator.lock()->SetAnimationCallBack("Attack_Jump_Land", 1, [=]()
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
+	});
 	actor->animator.lock()->SetAnimationCallBack("Attack_Jump_Land", 20, [=]()
 	{
 		actor->ChangeState(PlayerActor::State::Idle);
@@ -52,6 +57,7 @@ void PlayerAttackJump::OnUpdate(PlayerActor * actor)
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Jump_Land")
 		&& !actor->animator.lock()->IsCurrentAnimation("Weapon_Change"))
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
 		actor->ChangeState(PlayerActor::State::Idle);
 	}
 }

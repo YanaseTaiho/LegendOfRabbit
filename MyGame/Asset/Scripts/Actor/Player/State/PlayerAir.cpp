@@ -40,11 +40,13 @@ void PlayerAir::OnUpdate(PlayerActor * actor)
 		//actor->rigidbody.lock()->resistance = 0.9f;
 		if (actor->moveAmount > 0.1f)
 		{
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
 			actor->ChangeState(PlayerActor::State::Move);
 			return;
 		}
 		else
 		{
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
 			actor->ChangeState(PlayerActor::State::Idle);
 			return;
 		}

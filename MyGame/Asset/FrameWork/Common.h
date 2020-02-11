@@ -24,6 +24,7 @@
 #include "Scene/SceneBase.h"
 
 #include "Animation/AnimationClipManager.h"
+#include "Audio/AudioClipManager.h"
 
 #include "Time.h"
 #include "debugPrintf.h"

@@ -22,7 +22,7 @@ void CollisionMesh::LoadSerialized(const std::shared_ptr<Component>& component)
 	{
 		// 当たり判定の表示用
 		std::string lineMeshName = meshData.lock()->model.lock()->name;
-		if (!DebugLine::IsRegisterdLineData(lineMeshName))
+		//if (!DebugLine::IsRegisterdLineData(lineMeshName))
 		{
 			LineMesh * line = new LineMesh();
 			unsigned int vertexCnt = (unsigned int)meshInfo.lock()->faceInfoArray.size() * 6;
@@ -85,7 +85,7 @@ void CollisionMesh::Awake()
 	{
 		// 当たり判定の表示用
 		std::string lineMeshName = meshData.lock()->model.lock()->name;
-		if (!DebugLine::IsRegisterdLineData(lineMeshName))
+		//if (!DebugLine::IsRegisterdLineData(lineMeshName))
 		{
 			LineMesh * line = new LineMesh();
 			unsigned int vertexCnt = (unsigned int)meshInfo.lock()->faceInfoArray.size() * 6;

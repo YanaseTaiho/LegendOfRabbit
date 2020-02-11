@@ -57,6 +57,8 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 
 void PlayerAttack::Attack(PlayerActor * actor)
 {
+	Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordSwing01);
+
 	// フレームリセット
 	frameCnt = 0;
 

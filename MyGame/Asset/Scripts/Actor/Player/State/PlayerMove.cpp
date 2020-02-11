@@ -53,29 +53,14 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
-	// 崖があるのかを確認
-	if (!actor->castCliffGroundInfo.collision.expired()
-		&& Vector3::Dot(actor->castCliffGroundInfo.normal, Vector3::up()) > 0.7f)	// 掴める崖の角度を確認)
-	{
-		frameCnt++;
-		if (frameCnt > 15)
-		{
-			frameCnt = 0;
-			actor->ChangeState(PlayerActor::State::CliffJump);
-			return;
-		}
-	}
-	else
-	{
-		frameCnt = 0;
-	}
-
 	Vector3 forward = actor->transform.lock()->forward();
 	forward.y = 0.0f;
 
 	// ロックオン中
 	if (actor->isRockOn)
 	{
+		frameCnt = 0;
+
 		// ターゲットがいればそっちを向く
 		if (!actor->targetTransform.expired())
 		{
@@ -147,6 +132,23 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 	// 通常
 	else
 	{
+		// 崖があるのかを確認
+		if (!actor->castCliffGroundInfo.collision.expired()
+			&& Vector3::Dot(actor->castCliffGroundInfo.normal, Vector3::up()) > 0.7f)	// 掴める崖の角度を確認)
+		{
+			frameCnt++;
+			if (frameCnt > 15)
+			{
+				frameCnt = 0;
+				actor->ChangeState(PlayerActor::State::CliffJump);
+				return;
+			}
+		}
+		else
+		{
+			frameCnt = 0;
+		}
+
 		// 空中
 		if (!actor->onGround)
 		{

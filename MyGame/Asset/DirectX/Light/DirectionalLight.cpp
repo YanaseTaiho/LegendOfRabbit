@@ -7,7 +7,7 @@
 using namespace FrameWork;
 using namespace MyDirectX;
 
-#define DEPTH_FAR (256.0f)
+#define DEPTH_FAR (512.0f)
 
 void DirectionalLight::Awake()
 {
@@ -38,7 +38,8 @@ void DirectionalLight::SetLight()
 	CB_LIGHT_VIEW_PROJECTION cbVP;
 	Vector3 cameraPos = RendererSystem::GetCameraMatrix().position() + RendererSystem::GetCameraMatrix().forward() * DEPTH_FAR * 0.3f;
 	Vector3 lightForward = transform.lock()->forward();
-	Vector3 pos = cameraPos - lightForward * DEPTH_FAR * 0.5f;
+	Vector3 lightOffset = lightForward * DEPTH_FAR * 0.5f;
+	Vector3 pos = cameraPos - lightOffset;
 	Vector3 at = cameraPos + lightForward;
 	Matrix4 lightView = XMMatrixLookAtLH({ pos.x,pos.y,pos.z,1.0f }, { at.x,at.y,at.z,1.0f }, { 0.0f,1.0f,0.0f,1.0f });
 	cbVP.viewMatrix = lightView;

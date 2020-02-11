@@ -4,7 +4,7 @@
 #include "FrameWork/Component/MonoBehaviour/MonoBehaviour.h"
 #include "Scene/GameScene.h"
 
-#include "Main/audio_clip.h"
+//#include "Main/audio_clip.h"
 
 class TitleSceneSystem : public MonoBehaviour
 {
@@ -15,9 +15,9 @@ public:
 
 	void Start() override
 	{
-		clip = new CAudioClip();
-		clip->Load("Asset/Art/Sound/Title.wav");
-		clip->Play(true);
+		//clip = new AudioClip();
+		//clip->Load("Asset/Art/Sound/Title.wav");
+		//clip->Play(true);
 	}
 
 	void Update() override
@@ -30,13 +30,13 @@ public:
 
 	void OnDestroy() override
 	{
-		clip->Stop();
-		clip->Unload();
-		delete clip;
+		//clip->Stop();
+		//clip->Unload();
+		//delete clip;
 	}
 
 private:
-	CAudioClip * clip;
+	//AudioClip * clip;
 };
 
 #endif // !_TITLESCENESYSTEM_H_

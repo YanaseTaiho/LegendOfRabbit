@@ -219,6 +219,12 @@ float AnimationController::GetCurrentPercent(int layer)
 		{
 			if (filter->runningState.expired()) break;
 
+			// 遷移中なら次のモーションの進行度を返す
+			if (!filter->runningTransition.expired())
+			{
+				return filter->runningTransition.lock()->nextAnimation.lock()->motion->GetCurrentPercent();
+			}
+			// 現在のモーションの進行度を返す
 			return filter->runningState.lock()->motion->GetCurrentPercent();
 		}
 		layer--;

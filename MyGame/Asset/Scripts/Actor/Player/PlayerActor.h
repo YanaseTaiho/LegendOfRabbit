@@ -147,6 +147,7 @@ public:
 	void WeaponNotHold();
 
 	void RockOn(bool flag);
+	void SetNextTarget(bool isRight);
 
 private:
 	float horizontal = 0.0f;

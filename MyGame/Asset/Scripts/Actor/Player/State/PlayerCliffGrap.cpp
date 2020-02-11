@@ -4,6 +4,8 @@ void PlayerCliffGrap::OnStart(PlayerActor * actor)
 {
 	actor->animator.lock()->SetBool("IsCliff_Grap", true);
 
+	Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordPachin);
+
 	actor->animator.lock()->SetAnimationCallBack("Cliff_Up", 29, [=]()
 	{
 		actor->ChangeState(PlayerActor::State::Idle);

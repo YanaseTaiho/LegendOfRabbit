@@ -55,11 +55,13 @@ void PlayerStep::OnUpdate(PlayerActor * actor)
 			// ÃŽ~
 			if (actor->moveAmount < 0.1f)
 			{
+				Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
 				actor->ChangeState(PlayerActor::State::Idle);
 				return;
 			}
 			if (actor->moveAmount >= 0.1f && actor->moveDir != Vector3::zero())
 			{
+				Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
 				actor->ChangeState(PlayerActor::State::Move);
 				return;
 			}

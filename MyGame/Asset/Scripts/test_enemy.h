@@ -4,8 +4,6 @@
 #include "FrameWork/Component/MonoBehaviour/MonoBehaviour.h"
 #include "Scripts/test_move.h"
 
-#include "Main/audio_clip.h"
-
 class TestEnemy : public MonoBehaviour
 {
 public:

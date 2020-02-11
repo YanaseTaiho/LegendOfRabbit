@@ -9,8 +9,6 @@
 #include "Scene/TitleScene.h"
 #include "Scene/Editor/EditorScene.h"
 
-#include "audio_clip.h"
-
 #include "DirectX/ImGui/imgui.h"
 #include "DirectX/ImGui/imgui_impl_win32.h"
 #include "DirectX/ImGui/imgui_impl_dx11.h"
@@ -43,7 +41,8 @@ void CManager::Init()
 	// データ用のフォルダ作成
 	_mkdir(dataFolderName.c_str());
 
-	CAudioClip::Init();
+	Singleton<AudioClipManager>::Create();
+	//AudioClip::Init();
 	RendererSystem::Init();
 
 	//Setup ImGui
@@ -65,6 +64,7 @@ void CManager::Init()
 	Singleton<SkinMeshManager>::Create();
 	Singleton<GameObjectManager>::Create();
 
+	Singleton<AudioClipManager>::Instance()->Load();
 	Singleton<TextureManager>::Instance()->LoadTexture(dataFolderPath);
 	Singleton<MaterialManager>::Instance()->LoadMaterial(dataFolderPath);
 	Singleton<MeshManager>::Instance()->LoadMesh(dataFolderPath);
@@ -134,7 +134,7 @@ void CManager::Uninit()
 
 	RendererSystem::Uninit();
 
-	CAudioClip::Uninit();
+	Singleton<AudioClipManager>::Release();
 
 	Input::GamePad::Finalize();
 }

@@ -131,6 +131,24 @@ void PlayerActor::OnStart()
 			}
 		});
 	}
+
+	// アニメーションに応じてのSE再生用
+	animator.lock()->SetAnimationCallBack("Walk", 8, []()
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
+	});
+	animator.lock()->SetAnimationCallBack("Walk", 23, []()
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
+	});
+	animator.lock()->SetAnimationCallBack("Run", 8, []()
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
+	});
+	animator.lock()->SetAnimationCallBack("Run", 23, []()
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
+	});
 }
 
 void PlayerActor::OnUpdate()
@@ -156,11 +174,23 @@ void PlayerActor::OnUpdate()
 	{
 		RockOn(!isRockOn);
 	}
-	//  ターゲットがいない場合は長押ししていないとロックオン状態を解除する
-	if (isRockOn && targetTransform.expired())
+	if (isRockOn)
 	{
-		if(!GamePad::IsPress(GamePad::Button::LEFT_SHOULDER))
-			RockOn(false);
+		//  ターゲットがいない場合は長押ししていないとロックオン状態を解除する
+		if (targetTransform.expired())
+		{
+			if (!GamePad::IsPress(GamePad::Button::LEFT_SHOULDER))
+				RockOn(false);
+		}
+		// ターゲット切り替え
+		else if (GamePad::IsTrigger(GamePad::Button::THUMB_R_LEFT))
+		{
+			SetNextTarget(false);
+		}
+		else if (GamePad::IsTrigger(GamePad::Button::THUMB_R_RIGHT))
+		{
+			SetNextTarget(true);
+		}
 	}
 
 	// ターゲット画像の設定
@@ -289,6 +319,8 @@ void PlayerActor::WeaponHold(std::function<void()> func)
 
 	animator.lock()->SetAnimationCallBack("Weapon_Change", 14, [=]()
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordPachin);
+
 		isWeaponHold = true;
 
 		if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(0.1f);
@@ -311,6 +343,8 @@ void PlayerActor::WeaponNotHold()
 
 	animator.lock()->SetAnimationCallBack("Weapon_Change", 14, [=]()
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordPachin);
+
 		isWeaponHold = false;
 
 		if (!sword_HandContorller.expired()) sword_HandContorller.lock()->SetWeight(-0.1f);
@@ -332,6 +366,7 @@ void PlayerActor::RockOn(bool flag)
 	// ロックオン時
 	if (flag)
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_RockOn);
 		// ロックオンする一番近い対象を探す
 		for (auto & t : targetTriggerList)
 		{
@@ -353,8 +388,58 @@ void PlayerActor::RockOn(bool flag)
 	// ロックオン解除
 	else
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_RockOnChancel);
 		targetTransform.reset();
 		cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
+	}
+}
+
+void PlayerActor::SetNextTarget(bool isRight)
+{
+	std::weak_ptr<Transform> nextTarget;
+	Vector3 p_to_target = targetTransform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
+	p_to_target.Normalize();
+
+	Vector3 cross = Vector3::Cross(Vector3::up(), p_to_target);
+	cross.Normalize();
+	cross = (isRight) ? cross : -cross;
+
+	// ロックオンする一番近い対象を探す
+	for (auto & t : targetTriggerList)
+	{
+		if (t.lock()->transform.lock() == targetTransform.lock()) continue;
+
+		Vector3 p_to_t = t.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
+		p_to_t.Normalize();
+
+		// プレイヤーより右か左かを判断
+		float dot = Vector3::Dot(cross, p_to_t);
+		if (dot > 0)
+		{
+			if (nextTarget.expired())
+			{
+				nextTarget = t.lock()->transform;
+			}
+			else
+			{
+				// 前に入ったターゲットより距離が近ければ採用
+				float p_to_t_Length = (t.lock()->transform.lock()->GetWorldPosition() - targetTransform.lock()->GetWorldPosition()).LengthSq();
+				float p_to_next_len = (nextTarget.lock()->GetWorldPosition() - targetTransform.lock()->GetWorldPosition()).LengthSq();
+				if (p_to_t_Length < p_to_next_len)
+				{
+					nextTarget = t.lock()->transform;
+				}
+			}
+		}
+	}
+
+	// 最終的に条件を満たしたターゲットに切り替え
+	if (!nextTarget.expired())
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_RockOn);
+		targetTransform = nextTarget;
+		if (!targetImageController.expired())
+			targetImageController.lock()->gameObject.lock()->SetActive(false);	// ターゲット画像のアニメーションを再スタート
 	}
 }
 
@@ -371,6 +456,7 @@ void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
 			Vector3 dir = other.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
 			rb.lock()->AddForce(dir.Normalized() * 7.0f);
 		}
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
 		GameObject::Destroy(other.lock()->gameObject, 0.5f);
 	}
 	// 地面は判定しない

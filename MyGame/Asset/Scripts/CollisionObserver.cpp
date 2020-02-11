@@ -30,7 +30,7 @@ void CollisionObserver::Update()
 void CollisionObserver::LateUpdate()
 {
 	// 現在保持しているコリジョンとフレーム単位のリストを比較
-	for (auto itr = collisionList.begin(), end = collisionList.end(); itr != end; ++itr)
+	for (auto itr = collisionList.begin(), end = collisionList.end(); itr != end;)
 	{
 		bool isHit = false;
 		for (auto addItr = addCollisionList.begin(), addEnd = addCollisionList.end(); addItr != addEnd; ++addItr)
@@ -46,12 +46,14 @@ void CollisionObserver::LateUpdate()
 		if (!isHit)
 		{
 			if (collisionExit && !itr->expired()) collisionExit(*itr);
-			collisionList.erase(itr);
+			itr = collisionList.erase(itr);
+			continue;
 		}
+		++itr;
 	}
 
 	// 現在保持しているコリジョンとフレーム単位のリストを比較
-	for (auto itr = collisionTriggerList.begin(), end = collisionTriggerList.end(); itr != end; ++itr)
+	for (auto itr = collisionTriggerList.begin(), end = collisionTriggerList.end(); itr != end;)
 	{
 		bool isHit = false;
 		for (auto addItr = addCollisionTriggerList.begin(), addEnd = addCollisionTriggerList.end(); addItr != addEnd; ++addItr)
@@ -67,8 +69,10 @@ void CollisionObserver::LateUpdate()
 		if (!isHit)
 		{
 			if (triggerExit && !itr->expired()) triggerExit(*itr);
-			collisionTriggerList.erase(itr);
+			itr = collisionTriggerList.erase(itr);
+			continue;
 		}
+		++itr;
 	}
 }
 
