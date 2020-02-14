@@ -351,6 +351,10 @@ void SceneManager::DeleteSceneData(std::shared_ptr<SceneData>& deleteData)
 			GameObject::Destroy(object);
 		}
 		currentScene->sceneData.reset();
+
+		// 現在ある削除されるオブジェクトを全て破棄
+		Singleton<GameObjectManager>::Instance()->CleanupDestroyGameObject();
+		Component::CleanupDestoryComponent();
 	}
 }
 

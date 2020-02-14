@@ -29,6 +29,9 @@
 // ライト
 #include "Light/DirectionalLight.h"
 
+// エフェクト
+#include "Effekseer/EffekseerSystem.h"
+
 // デバッグ
 #include "MeshData/LineMesh/DebugLine.h"
 

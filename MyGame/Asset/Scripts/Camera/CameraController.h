@@ -48,6 +48,7 @@ public:
 
 	void AddPlugin(Plugin key, CameraPlugin * plugin);
 	void ChangePlugin(Plugin key);
+	bool IsPlugin(Plugin key);
 
 	bool CollisionCheck();
 	void UpdateDistance(float distance, float speed);

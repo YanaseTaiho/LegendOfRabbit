@@ -5,7 +5,7 @@
 
 using namespace FrameWork;
 
-bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<GameObject> myObject)
+bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<GameObject> myObject, int layerMask, bool isFaceHit)
 {
 	bool hit = false;
 	Vector3 rayCenter = Vector3::Lerp(ray->start, ray->end, 0.5f);
@@ -13,6 +13,9 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 
 	for (int i = 0; i < (int)Layer::MAX; i++)
 	{
+		// レイヤーマスクから判定するか確認
+		if (layerMask >= 0 && (layerMask & (1 << i))) continue;
+
 		for (auto & collision : Collision::CollisionList(i))
 		{
 			Collision * col = collision.lock().get();
@@ -67,7 +70,15 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 				CollisionMesh * colMesh = (CollisionMesh*)col;
 				if (colMesh->meshInfo.expired()) continue;
 				RayCastInfo addInfo;
+				// レイとメッシュの衝突判定
 				if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), &addInfo)) continue;
+
+				if (isFaceHit)
+				{
+					// 法線方向がレイの逆方向なら衝突していない判定とする
+					Vector3 rayDir = (r.start - r.end).Normalized();
+					if (Vector3::Dot(addInfo.normal, rayDir) < 0) continue;
+				}
 
 				// ワールド系に戻してから格納
 				addInfo.point = col->worldMatrix * addInfo.point;

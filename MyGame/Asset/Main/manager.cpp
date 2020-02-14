@@ -42,8 +42,16 @@ void CManager::Init()
 	_mkdir(dataFolderName.c_str());
 
 	Singleton<AudioClipManager>::Create();
-	//AudioClip::Init();
 	RendererSystem::Init();
+
+	// エフェクシアーの初期化
+	Singleton<EffekseerManager>::Create();
+	Singleton<EffekseerManager>::Instance()->Initialize(
+		RendererSystem::GetDevice()
+		, RendererSystem::GetDeviceContext()
+		, Singleton<AudioClipManager>::Instance()->GetXAudio2());
+	// エフェクトを読み込み
+	Singleton<EffekseerManager>::Instance()->Load();
 
 	//Setup ImGui
 	IMGUI_CHECKVERSION();
@@ -131,6 +139,9 @@ void CManager::Uninit()
 	/////////////////////////////////////
 	CollisionMeshInfoManager::Release();
 	///////////////////////////////////////
+
+	// エフェクシアー破棄
+	Singleton<EffekseerManager>::Release();
 
 	RendererSystem::Uninit();
 

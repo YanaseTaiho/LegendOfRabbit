@@ -119,7 +119,7 @@ bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std
 							{
 								MeshCastInfo hitInfo;
 								hitInfo.collision = collision;
-								hitInfo.point = (p[0] + p[1] + p[2]) / 3;
+								hitInfo.point = (points.point[0] + points.point[1] + points.point[2]) / 3;
 								hitInfo.normal = face.normal;
 								// マテリアル情報取得
 								auto renderer = hitInfo.collision.lock()->gameObject.lock()->GetComponent<MeshRenderer>();
@@ -141,7 +141,7 @@ bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std
 							{
 								MeshCastInfo hitInfo;
 								hitInfo.collision = collision;
-								hitInfo.point = (p[0] + p[1] + p[2]) / 3;
+								hitInfo.point = (points.point[1] + points.point[2] + points.point[3]) / 3;
 								hitInfo.normal = face.normal;
 
 								// マテリアル情報取得

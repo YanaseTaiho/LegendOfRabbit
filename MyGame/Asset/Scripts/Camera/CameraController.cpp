@@ -4,6 +4,8 @@
 #include "Plugin/CharacterCameraPlugin.h"
 #include "Plugin/RockOnCameraPlugin.h"
 
+#include "DirectX/Common.h"
+
 void CameraController::DrawImGui(int id)
 {
 	ImGui::Text("Camera Transform");
@@ -56,6 +58,11 @@ void CameraController::ChangePlugin(Plugin key)
 	currentPlugin.lock()->OnStart(this);
 }
 
+bool CameraController::IsPlugin(Plugin key)
+{
+	return currentPlugin.lock() == pluginMap[key];
+}
+
 bool CameraController::CollisionCheck()
 {
 	Transform* pTr = playerActor.lock()->transform.lock().get();	// プレイヤーのトランスフォームポインタ
@@ -66,12 +73,20 @@ bool CameraController::CollisionCheck()
 	RayCastInfo castInfo;
 	Vector3 hitPoint;
 	float finalDistance = -1.0f;
+	Vector3 pivotPos = transform.lock()->GetWorldPosition();
+	Vector3 dir = cTr->GetWorldPosition() - pivotPos;
+	dir.Normalize();
+
 	Vector3 playerPos = pTr->GetWorldPosition() + Vector3(0.0f, offsetHeight, 0.0f);
-	Vector3 dir = cTr->GetWorldPosition() - playerPos;
-	float curDist = dir.Length();
-	ray.Set(playerPos, dir.Normalized(), curDist * 2.0f);
-	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
-		&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
+	Vector3 playerDir = playerPos - pivotPos;
+	pivotPos = pivotPos + dir * playerDir.Length() * 0.6f;
+
+	float curDist = (cTr->GetWorldPosition() - pivotPos).Length();
+	ray.Set(pivotPos, dir, curDist * 2.0f);
+
+	//MyDirectX::DebugLine::DrawRay(ray.start, ray.end, Color::red(),2.0f);
+
+	if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject, (int)Layer::Ground, true))
 	{
 		finalDistance = castInfo.distance;
 		hitPoint = castInfo.point;
@@ -79,11 +94,10 @@ bool CameraController::CollisionCheck()
 
 	auto RayCastCheck = [&](const Vector3 & offset)
 	{
-		dir = cTr->GetWorldPosition() - playerPos;
-		ray.Set(playerPos + offset, dir.Normalized(), curDist * 2.0f);
+		//dir = cTr->GetWorldPosition() - pivotPos;
+		ray.Set(pivotPos + offset, dir.Normalized(), curDist * 2.0f);
 
-		if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject)
-			&& castInfo.collision.lock()->GetLayer() == Layer::Ground)
+		if (RayCast::JudgeAllCollision(&ray, &castInfo, pTr->gameObject, (int)Layer::Ground, true))
 		{
 			if (finalDistance < 0.0f || finalDistance > castInfo.distance) {
 				finalDistance = castInfo.distance;

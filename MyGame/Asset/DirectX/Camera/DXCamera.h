@@ -39,10 +39,10 @@ namespace MyDirectX
 		Rect viewport;
 		FrameWork::Matrix4 viewMatrix;
 		FrameWork::Matrix4 projectionMatrix;
-	private:
-		
 		float nearDistance;
 		float farDistance;
+	private:
+		
 	};
 }
 

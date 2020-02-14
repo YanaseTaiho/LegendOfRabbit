@@ -77,20 +77,12 @@ void Transform::SetWorldPosition(const Vector3 & position)
 	// 親がいる場合
 	else
 	{
-		// ワールド座標に直接ポジションを指定
-		//worldMatrix.matrix(0, 3) = position.x;
-		//worldMatrix.matrix(1, 3) = position.y;
-		//worldMatrix.matrix(2, 3) = position.z;
-		//// 設定したワールドマトリクスを親の逆行列を掛けてローカルマトリクスに変換
-		//localMatrix.matrix = parent.lock()->worldMatrix.matrix.inverse() * worldMatrix.matrix;
-		//Vector3 localPosition = localMatrix.position();
-		//Vector3 localScale = localMatrix.scale();
-		//Quaternion localRotation = localMatrix.rotation().Normalized();
-		//this->translation = Translation3f(localPosition.x, localPosition.y, localPosition.z);
-		//this->scaling = Scaling3f(localScale.x, localScale.y, localScale.z);
-		//this->rotate = localRotation;
-
 		Vector3 localPosition = parent.lock()->worldMatrix.Inverse() * position;
+
+		// 不定な値なら計算しない
+		if (std::isnan(localPosition.x) || std::isnan(localPosition.y) || std::isnan(localPosition.z))
+			return;
+
 		this->translation = Translation3f(localPosition.x, localPosition.y, localPosition.z);
 		SetLocalMatrix();
 		SetWorldMatrix();
@@ -142,8 +134,13 @@ void Transform::SetWorldRotation(const Quaternion & rotation)
 	else
 	{
 		// 親の回転行列の逆行列を掛ける
-		Quaternion inverse = parent.lock()->worldMatrix.rotation().Inversed();
-		rotate = inverse * rotation;
+		Quaternion rot = parent.lock()->worldMatrix.rotation().Inversed() * rotation;
+
+		// 不定な値なら計算しない
+		if (std::isnan(rot.x()) || std::isnan(rot.y()) || std::isnan(rot.z()) || std::isnan(rot.w()))
+			return;
+
+		rotate = rot;
 		SetLocalMatrix();
 		SetWorldMatrix();
 	}

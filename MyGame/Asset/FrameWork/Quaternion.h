@@ -42,8 +42,10 @@ namespace FrameWork
 		// オイラー角で設定
 		Quaternion SetEulerAngles(float x, float y, float z);
 		Quaternion SetEulerAngles(Vector3 v);
-		// オイラー角を取得
+		// オイラー角を取得( 度数 )
 		Vector3 GetEulerAngles();
+		// オイラー角を取得( ラジアン角 )
+		Vector3 GetEulerAnglesToRadian();
 
 		// 軸( axis ) 回転角度( angle )
 		Quaternion SetAxisAngle(Vector3 axis, float angle);

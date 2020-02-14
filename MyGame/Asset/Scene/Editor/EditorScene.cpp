@@ -26,6 +26,8 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, Rigidbody);
 	// ライト
 	REGISTER_COMPONENT(componentList, DirectionalLight);
+	// エフェクト
+	REGISTER_COMPONENT(componentList, EffekseerSystem);
 	// コリジョン
 	REGISTER_COMPONENT(componentList, CollisionSphere);
 	REGISTER_COMPONENT(componentList, CollisionMesh);
@@ -485,6 +487,13 @@ void EditorScene::DrawScene()
 			}
 		}
 	}
+
+	//======= エフェクトのレンダリング ======//
+	Rect viewport = editorCamera.lock()->viewport;
+	float viewWidth = (float)(viewport.right - viewport.left);
+	float viewHeight = (float)(viewport.bottom - viewport.top);
+	//Singleton<EffekseerManager>::Instance()->Draw(editorCamera.lock()->viewMatrix, viewWidth / viewHeight, editorCamera.lock()->nearDistance, editorCamera.lock()->farDistance);
+	Singleton<EffekseerManager>::Instance()->Draw(editorCamera.lock()->transform.lock()->GetWorldMatrix(), viewWidth / viewHeight, editorCamera.lock()->nearDistance, editorCamera.lock()->farDistance);
 }
 
 void EditorScene::DrawImGui()

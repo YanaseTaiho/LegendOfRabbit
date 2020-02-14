@@ -456,7 +456,7 @@ void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
 			Vector3 dir = other.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
 			rb.lock()->AddForce(dir.Normalized() * 7.0f);
 		}
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+		
 		GameObject::Destroy(other.lock()->gameObject, 0.5f);
 	}
 	// ’n–Ê‚Í”»’è‚µ‚È‚¢
@@ -467,6 +467,15 @@ void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
 		normal.Normalize();
 		rigidbody.lock()->AddForce(normal * 200.0f);
 	}
+
+	auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
+	if (!effect.expired())
+	{
+		effect.lock()->transform.lock()->SetWorldPosition(hitInfo.point);
+		//effect.lock()->GetComponent<EffekseerSystem>().lock();
+	}
+
+	Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
 }
 
 void PlayerActor::UpdateInput()

@@ -83,6 +83,12 @@ Vector3 Quaternion::GetEulerAngles()
 	return Vector3(v.x(), v.y(), v.z()) * Mathf::RadToDeg();
 }
 
+Vector3 Quaternion::GetEulerAnglesToRadian()
+{
+	Eigen::Vector3f v = quaternion.matrix().eulerAngles(0, 1, 2);	// roll pitch yaw
+	return Vector3(v.x(), v.y(), v.z());
+}
+
 Quaternion Quaternion::SetAxisAngle(Vector3 axis, float angle)
 {
 	Eigen::Vector3f v(axis.x, axis.y, axis.z);

@@ -35,6 +35,8 @@ namespace FrameWork
 		void Play(AudioData data, float volume = 1.0f, bool loop = false);
 		void Stop(AudioData data);
 
+		IXAudio2 * GetXAudio2() { return xAudio; }
+		IXAudio2MasteringVoice * GetXAudio2MasteringVoice() { return masteringVoice; }
 	private:
 		IXAudio2 * xAudio;
 		IXAudio2MasteringVoice * masteringVoice;

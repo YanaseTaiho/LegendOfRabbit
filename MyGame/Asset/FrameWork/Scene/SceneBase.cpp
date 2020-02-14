@@ -2,7 +2,7 @@
 #include "../Common.h"
 
 #include "DirectX/MeshData/LineMesh/DebugLine.h"
-#include "DirectX/Renderer/System/RendererSystem.h"
+#include "DirectX/Common.h"
 
 SceneBase::SceneBase()
 {
@@ -69,6 +69,9 @@ void SceneBase::Update()
 		com.lock()->LateUpdate();
 	}
 
+	//======= エフェクトの更新 ======//
+	Singleton<MyDirectX::EffekseerManager>::Instance()->Update();
+
 	Singleton<GameObjectManager>::Instance()->CleanupDestroyGameObject();
 	Component::CleanupDestoryComponent();
 }
@@ -116,6 +119,8 @@ void SceneBase::Draw()
 
 		if (isDebug)
 		{
+			camera.lock()->Draw();
+
 			for (const auto & com : MonoBehaviour::ComponentList())
 			{
 				if (!com.lock()->IsEnable()) continue;
@@ -134,6 +139,13 @@ void SceneBase::Draw()
 		}
 
 //#endif // DEBUG || _DEBAG
+
+		//======= エフェクトのレンダリング ======//
+		auto dxCamera = std::static_pointer_cast<DXCamera>(camera.lock());
+		Rect viewport = dxCamera->viewport;
+		float viewWidth = (float)(viewport.right - viewport.left);
+		float viewHeight = (float)(viewport.bottom - viewport.top);
+		Singleton<EffekseerManager>::Instance()->Draw(dxCamera->transform.lock()->GetWorldMatrix(), viewWidth / viewHeight, dxCamera->nearDistance, dxCamera->farDistance);
 	}
 
 	//if (isDebug)

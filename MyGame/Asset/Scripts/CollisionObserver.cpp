@@ -7,6 +7,7 @@ void CollisionObserver::DrawImGui(int id)
 	ImGui::Indent();
 	for (auto & c : collisionList)
 	{
+		if (c.expired()) continue;
 		ImGui::Text(c.lock()->gameObject.lock()->name.c_str());
 	}
 	ImGui::Unindent();
@@ -15,6 +16,7 @@ void CollisionObserver::DrawImGui(int id)
 	ImGui::Indent();
 	for (auto & c : collisionTriggerList)
 	{
+		if (c.expired()) continue;
 		ImGui::Text(c.lock()->gameObject.lock()->name.c_str());
 	}
 	ImGui::Unindent();
@@ -32,6 +34,13 @@ void CollisionObserver::LateUpdate()
 	// 現在保持しているコリジョンとフレーム単位のリストを比較
 	for (auto itr = collisionList.begin(), end = collisionList.end(); itr != end;)
 	{
+		// リストにある対象が既に死んでいないかチェック
+		if (itr->expired())
+		{
+			itr = collisionList.erase(itr);
+			continue;
+		}
+
 		bool isHit = false;
 		for (auto addItr = addCollisionList.begin(), addEnd = addCollisionList.end(); addItr != addEnd; ++addItr)
 		{
@@ -55,6 +64,13 @@ void CollisionObserver::LateUpdate()
 	// 現在保持しているコリジョンとフレーム単位のリストを比較
 	for (auto itr = collisionTriggerList.begin(), end = collisionTriggerList.end(); itr != end;)
 	{
+		// リストにある対象が既に死んでいないかチェック
+		if (itr->expired())
+		{
+			itr = collisionTriggerList.erase(itr);
+			continue;
+		}
+
 		bool isHit = false;
 		for (auto addItr = addCollisionTriggerList.begin(), addEnd = addCollisionTriggerList.end(); addItr != addEnd; ++addItr)
 		{
