@@ -469,10 +469,10 @@ void EditorScene::DrawScene()
 		}
 	}
 
+	editorCamera.lock()->Draw();
+
 	if (isDebug)
 	{
-		editorCamera.lock()->Draw();
-
 		for (const auto & com : MonoBehaviour::ComponentList())
 		{
 			if (!com.lock()->IsEnable()) continue;

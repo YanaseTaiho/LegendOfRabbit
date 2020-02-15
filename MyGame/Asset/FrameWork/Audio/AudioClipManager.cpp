@@ -16,7 +16,7 @@ static audio_data LoadData[(int)AudioData::MaxNum] =
 	{ "BGM/hateshinaimichi.wav", 1 },
 	// SE
 	{ "SE/swing1.wav", 5 },
-	{ "SE/step07.wav", 1 },
+	{ "SE/bosu40.wav", 1 },
 	{ "SE/sword_pachin.wav", 4 },
 	{ "SE/landing1.wav", 2 },
 	{ "SE/extend1.wav", 2 },

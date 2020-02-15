@@ -580,7 +580,7 @@ void RabitAnimationController::Initialize()
 				});
 				walk->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 				{
-					transition->SetOption(0.3f, false);
+					transition->SetOption(0.1f, false);
 					transition->AddConditionFloat(walkValue, Greater, 0.5f);
 				});
 			}

@@ -4,6 +4,15 @@
 
 void PlayerAttack::OnStart(PlayerActor * actor)
 {
+	if (actor->animator.lock()->IsCurrentAnimation("Attack_Inside_Filter")
+		|| actor->animator.lock()->IsCurrentAnimation("Attack_Outside_Filter")
+		|| actor->animator.lock()->IsCurrentAnimation("Attack_Upper_Filter")
+		|| actor->animator.lock()->IsCurrentAnimation("Attack_Thrust_Filter"))
+	{
+		actor->ChangeState(PlayerActor::State::Idle);
+		return;
+	}
+
 	frameCnt = 0;
 	combo = 0;
 	actor->rigidbody.lock()->velocity.x = 0.0f;

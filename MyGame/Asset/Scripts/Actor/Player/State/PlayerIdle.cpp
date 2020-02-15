@@ -25,13 +25,6 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
-	if (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
-	{
-		if (!actor->isWeaponHold) actor->WeaponHold();
-		else actor->WeaponNotHold();
-		return;
-	}
-
 	if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
 	{
 		if (actor->isWeaponHold)
@@ -63,7 +56,7 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 			actor->transform.lock()->SetWorldRotation(rot);
 		}
 
-		/*if (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
+		if (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
 		{
 			if (actor->isWeaponHold)
 			{
@@ -77,7 +70,16 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 				});
 			}
 			return;
-		}*/
+		}
+	}
+	else
+	{
+		if (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
+		{
+			if (!actor->isWeaponHold) actor->WeaponHold();
+			else actor->WeaponNotHold();
+			return;
+		}
 	}
 	
 

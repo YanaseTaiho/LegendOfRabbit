@@ -202,7 +202,7 @@ void PlayerMove::CheckDirection(PlayerActor * actor)
 	float attackDir = Vector3::Dot(actor->transform.lock()->forward(), actor->moveDir);
 	bool isRight = Vector3::Dot(actor->transform.lock()->right(), actor->moveDir) >= 0;
 
-	float boundar = 0.95f;
+	float boundar = 0.90f;
 
 	if (attackDir >= boundar)
 	{

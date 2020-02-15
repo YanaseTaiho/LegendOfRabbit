@@ -8,7 +8,8 @@ static auto constexpr EffectPath = L"Asset/Art/Effect/";
 
 static const wchar_t * effectPaths[(int)EffekseerType::MaxNum] =
 {
-	L"hit01.efk"
+	L"hit01.efk",
+	L"atmosphere.efk"
 };
 
 static std::list<std::weak_ptr<EffekseerSystem>> effekseerList;
