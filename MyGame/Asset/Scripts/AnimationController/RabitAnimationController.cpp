@@ -33,6 +33,11 @@ void RabitAnimationController::Initialize()
 	auto step_Trigger = AddParameterTrigger("Step_Trigger");
 	auto step_Trigger_Land = AddParameterTrigger("Step_Trigger_Land");
 
+	// ダメージ系
+	auto damage_Trigger = AddParameterTrigger("Damage_Trigger");
+	auto damage_Land_Trigger = AddParameterTrigger("Damage_Land_Trigger");	// ダメージ時の着地トリガー
+	auto damage_Direction = AddParameterInt("Damage_Direction");	// 吹き飛ぶダメージを受けた方向（０前方 １後方）
+
 	AddFilter("Normal", [=](std::shared_ptr<AnimationFilter> & filter)
 	{
 		// ステート追加
@@ -105,6 +110,44 @@ void RabitAnimationController::Initialize()
 		auto attack_Thrust_2 = Attack_Thrust_Filter->AddState("Attack_Thrust_2");
 		auto attack_Thrust_3 = Attack_Thrust_Filter->AddState("Attack_Thrust_3");
 
+		// ダメージ
+		auto damage_Forward = filter->AddState("Damage_Forward");
+		auto damage_Forward_Land = filter->AddState("Damage_Forward_Land");
+		auto damage_Back = filter->AddState("Damage_Back");
+		auto damage_Back_Land = filter->AddState("Damage_Back_Land");
+
+		// ダメージは全ての状態から遷移可能
+		filter->AddTransition(damage_Forward, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.0f, false);
+			transition->AddConditionTrigger(damage_Trigger);
+			transition->AddConditionInt(damage_Direction, 0);	// 0の時前方
+		});
+		filter->AddTransition(damage_Back, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.0f, false);
+			transition->AddConditionTrigger(damage_Trigger);
+			transition->AddConditionInt(damage_Direction, 1);	// 1の時前方
+		});
+		damage_Forward->AddTransition(damage_Forward_Land, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.0f, false);
+			transition->AddConditionTrigger(damage_Land_Trigger);
+		});
+		damage_Back->AddTransition(damage_Back_Land, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.0f, false);
+			transition->AddConditionTrigger(damage_Land_Trigger);
+		});
+		// ダメージ着地
+		damage_Forward_Land->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.0f, true);
+		});
+		damage_Back_Land->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.0f, true);
+		});
 
 		// 攻撃モーションへ
 		auto AttackTransition = [=](std::shared_ptr<AnimationFilter> filter, std::shared_ptr<AnimationState> state, PlayerActor::AttackType type, int combo)
@@ -609,18 +652,18 @@ void RabitAnimationController::Initialize()
 
 			roll->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
-				transition->SetOption(0.05f, true);
+				transition->SetOption(0.1f, true, 0.9f);
 				transition->AddConditionFloat(walkValue, Less, 0.1f);
 			});
 			roll->AddTransition(walk, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
-				transition->SetOption(0.1f, true);
-				transition->AddConditionFloat(walkValue, Less, 0.5f);
+				transition->SetOption(0.1f, true, 0.9f);
+				transition->AddConditionFloat(walkValue, Less, 0.3f);
 			});
 			roll->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
-				transition->SetOption(0.1f, true);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
+				transition->SetOption(0.1f, true, 0.9f);
+				transition->AddConditionFloat(walkValue, Greater, 0.3f);
 			});
 			roll->AddTransition(jump, [=](std::shared_ptr<AnimationTransition> & transition)
 			{

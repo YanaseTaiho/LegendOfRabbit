@@ -193,6 +193,31 @@ void PlayerActor::OnUpdate()
 		}
 	}
 
+	// 前方ダメージ
+	if (Keyboad::IsTrigger('Z') && Keyboad::IsPress(VK_UP))
+	{
+		animator.lock()->SetTrigger("Damage_Trigger");
+		animator.lock()->SetInt("Damage_Direction", 0);
+
+		rigidbody.lock()->AddForce((Vector3::up() * 100.0f + transform.lock()->forward() * 500.0f) * Time::DeltaTime());
+	}
+	// 後方ダメージ
+	if (Keyboad::IsTrigger('Z') && Keyboad::IsPress(VK_DOWN))
+	{
+		animator.lock()->SetTrigger("Damage_Trigger");
+		animator.lock()->SetInt("Damage_Direction", 1);
+
+		rigidbody.lock()->AddForce((Vector3::up() * 100.0f - transform.lock()->forward() * 500.0f) * Time::DeltaTime());
+	}
+	if (animator.lock()->IsCurrentAnimation("Damage_Forward")
+		|| animator.lock()->IsCurrentAnimation("Damage_Back"))
+	{
+		if (rigidbody.lock()->velocity.y <= 0.0f && onGround)
+		{
+			animator.lock()->SetTrigger("Damage_Land_Trigger");
+		}
+	}
+
 	// ターゲット画像の設定
 	if (!targetImageController.expired())
 	{

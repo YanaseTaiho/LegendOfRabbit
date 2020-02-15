@@ -103,7 +103,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 
 			{
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.50f;
-				force += actor->moveDir * 200.0f * Time::DeltaTime();
+				force += actor->moveDir * 70.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);
@@ -113,7 +113,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			case PlayerActor::Direction::Back:
 			{
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.75f;
-				force += actor->moveDir * 70.0f * Time::DeltaTime();
+				force += actor->moveDir * 50.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);

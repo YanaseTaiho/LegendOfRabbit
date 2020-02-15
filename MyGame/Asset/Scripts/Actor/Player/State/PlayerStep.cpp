@@ -9,7 +9,7 @@ void PlayerStep::OnStart(PlayerActor * actor)
 
 void PlayerStep::OnUpdate(PlayerActor * actor)
 {
-	actor->horizontalRegistance = 1.02f;
+	actor->horizontalRegistance = 1.01f;
 
 
 	// ターゲットがいればそっちを向く
@@ -19,7 +19,7 @@ void PlayerStep::OnUpdate(PlayerActor * actor)
 		dir.y = 0.0f;
 		Quaternion look = Quaternion::LookRotation(dir);
 		Quaternion rot = actor->transform.lock()->GetWorldRotation();
-		rot = rot.Slerp(look, Time::DeltaTime() * 10.0f);
+		rot = rot.Slerp(look, Time::DeltaTime() * 20.0f);
 		actor->transform.lock()->SetWorldRotation(rot);
 	}
 

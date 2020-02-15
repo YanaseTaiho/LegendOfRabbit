@@ -5,19 +5,37 @@ void PlayerRoll::OnStart(PlayerActor * actor)
 {
 	actor->animator.lock()->SetTrigger("RollTrigger");
 
-	actor->animator.lock()->SetAnimationCallBack("Roll", 1, [=]()
+	actor->animator.lock()->SetAnimationCallBack("Roll", 3, [=]()
 	{
-		actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (180.0f * Time::DeltaTime()));
+		actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (50.0f * Time::DeltaTime()));
 	});
+
+	Quaternion look = Quaternion::LookRotation(actor->moveDir);
+	actor->transform.lock()->SetWorldRotation(look);
 }
 
 void PlayerRoll::OnUpdate(PlayerActor * actor)
 {
-	actor->horizontalRegistance = 1.0f;
+	actor->horizontalRegistance = 0.9f;
 
-	//bool isRool = actor->animator.lock()->IsCurrentAnimation("Roll");
+	float parcent = actor->animator.lock()->GetCurrentPercent();
+	bool isRoll = actor->animator.lock()->IsCurrentAnimation("Roll");
 
-	if(actor->animator.lock()->GetCurrentPercent() < 0.8f)
+	if (!isRoll)
+	{
+		if (actor->moveAmount > 0.1f)
+		{
+			actor->ChangeState(PlayerActor::State::Move);
+			return;
+		}
+		else
+		{
+			actor->ChangeState(PlayerActor::State::Idle);
+			return;
+		}
+	}
+
+	if(parcent < 0.7f)
 	{
 		Ray downRay;
 		RayCastInfo info;
@@ -33,10 +51,12 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 			return;
 		}
 	}
-	else
+	else if (parcent < 0.9f)
 	{
-		actor->horizontalRegistance = 0.8f;
-
+		actor->horizontalRegistance = 0.6f;
+	}
+	else 
+	{
 		if (actor->moveAmount > 0.1f)
 		{
 			actor->ChangeState(PlayerActor::State::Move);
