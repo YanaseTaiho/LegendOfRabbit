@@ -3,6 +3,7 @@
 
 #include "../BaseActor.h"
 #include "../FSMManager.h"
+#include "../../FlashColor.h"
 
 class RotationFixedController;
 class CameraController;
@@ -27,6 +28,7 @@ private:
 
 		if (version >= 1) archive(locusController);
 		if (version >= 2) archive(targetImageController);
+		if (version >= 3) archive(headCollision);
 	}
 
 	template<class Archive>
@@ -41,6 +43,7 @@ private:
 
 		if (version >= 1) archive(locusController);
 		if (version >= 2) archive(targetImageController);
+		if (version >= 3) archive(headCollision);
 	}
 
 	void DrawImGui(int id) override;
@@ -60,7 +63,8 @@ public:
 		CliffJump,
 		AttackJump,
 		Attack,
-		Step
+		Step,
+		Damage
 	};
 
 	enum class AttackType : int
@@ -81,6 +85,7 @@ public:
 	};
 
 	std::weak_ptr<CameraController> cameraController;
+	std::weak_ptr<Collision> headCollision;
 
 	std::weak_ptr<RotationFixedController> sword_HandContorller;	// 剣装備時
 	std::weak_ptr<RotationFixedController> shield_HandContorller;	// 盾装備時
@@ -96,6 +101,7 @@ public:
 	std::weak_ptr<Animator> animator;
 	std::weak_ptr<Rigidbody> rigidbody;
 	std::list<std::weak_ptr<BaseActor>> targetTriggerList;	// プレイヤーのロックオン対象のリスト
+	FlashColor damageFlashColor;	// ダメージを受けた時の点滅用（ 無敵時間 ）
 
 	State currentState;
 	RayCastInfo castGroundInfo;
@@ -153,13 +159,13 @@ private:
 	float horizontal = 0.0f;
 	float vertical = 0.0f;
 	
-	void AttackSwordHit(MeshCastInfo hitInfo);
+	void AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints, float locusLengh);
 	void UpdateInput();
 	void CheckGround();
 	void CheckCliff();
 };
 
-CEREAL_CLASS_VERSION(PlayerActor, 2)
+CEREAL_CLASS_VERSION(PlayerActor, 3)
 CEREAL_REGISTER_TYPE(PlayerActor)
 
 #endif // !_PLAYERACTOR_H_

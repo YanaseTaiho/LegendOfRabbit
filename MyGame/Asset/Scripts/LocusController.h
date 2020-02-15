@@ -45,14 +45,14 @@ public:
 	int remainCnt = 0;
 	bool isStart = false;
 
-	void SetCollision(std::weak_ptr<GameObject> myObject, std::function<void(MeshCastInfo)> hitFunc);
+	void SetCollision(std::weak_ptr<Rigidbody> myRigidbody, std::function<void(MeshCastInfo&, MeshPoints&, float)> hitFunc);
 
 	void LocusStart();
 
 private:
 
-	std::weak_ptr<GameObject> myObject;
-	std::function<void(MeshCastInfo hitInfo)> CollisionFunc = nullptr;	// これをセットすると当たり判定を行う
+	std::weak_ptr<Rigidbody> myRigidbody;
+	std::function<void(MeshCastInfo & hitInfo, MeshPoints& locusPoints, float locusLength)> CollisionFunc = nullptr;	// これをセットすると当たり判定を行う
 
 	//void Start() override;
 	//void Update() override;

@@ -26,6 +26,20 @@ public:
 		return fsmMap[key];
 	}
 
+	template <typename T>
+	std::weak_ptr<T> GetState()
+	{
+		for (auto map : fsmMap)
+		{
+			if (typeid(*map.second) == typeid(T))
+			{
+				return std::dynamic_pointer_cast<T>(map.second);
+			}
+		}
+
+		return std::weak_ptr<T>();
+	}
+
 	void ChangeState(State * actor, int key)
 	{
 		if (!actor->state.expired())

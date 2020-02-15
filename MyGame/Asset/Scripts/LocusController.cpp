@@ -33,9 +33,9 @@ LocusController::~LocusController()
 {
 }
 
-void LocusController::SetCollision(std::weak_ptr<GameObject> myObject, std::function<void(MeshCastInfo)> hitFunc)
+void LocusController::SetCollision(std::weak_ptr<Rigidbody> myRigidbody, std::function<void(MeshCastInfo&, MeshPoints&, float)> hitFunc)
 {
-	this->myObject = myObject;
+	this->myRigidbody = myRigidbody;
 	this->CollisionFunc = hitFunc;
 }
 
@@ -78,7 +78,14 @@ void LocusController::LateUpdate()
 			points[0].point[2] = framePos1[endFrameCnt];
 			points[0].point[3] = framePos2[endFrameCnt];
 
-			MeshCast::JudgeAllCollision(points, CollisionFunc, myObject);
+			float locusLength = (points[0].point[0] - points[0].point[1]).Length();
+
+			auto HitFunc = [this, points, locusLength](MeshCastInfo& info)
+			{
+				CollisionFunc(info, (MeshPoints &)points[0], locusLength);
+			};
+
+			MeshCast::JudgeAllCollision(points, HitFunc, myRigidbody.lock()->collisions);
 		}
 	}
 

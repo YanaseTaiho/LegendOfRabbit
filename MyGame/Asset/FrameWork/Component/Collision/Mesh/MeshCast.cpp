@@ -7,7 +7,7 @@
 using namespace FrameWork;
 using namespace MyDirectX;
 
-bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std::function<void(MeshCastInfo hitInfo)> callBack, std::weak_ptr<GameObject> myObject)
+bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std::function<void(MeshCastInfo & hitInfo)> callBack, const std::list<std::weak_ptr<Collision>> & myCollisions)
 {
 	bool isHit = false;
 
@@ -38,8 +38,17 @@ bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std
 
 			if (!col->IsEnable()) continue;
 
-			if (!myObject.expired() && myObject.lock() == col->gameObject.lock())
-				continue;
+			// 自身のオブジェクトか確認する
+			bool myHit = false;
+			for (auto my : myCollisions)
+			{
+				// 自身のコリジョンだった場合は判定をしない
+				if (my.lock() == collision.lock()) {
+					myHit = true;
+					break;
+				}
+			}
+			if (myHit) continue;
 
 
 			// 球の判定をする

@@ -22,6 +22,8 @@ namespace FrameWork
 	{
 	public:
 		static bool JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<GameObject> myObject = std::weak_ptr<GameObject>(), int layerMask = -1, bool isFaceHit = false);
+		static bool JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, const std::list<std::weak_ptr<Collision>> & myCollisions, int layerMask = -1, bool isFaceHit = false);
+		static bool JudgeCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<Collision> other);
 		static bool JudgeMesh(Ray * ray, CollisionMeshInfo * collisionMesh, RayCastInfo * castInfo);
 		static bool JudgeSphere(const Ray & ray, const Vector3 & pos, const float radius, RayCastInfo * castInfo);
 		static bool JudgeInfinityCilinder(const Ray & ray, const Vector3 & start, const Vector3 & end, const float radius, RayCastInfo * castInfo);

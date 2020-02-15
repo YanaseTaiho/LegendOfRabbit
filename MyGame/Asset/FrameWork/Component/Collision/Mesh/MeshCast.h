@@ -34,7 +34,7 @@ namespace FrameWork
 	{
 	public:
 
-		static bool JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std::function<void(MeshCastInfo hitInfo)> callBack = nullptr, std::weak_ptr<GameObject> myObject = std::weak_ptr<GameObject>());
+		static bool JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std::function<void(MeshCastInfo& hitInfo)> callBack = nullptr, const std::list<std::weak_ptr<Collision>> & myCollisions = std::list<std::weak_ptr<Collision>>());
 
 		static bool Sphere_VS_Mesh(const CollisionSphere * a, const Vector3 point[3]);
 		

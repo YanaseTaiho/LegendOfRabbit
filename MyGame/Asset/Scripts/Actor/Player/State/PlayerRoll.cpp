@@ -5,13 +5,19 @@ void PlayerRoll::OnStart(PlayerActor * actor)
 {
 	actor->animator.lock()->SetTrigger("RollTrigger");
 
-	actor->animator.lock()->SetAnimationCallBack("Roll", 3, [=]()
+	actor->animator.lock()->SetAnimationCallBack("Roll", 1, [=]()
 	{
 		actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (50.0f * Time::DeltaTime()));
 	});
 
 	Quaternion look = Quaternion::LookRotation(actor->moveDir);
 	actor->transform.lock()->SetWorldRotation(look);
+
+	// 頭のコリジョンをこの時だけトリガーに変更
+	if (!actor->headCollision.expired())
+	{
+		actor->headCollision.lock()->isTrigger = true;
+	}
 }
 
 void PlayerRoll::OnUpdate(PlayerActor * actor)
@@ -45,7 +51,7 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 		downRay.Set(pos + Vector3(0.0f, actor->rayStart * 0.2f, 0.0f), forward, actor->cliffRayLength_Front * 1.0f);
 		DebugLine::DrawRay(downRay.start, downRay.end, Color::red());
 
-		if (RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) && Vector3::Dot(-info.normal, forward) > 0.8f)
+		if (RayCast::JudgeAllCollision(&downRay, &info, actor->rigidbody.lock()->collisions) && Vector3::Dot(-info.normal, forward) > 0.8f)
 		{
 			actor->ChangeState(PlayerActor::State::RollStop);
 			return;
@@ -98,4 +104,13 @@ void PlayerRoll::OnUpdate(PlayerActor * actor)
 	force += forward * (actor->moveAmount * actor->moveForce * moveDot * Time::DeltaTime());
 	Rigidbody *rb = actor->rigidbody.lock().get();
 	rb->AddForce(force);
+}
+
+void PlayerRoll::OnDestroy(PlayerActor * actor)
+{
+	// 頭のコリジョンを戻す
+	if (!actor->headCollision.expired())
+	{
+		actor->headCollision.lock()->isTrigger = false;
+	}
 }

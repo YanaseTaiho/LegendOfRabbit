@@ -31,17 +31,6 @@ namespace FrameWork
 		template<class Archive>
 		void save(Archive & archive) const
 		{
-			// ワールド姿勢を保存
-			/*Matrix4 w = (parent.expired()) ? localMatrix : parent.lock()->worldMatrix.Inverse() * localMatrix;
-			Vector3 p = w.position();
-			Vector3 s = w.scale();
-			Quaternion rot = w.rotation();
-		 	Translation3f trans = Translation3f(p.x, p.y, p.z);
-			Scaling3f scal = Scaling3f(s.x, s.y, s.z);
-
-			archive(cereal::make_nvp("Component", cereal::base_class<Component>(this)),
-				cereal::make_nvp("translation", trans), cereal::make_nvp("scaling", scal), cereal::make_nvp("rotate", rot),
-				CEREAL_NVP(parent), CEREAL_NVP(childs));*/
 			archive(cereal::make_nvp("Component", cereal::base_class<Component>(this)),
 				CEREAL_NVP(translation), CEREAL_NVP(scaling), CEREAL_NVP(rotate),
 				CEREAL_NVP(parent), CEREAL_NVP(childs));
@@ -107,6 +96,8 @@ namespace FrameWork
 		std::weak_ptr<Transform> GetChild(int num); // 子のナンバーに一致したオブジェクトを取得
 		std::weak_ptr<Transform> GetChild(std::string name); // 名前が一致した子を取得
 		std::list<std::weak_ptr<Transform>> & GetChilds() { return childs; };
+
+		bool IsChild(std::weak_ptr<Transform> other);	// 引数のオブジェクトが子に存在するかを確かめる
 
 		void ReleaseParent();	// 親との関係を相互に断ち切る
 		void ReleaseChild(int num); // num番目の子との関係を相互に断ち切る

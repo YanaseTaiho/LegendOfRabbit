@@ -2,6 +2,7 @@
 #include "../Collision.h"
 #include "../Mesh/CollisionMesh.h"
 #include "../Sphere/CollisionSphere.h"
+#include "../../../GameObject/GameObject.h"
 
 using namespace FrameWork;
 
@@ -28,6 +29,8 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 			{
 				// 自身のコリジョンだった場合は判定をしない
 				if (col->gameObject.lock() == myObject.lock()) continue;
+				//// 自身の子のコリジョンでも無視する
+				//if (myObject.lock()->transform.lock()->IsChild(col->transform)) continue;
 			}
 
 			// 球の判定をする
@@ -114,6 +117,174 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 	}
 
 	return hit;
+}
+
+bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, const std::list<std::weak_ptr<Collision>> & myCollisions, int layerMask, bool isFaceHit)
+{
+	bool hit = false;
+	Vector3 rayCenter = Vector3::Lerp(ray->start, ray->end, 0.5f);
+	float rayRadiusSq = (ray->end - ray->start).LengthSq() * 0.5f;
+
+	for (int i = 0; i < (int)Layer::MAX; i++)
+	{
+		// レイヤーマスクから判定するか確認
+		if (layerMask >= 0 && (layerMask & (1 << i))) continue;
+
+		for (auto & collision : Collision::CollisionList(i))
+		{
+			Collision * col = collision.lock().get();
+
+			if (!col->IsEnable()) continue;
+			if (col->isTrigger) continue;	// トリガーがオンの場合は無視
+
+			// 自身のオブジェクトか確認する
+			bool myHit = false;
+			for (auto my : myCollisions)
+			{
+				// 自身のコリジョンだった場合は判定をしない
+				if (my.lock() == collision.lock()) {
+					myHit = true;
+					break;
+				}
+			}
+			if(myHit) continue;
+
+			// 球の判定をする
+			if (col->GetType() == typeid(CollisionSphere))
+			{
+				RayCastInfo addInfo;
+				if (JudgeSphere(*ray, col->worldMatrix.position(), col->scaleRadius, &addInfo))
+				{
+					if (!hit)
+					{
+						addInfo.collision = collision;
+						*castInfo = addInfo;
+						hit = true;
+					}
+					else if (castInfo->distance > addInfo.distance)
+					{
+						addInfo.collision = collision;
+						*castInfo = addInfo;
+					}
+				}
+				continue;
+			}
+			else
+			{
+				float rayDistSq = (rayCenter - col->worldMatrix.position()).LengthSq();
+				float radiusSq = col->scaleRadius * col->scaleRadius + rayRadiusSq;
+				if (rayDistSq > radiusSq)
+					continue;
+			}
+
+			// 相手がメッシュコリジョンの場合
+			if (col->GetType() == typeid(CollisionMesh))
+			{
+				// 判定をする相手の逆行列を掛ける
+				Ray r = *ray;
+				Matrix4 invTargetMat = col->worldMatrix.Inverse();
+				r.start = invTargetMat * r.start;
+				r.end = invTargetMat * r.end;
+
+				CollisionMesh * colMesh = (CollisionMesh*)col;
+				if (colMesh->meshInfo.expired()) continue;
+				RayCastInfo addInfo;
+				// レイとメッシュの衝突判定
+				if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), &addInfo)) continue;
+
+				if (isFaceHit)
+				{
+					// 法線方向がレイの逆方向なら衝突していない判定とする
+					Vector3 rayDir = (r.start - r.end).Normalized();
+					if (Vector3::Dot(addInfo.normal, rayDir) < 0) continue;
+				}
+
+				// ワールド系に戻してから格納
+				addInfo.point = col->worldMatrix * addInfo.point;
+				addInfo.distance = (addInfo.point - ray->start).Length();
+
+				if (!hit)
+				{
+					addInfo.collision = collision;
+					*castInfo = addInfo;
+					hit = true;
+
+					// 法線はポジションを 0 の位置にしてから計算
+					Matrix4 matrix = col->worldMatrix;
+					matrix.matrix(0, 3) = 0.0f; matrix.matrix(1, 3) = 0.0f; matrix.matrix(2, 3) = 0.0f;
+					castInfo->normal = matrix * castInfo->normal;
+					castInfo->normal.Normalize();
+				}
+				else if (castInfo->distance > addInfo.distance)
+				{
+					addInfo.collision = collision;
+					*castInfo = addInfo;
+
+					// 法線はポジションを 0 の位置にしてから計算
+					Matrix4 matrix = col->worldMatrix;
+					matrix.matrix(0, 3) = 0.0f; matrix.matrix(1, 3) = 0.0f; matrix.matrix(2, 3) = 0.0f;
+					castInfo->normal = matrix * castInfo->normal;
+					castInfo->normal.Normalize();
+				}
+
+				continue;
+			}
+		}
+	}
+
+	return hit;
+}
+
+bool RayCast::JudgeCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<Collision> other)
+{
+	auto col = other.lock().get();
+
+	// 球の判定をする
+	if (col->GetType() == typeid(CollisionSphere))
+	{
+		if (JudgeSphere(*ray, col->worldMatrix.position(), col->scaleRadius, castInfo))
+		{
+			castInfo->collision = other;
+			return true;
+		}
+	}
+	// 相手がメッシュコリジョンの場合
+	else if (col->GetType() == typeid(CollisionMesh))
+	{
+		// 判定をする相手の逆行列を掛ける
+		Ray r = *ray;
+		Matrix4 invTargetMat = col->worldMatrix.Inverse();
+		r.start = invTargetMat * r.start;
+		r.end = invTargetMat * r.end;
+
+		CollisionMesh * colMesh = (CollisionMesh*)col;
+		if (colMesh->meshInfo.expired()) return false;
+		// レイとメッシュの衝突判定
+		if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), castInfo)) return false;
+
+		//if (isFaceHit)
+		//{
+		//	// 法線方向がレイの逆方向なら衝突していない判定とする
+		//	Vector3 rayDir = (r.start - r.end).Normalized();
+		//	if (Vector3::Dot(castInfo->normal, rayDir) < 0) return false;
+		//}
+
+		// ワールド系に戻してから格納
+		castInfo->point = col->worldMatrix * castInfo->point;
+		castInfo->distance = (castInfo->point - ray->start).Length();
+
+		castInfo->collision = other;
+
+		// 法線はポジションを 0 の位置にしてから計算
+		Matrix4 matrix = col->worldMatrix;
+		matrix.matrix(0, 3) = 0.0f; matrix.matrix(1, 3) = 0.0f; matrix.matrix(2, 3) = 0.0f;
+		castInfo->normal = matrix * castInfo->normal;
+		castInfo->normal.Normalize();
+
+		return true;
+	}
+
+	return false;
 }
 
 bool RayCast::JudgeMesh(Ray * ray, CollisionMeshInfo * collisionMesh, RayCastInfo * castInfo)

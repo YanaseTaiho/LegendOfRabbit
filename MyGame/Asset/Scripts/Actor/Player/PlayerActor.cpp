@@ -9,6 +9,7 @@
 #include "State/PlayerAttackJump.h"
 #include "State/PlayerAttack.h"
 #include "State/PlayerStep.h"
+#include "State/PlayerDamage.h"
 
 #include "../../Camera/CameraController.h"
 #include "../../RotationFixedController.h"
@@ -24,6 +25,10 @@ void PlayerActor::DrawImGui(int id)
 	std::string strId = "##PlayerActor" + std::to_string(id);
 	ImGui::Text("Camera Controller");
 	MyImGui::DropTargetComponent(cameraController, strId);
+
+	ImGui::Text("Head Collision");
+	MyImGui::DropTargetComponent(headCollision, strId);
+
 	ImGui::Text("Sorwd Handler");
 	MyImGui::DropTargetComponent(sword_HandContorller, strId);
 	ImGui::Text("Shield Handler");
@@ -84,16 +89,23 @@ void PlayerActor::OnStart()
 	fsmManager->AddState((int)State::AttackJump, new PlayerAttackJump());
 	fsmManager->AddState((int)State::Attack, new PlayerAttack());
 	fsmManager->AddState((int)State::Step, new PlayerStep());
+	fsmManager->AddState((int)State::Damage, new PlayerDamage());
 
 	animator = this->gameObject.lock()->GetComponent<Animator>();
 	rigidbody = this->gameObject.lock()->GetComponent<Rigidbody>();
+
+	damageFlashColor.SetRenderer(this->gameObject.lock()->GetComponent<Renderer>());
 
 	ChangeState(State::Idle);
 
 	// 剣の当たり判定の設定
 	if (!this->locusController.expired())
 	{
-		this->locusController.lock()->SetCollision(this->gameObject, [=](MeshCastInfo hitInfo) { AttackSwordHit(hitInfo); });
+		this->locusController.lock()->SetCollision(this->rigidbody, 
+			[=](MeshCastInfo & hitInfo, MeshPoints& locusPoints, float locusLen)
+		{
+			AttackSwordHit(hitInfo, locusPoints, locusLen);
+		});
 	}
 
 	// ロックオン対象についての処理
@@ -193,31 +205,6 @@ void PlayerActor::OnUpdate()
 		}
 	}
 
-	// 前方ダメージ
-	if (Keyboad::IsTrigger('Z') && Keyboad::IsPress(VK_UP))
-	{
-		animator.lock()->SetTrigger("Damage_Trigger");
-		animator.lock()->SetInt("Damage_Direction", 0);
-
-		rigidbody.lock()->AddForce((Vector3::up() * 100.0f + transform.lock()->forward() * 500.0f) * Time::DeltaTime());
-	}
-	// 後方ダメージ
-	if (Keyboad::IsTrigger('Z') && Keyboad::IsPress(VK_DOWN))
-	{
-		animator.lock()->SetTrigger("Damage_Trigger");
-		animator.lock()->SetInt("Damage_Direction", 1);
-
-		rigidbody.lock()->AddForce((Vector3::up() * 100.0f - transform.lock()->forward() * 500.0f) * Time::DeltaTime());
-	}
-	if (animator.lock()->IsCurrentAnimation("Damage_Forward")
-		|| animator.lock()->IsCurrentAnimation("Damage_Back"))
-	{
-		if (rigidbody.lock()->velocity.y <= 0.0f && onGround)
-		{
-			animator.lock()->SetTrigger("Damage_Land_Trigger");
-		}
-	}
-
 	// ターゲット画像の設定
 	if (!targetImageController.expired())
 	{
@@ -309,6 +296,8 @@ void PlayerActor::OnUpdate()
 	rigidbody.lock()->velocity = Vector3(force.x, rigidbody.lock()->velocity.y, force.y);
 
 	forceAmount = forceLen / forceMax;
+
+	damageFlashColor.OnUpdate();
 }
 
 void PlayerActor::OnLateUpdate()
@@ -323,6 +312,55 @@ void PlayerActor::Draw()
 
 void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
 {
+	// ダメージ中と無敵時間以外
+	if (currentState != State::Damage && !damageFlashColor.IsFlash())
+	{
+		auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
+		if (actor.expired()) return;
+
+		
+		RayCastInfo info;
+		Ray ray(mine.lock()->worldMatrix.position(), other.lock()->worldMatrix.position());
+		Vector3 toDir = ray.end - ray.start;
+		// レイを飛ばしてどこに当たったのかを確かめる
+		if (RayCast::JudgeCollision(&ray, &info, other))
+		{
+			auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
+			if (!effect.expired())
+			{
+				effect.lock()->transform.lock()->SetWorldPosition(info.point);
+				//effect.lock()->GetComponent<EffekseerSystem>().lock();
+			}
+
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+
+			// 後方ダメージ（ 前からの衝突 ）
+			if (Vector3::Dot(transform.lock()->forward(), toDir.Normalize()) > 0)
+			{
+				// ガード時
+				if (!shieldRock_HandContorller.expired()
+					&& shieldRock_HandContorller.lock()->IsWeightDone())
+				{
+					auto otherRigid = actor.lock()->gameObject.lock()->GetComponent<Rigidbody>();
+					if (!otherRigid.expired())
+					{
+						otherRigid.lock()->AddForce(toDir * (otherRigid.lock()->velocity.Length() + 1.0f) * 300.0f * Time::DeltaTime());
+					}
+				}
+				else
+				{
+					ChangeState(State::Damage);
+					fsmManager->GetState<PlayerDamage>().lock()->SetDamage(this, PlayerDamage::DamageDirection::Back);
+				}
+			}
+			// 前方ダメージ
+			else
+			{
+				ChangeState(State::Damage);
+				fsmManager->GetState<PlayerDamage>().lock()->SetDamage(this, PlayerDamage::DamageDirection::Forward);
+			}
+		}
+	}
 }
 
 void PlayerActor::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
@@ -468,7 +506,7 @@ void PlayerActor::SetNextTarget(bool isRight)
 	}
 }
 
-void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
+void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints, float locusLengh)
 {
 	if (hitInfo.collision.lock()->isTrigger) return;
 
@@ -482,6 +520,16 @@ void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
 			rb.lock()->AddForce(dir.Normalized() * 7.0f);
 		}
 		
+		RayCastInfo info;
+		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
+		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
+		Ray ray(start, dir, locusLengh);
+		// レイを飛ばしてどこに当たったのかを確かめる
+		if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
+		{
+			hitInfo.point = info.point;
+		}
+
 		auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
 		if (!effect.expired())
 		{
@@ -496,20 +544,29 @@ void PlayerActor::AttackSwordHit(MeshCastInfo hitInfo)
 	// 地面は判定しない
 	else if (Vector3::Dot(Vector3::up(), hitInfo.normal) < 0.4f)
 	{
-		Vector3 normal = hitInfo.normal;
-		normal.y = 0.0f;
-		normal.Normalize();
-		rigidbody.lock()->AddForce(normal * 1000.0f);
-
-		auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(
-			Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
-		if (!effect.expired())
+		RayCastInfo info;
+		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
+		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
+		Ray ray(start, dir, locusLengh);
+		// レイを飛ばしてどこに当たったのかを確かめる
+		if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
 		{
-			effect.lock()->transform.lock()->SetWorldPosition(hitInfo.point);
-			//effect.lock()->GetComponent<EffekseerSystem>().lock();
-		}
+			Vector3 normal = info.normal;
+			normal.y = 0.0f;
+			normal.Normalize();
+			rigidbody.lock()->AddForce(normal * 1000.0f);
 
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+			// エフェクト生成
+			auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(
+				Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
+			if (!effect.expired())
+			{
+				effect.lock()->transform.lock()->SetWorldPosition(info.point);
+				//effect.lock()->GetComponent<EffekseerSystem>().lock();
+			}
+
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+		}
 	}
 }
 
@@ -595,21 +652,25 @@ void PlayerActor::CheckGround()
 
 	if (rigidbody.expired()) return;
 
-	if (RayCast::JudgeAllCollision(&downRay, &castGroundInfo, this->gameObject))
+	if (RayCast::JudgeAllCollision(&downRay, &castGroundInfo, rigidbody.lock()->collisions))
 	{
-		float h = castGroundInfo.point.y + height;
-		//if (h + 1.0f >= pos.y)
+		auto other = castGroundInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
+		if (other.expired())	// アクターは対象外
 		{
-			pos.y = Mathf::Lerp(pos.y, h - 0.1f, 0.3f);
-
-			transform.lock()->SetWorldPosition(pos);
-			if (rigidbody.lock()->velocity.y < 0.0f)
+			float h = castGroundInfo.point.y + height;
+			//if (h + 1.0f >= pos.y)
 			{
-				rigidbody.lock()->velocity.y = 0.0f;
+				pos.y = Mathf::Lerp(pos.y, h - 0.1f, 0.3f);
+
+				transform.lock()->SetWorldPosition(pos);
+				if (rigidbody.lock()->velocity.y < 0.0f)
+				{
+					rigidbody.lock()->velocity.y = 0.0f;
+				}
 			}
+			onGround = true;
+			horizontalRegistance = 0.7f;
 		}
-		onGround = true;
-		horizontalRegistance = 0.7f;
 	}
 
 	animator.lock()->SetBool("IsFall", !onGround);
@@ -626,14 +687,23 @@ void PlayerActor::CheckCliff()
 	// 前方に飛ばすレイ
 	ray.Set(pos + Vector3(0.0f, cliffRayStartY_Front, 0.0f), transform.lock()->forward(), cliffRayLength_Front);
 	DebugLine::DrawRay(ray.start, ray.end, Color::red());
-	if (RayCast::JudgeAllCollision(&ray, &castCliffWallInfo, this->gameObject))
+	if (RayCast::JudgeAllCollision(&ray, &castCliffWallInfo, rigidbody.lock()->collisions))
 	{
+		auto other = castCliffWallInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
+		if (!other.expired())	// アクターは対象外
+		{
+			castCliffWallInfo.collision.reset();
+		}
 	}
 	// 前方の下に飛ばすレイ
 	ray.Set(pos + Vector3(0.0f, cliffRayStartY_Down, 0.0f) + transform.lock()->forward() * cliffRayStartZ_Down, Vector3::down(), cliffRayStartY_Down - cliffRayStartY_Front);
 	DebugLine::DrawRay(ray.start, ray.end, Color::red());
-	if (RayCast::JudgeAllCollision(&ray, &castCliffGroundInfo, this->gameObject))
+	if (RayCast::JudgeAllCollision(&ray, &castCliffGroundInfo, rigidbody.lock()->collisions))
 	{
-
+		auto other = castCliffGroundInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
+		if (!other.expired())	// アクターは対象外
+		{
+			castCliffGroundInfo.collision.reset();
+		}
 	}
 }

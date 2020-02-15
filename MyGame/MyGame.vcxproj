@@ -98,12 +98,14 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttackJump.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffGrap.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerCliffJump.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerDamage.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRoll.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerStep.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
     <ClCompile Include="Asset\Scripts\CollisionObserver.cpp" />
+    <ClCompile Include="Asset\Scripts\FlashColor.cpp" />
     <ClCompile Include="Asset\Scripts\LocusController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
     <ClCompile Include="Asset\Scripts\TargetImageController.cpp" />
@@ -253,6 +255,10 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerDamage.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerRoll.h">
       <SubType>
       </SubType>
@@ -274,6 +280,10 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Common.h" />
+    <ClInclude Include="Asset\Scripts\FlashColor.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Scripts\LocusController.h">
       <SubType>
       </SubType>
@@ -559,7 +569,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\MyGame\Asset\;C:\Program Files\cereal-1.2.2\include;C:\Program Files\assimp-3.1.1\include;C:\Program Files %28x86%29\Eigen;C:\Program Files\Effekseer\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

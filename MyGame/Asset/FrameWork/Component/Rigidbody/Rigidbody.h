@@ -51,6 +51,8 @@ namespace FrameWork
 
 		void AddForce(Vector3 force);
 
+		std::list<std::weak_ptr<Collision>> collisions;	// 自身の保持するコリジョンリスト
+
 		Vector3 velocity;
 		float gravity;		// 重力
 		float resistance;	// 抵抗
@@ -61,8 +63,6 @@ namespace FrameWork
 	
 		void AddComponent() override;
 		void RemoveComponent() override;
-
-		std::list<std::weak_ptr<Collision>> collisions;
 		
 		void SetCollision(std::weak_ptr<Collision> & collision);
 		// この関数を呼ぶタイミング

@@ -53,7 +53,7 @@
                 "texName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Base_Color.png",
                 "normalName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Normal_DirectX.png",
                 "heightName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkClothes_Height.png",
-                "value0": 0
+                "value0": 1
             }
         }
     }

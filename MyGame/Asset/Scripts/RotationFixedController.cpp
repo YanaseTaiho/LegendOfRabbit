@@ -32,4 +32,6 @@ void RotationFixedController::LateUpdate()
 		Quaternion q = v.transform.lock()->GetLocalRotation();
 		v.transform.lock()->SetLocalRotation(q.Slerp(v.rotation, weightValue));
 	}
+
+	weightValue = Mathf::Clamp01(weightValue);
 }

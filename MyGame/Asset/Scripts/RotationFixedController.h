@@ -27,7 +27,7 @@ public:
 	~RotationFixedController() {};
 
 	void SetWeight(float speed) { weightSpeed = speed; }
-
+	bool IsWeightDone() { return weightValue >= 1.0f; };
 	void LateUpdate() override;
 
 private:

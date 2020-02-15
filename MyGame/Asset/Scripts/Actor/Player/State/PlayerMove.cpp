@@ -43,8 +43,9 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			actor->WeaponHold([=]()
 			{
 				actor->ChangeState(PlayerActor::State::Attack);
-				auto attack = std::static_pointer_cast<PlayerAttack>(actor->fsmManager->GetState((int)PlayerActor::State::Attack).lock());
-				attack->Attack(actor);
+				auto attack = actor->fsmManager->GetState<PlayerAttack>();
+				//auto attack = std::static_pointer_cast<PlayerAttack>(actor->fsmManager->GetState((int)PlayerActor::State::Attack).lock());
+				attack.lock()->Attack(actor);
 			});
 			actor->ChangeState(PlayerActor::State::Idle);
 			//return;
@@ -102,8 +103,9 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			case PlayerActor::Direction::Right:
 
 			{
+				actor->rigidbody.lock()->velocity *= 0.1f;
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.50f;
-				force += actor->moveDir * 70.0f * Time::DeltaTime();
+				force += actor->moveDir * 100.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);
@@ -112,8 +114,9 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			// ƒoƒN’ˆ
 			case PlayerActor::Direction::Back:
 			{
+				actor->rigidbody.lock()->velocity *= 0.1f;
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.75f;
-				force += actor->moveDir * 50.0f * Time::DeltaTime();
+				force += actor->moveDir * 100.0f * Time::DeltaTime();
 				actor->rigidbody.lock()->AddForce(force);
 
 				actor->ChangeState(PlayerActor::State::Step);
@@ -158,7 +161,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			Vector3 pos = actor->transform.lock()->GetWorldPosition() + actor->transform.lock()->forward();
 			downRay.Set(pos + Vector3(0.0f, actor->rayStart, 0.0f), Vector3::down(), actor->rayLength * 1.3f);
 			DebugLine::DrawRay(downRay.start, downRay.end, Color::yellow());
-			if (!RayCast::JudgeAllCollision(&downRay, &info, actor->gameObject) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
+			if (!RayCast::JudgeAllCollision(&downRay, &info, actor->rigidbody.lock()->collisions) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
 			{
 				actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
 				actor->animator.lock()->SetTrigger("JumpTrigger");
@@ -170,7 +173,8 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 
 		// “]‚ª‚é
 		if (actor->moveAmount > 0.1f
-			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B)))
+			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
+			|| actor->animator.lock()->IsCurrentAnimation("Roll"))
 		{
 			actor->ChangeState(PlayerActor::State::Roll);
 			return;

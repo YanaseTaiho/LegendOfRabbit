@@ -364,10 +364,14 @@ void EditorScene::Draw()
 	{
 		DrawScene();
 		DrawImGui();
+
+		editorCamera.lock()->Draw();
+
 		DrawManipulator();
 
 		if (isDebug)
 		{
+			DebugLine::DrawLine("Grid", Matrix4::Identity(), Color(1.0f, 1.0f, 1.0f, 0.5f));
 			DebugLine::DrawRayAll();
 		}
 		DebugLine::DrawDataReset();
@@ -377,7 +381,7 @@ void EditorScene::Draw()
 		SceneBase::Draw();
 	}
 
-	//DebugLine::DrawLine("Grid", Matrix4::Identity(), Color() * 0.8f);
+	
 }
 
 void EditorScene::CreateEditorCamera()
@@ -471,6 +475,12 @@ void EditorScene::DrawScene()
 
 	editorCamera.lock()->Draw();
 
+	//======= エフェクトのレンダリング ======//
+	Rect viewport = editorCamera.lock()->viewport;
+	float viewWidth = (float)(viewport.right - viewport.left);
+	float viewHeight = (float)(viewport.bottom - viewport.top);
+	Singleton<EffekseerManager>::Instance()->Draw(editorCamera.lock()->transform.lock()->GetWorldMatrix(), viewWidth / viewHeight, editorCamera.lock()->nearDistance, editorCamera.lock()->farDistance);
+
 	if (isDebug)
 	{
 		for (const auto & com : MonoBehaviour::ComponentList())
@@ -487,13 +497,6 @@ void EditorScene::DrawScene()
 			}
 		}
 	}
-
-	//======= エフェクトのレンダリング ======//
-	Rect viewport = editorCamera.lock()->viewport;
-	float viewWidth = (float)(viewport.right - viewport.left);
-	float viewHeight = (float)(viewport.bottom - viewport.top);
-	//Singleton<EffekseerManager>::Instance()->Draw(editorCamera.lock()->viewMatrix, viewWidth / viewHeight, editorCamera.lock()->nearDistance, editorCamera.lock()->farDistance);
-	Singleton<EffekseerManager>::Instance()->Draw(editorCamera.lock()->transform.lock()->GetWorldMatrix(), viewWidth / viewHeight, editorCamera.lock()->nearDistance, editorCamera.lock()->farDistance);
 }
 
 void EditorScene::DrawImGui()

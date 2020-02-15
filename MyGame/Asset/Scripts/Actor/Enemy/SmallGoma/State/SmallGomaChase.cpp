@@ -16,6 +16,9 @@ void SmallGomaChase::OnUpdate(SmallGomaActor * actor)
 	dir.y = 0.0f;
 	Quaternion look = Quaternion::LookRotation(dir);
 	Quaternion rot = actor->transform.lock()->GetWorldRotation();
-	rot = rot.Slerp(look, Time::DeltaTime() * 10.0f);
+	rot = rot.Slerp(look, Time::DeltaTime() * 3.0f);
 	actor->transform.lock()->SetWorldRotation(rot);
+
+	Vector3 moveDir = actor->transform.lock()->forward() * Time::DeltaTime() * actor->moveSpeed;
+	actor->rigidbody.lock()->AddForce(moveDir);
 }

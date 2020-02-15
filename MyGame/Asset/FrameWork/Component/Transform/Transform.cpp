@@ -313,6 +313,16 @@ std::weak_ptr<Transform> Transform::GetChild(std::string name)
 	return std::weak_ptr<Transform>();
 }
 
+bool Transform::IsChild(std::weak_ptr<Transform> other)
+{
+	for (auto c : childs)
+	{
+		if (c.lock()->IsChild(other)) return true;
+	}
+
+	return this->transform.lock() == other.lock();
+}
+
 void Transform::ReleaseParent()
 {
 	if (this->parent.expired()) return;

@@ -105,6 +105,9 @@ void SceneBase::Draw()
 		MyDirectX::RendererSystem::SetDefaultOption();
 		for (int i = 0; i < (int)Layer::MAX; i++)
 		{
+			if (i == (int)Layer::Canvas)
+				RendererSystem::SetWorldViewProjection2D();
+
 			const auto & rendererList = Renderer::ComponentList(i);
 
 			for (const auto & renderer : rendererList)
@@ -115,6 +118,8 @@ void SceneBase::Draw()
 			}
 		}
 
+		camera.lock()->Draw();
+
 		//======= エフェクトのレンダリング ======//
 		auto dxCamera = std::static_pointer_cast<DXCamera>(camera.lock());
 		Rect viewport = dxCamera->viewport;
@@ -124,8 +129,6 @@ void SceneBase::Draw()
 
 		if (isDebug)
 		{
-			camera.lock()->Draw();
-
 			for (const auto & com : MonoBehaviour::ComponentList())
 			{
 				if (!com.lock()->IsEnable()) continue;
