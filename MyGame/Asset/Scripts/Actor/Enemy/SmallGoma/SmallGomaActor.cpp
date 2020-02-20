@@ -48,9 +48,20 @@ void SmallGomaActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_p
 
 void SmallGomaActor::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
 {
+	if (other.lock()->isTrigger) return;
 	auto p = other.lock()->gameObject.lock()->GetComponent<PlayerActor>();
 	if (!p.expired())
 	{
 		player = p;
+	}
+}
+
+void SmallGomaActor::OnDestroy()
+{
+	auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect_Deth"));
+	if (!effect.expired())
+	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Bomb);
+		effect.lock()->transform.lock()->SetWorldPosition(transform.lock()->GetWorldPosition());
 	}
 }

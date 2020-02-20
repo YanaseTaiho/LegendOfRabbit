@@ -14,6 +14,7 @@ void Material::LoadSerialize(std::string tex, std::string nor, std::string hei)
 Material::Material()
 {
 	rasterizer = Rasterizer::FILL_SOLID_AND_CULL_BACK;
+	type = (MaterialType)0;
 }
 
 Material::~Material()
@@ -31,10 +32,17 @@ void Material::DrawImGui(int & id)
 {
 	if (!this->shader) return;
 
+	std::string strId = "##Material" + std::to_string(id);
+
 	ImGui::Text("Rasterizer"); ImGui::SameLine();
-	if (ImGui::Button(enum_to_string(rasterizer).c_str()))
+	if (ImGui::Button((enum_to_string(rasterizer) + strId).c_str()))
 	{
 		ImGui::OpenPopup("Rasterizer##PopUp");
+	}
+	ImGui::Text("Type"); ImGui::SameLine();
+	if (ImGui::Button((enum_to_string(type) + strId).c_str()))
+	{
+		ImGui::OpenPopup("MaterialType##PopUp");
 	}
 
 	if (ImGui::BeginPopup("Rasterizer##PopUp"))
@@ -44,6 +52,17 @@ void Material::DrawImGui(int & id)
 			if (ImGui::MenuItem(enum_to_string((Rasterizer)i).c_str()))
 			{
 				rasterizer = (Rasterizer)i;
+			}
+		}
+		ImGui::EndPopup();
+	}
+	if (ImGui::BeginPopup("MaterialType##PopUp"))
+	{
+		for (int i = 0; i < (int)MaterialType::MaxNum; i++)
+		{
+			if (ImGui::MenuItem(enum_to_string((MaterialType)i).c_str()))
+			{
+				type = (MaterialType)i;
 			}
 		}
 		ImGui::EndPopup();

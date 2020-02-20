@@ -16,12 +16,25 @@ static audio_data LoadData[(int)AudioData::MaxNum] =
 	{ "BGM/hateshinaimichi.wav", 1 },
 	// SE
 	{ "SE/swing1.wav", 5 },
-	{ "SE/bosu40.wav", 1 },
+	{ "SE/sword_chaki.wav", 1 },
 	{ "SE/sword_pachin.wav", 4 },
 	{ "SE/landing1.wav", 2 },
 	{ "SE/extend1.wav", 2 },
 	{ "SE/shrink1.wav", 2 },
 	{ "SE/hit70.wav", 5 },
+	{ "SE/hit70.wav", 2 },
+	{ "SE/hit_wood.wav", 2 },
+	{ "SE/hit_stone.wav", 2 },
+	{ "SE/hit_iron.wav", 2 },
+	{ "SE/foot_kusa.wav", 2 },
+	{ "SE/hit70.wav", 2 },
+	{ "SE/foot_soil.wav", 2 },
+	{ "SE/foot_iron.wav", 2 },
+	{ "SE/hyu.wav", 1 },
+	{ "SE/down.wav", 1 },
+	{ "SE/roll.wav", 1 },
+	{ "SE/roll_hit.wav", 1 },
+	{ "SE/bomb1.wav", 1 },
 };
 
 AudioClipManager::AudioClipManager()

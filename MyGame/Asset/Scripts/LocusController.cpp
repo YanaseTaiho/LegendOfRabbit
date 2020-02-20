@@ -39,12 +39,23 @@ void LocusController::SetCollision(std::weak_ptr<Rigidbody> myRigidbody, std::fu
 	this->CollisionFunc = hitFunc;
 }
 
-void LocusController::LocusStart()
+void LocusController::LocusStop()
+{
+	startFrameCnt = 0;
+	endFrameCnt = 0;
+	remainCnt = 0;
+	isStart = false;
+	frameCnt = 0;
+}
+
+void LocusController::LocusStart(int collisionInterval)
 {
 	startFrameCnt = 0;
 	endFrameCnt = 0;
 	remainCnt = remainTime;
 	isStart = true;
+	this->collisionInterval = collisionInterval;
+	frameCnt = 0;
 }
 
 void LocusController::LateUpdate()
@@ -58,34 +69,38 @@ void LocusController::LateUpdate()
 		return;
 	}
 
-
 	locusRenderer.lock()->SetEnable(true);
 
 	// フレーム毎にターゲットの座標を保存する
 	framePos1[endFrameCnt] = locusTransform1.lock()->GetWorldPosition();
 	framePos2[endFrameCnt] = locusTransform2.lock()->GetWorldPosition();
 
-	// 当たり判定を行う
-	if (CollisionFunc)
+	// 数フレーム毎に当たり判定を行う
+	if (frameCnt == 0)
 	{
-		int colMeshNum = endFrameCnt - startFrameCnt;
-		if (colMeshNum > 1)
+		// 当たり判定を行う
+		if (CollisionFunc)
 		{
-			std::vector<MeshPoints> points(1);
-			// メッシュの先頭から末端のポイントを当たり判定に設定
-			points[0].point[0] = framePos1[startFrameCnt];
-			points[0].point[1] = framePos2[startFrameCnt];
-			points[0].point[2] = framePos1[endFrameCnt];
-			points[0].point[3] = framePos2[endFrameCnt];
-
-			float locusLength = (points[0].point[0] - points[0].point[1]).Length();
-
-			auto HitFunc = [this, points, locusLength](MeshCastInfo& info)
+			int colMeshNum = endFrameCnt - startFrameCnt;
+			if (colMeshNum > 1)
 			{
-				CollisionFunc(info, (MeshPoints &)points[0], locusLength);
-			};
+				std::vector<MeshPoints> points(1);
+				// メッシュの先頭から末端のポイントを当たり判定に設定
+				points[0].point[0] = framePos1[startFrameCnt];
+				points[0].point[1] = framePos2[startFrameCnt];
+				points[0].point[2] = framePos1[endFrameCnt];
+				points[0].point[3] = framePos2[endFrameCnt];
 
-			MeshCast::JudgeAllCollision(points, HitFunc, myRigidbody.lock()->collisions);
+				float locusLength = (points[0].point[0] - points[0].point[1]).Length();
+
+				auto HitFunc = [this, points, locusLength](MeshCastInfo& info)
+				{
+					frameCnt = collisionInterval;
+					CollisionFunc(info, (MeshPoints &)points[0], locusLength);
+				};
+
+				MeshCast::JudgeAllCollision(points, HitFunc, myRigidbody.lock()->collisions);
+			}
 		}
 	}
 
@@ -103,4 +118,6 @@ void LocusController::LateUpdate()
 		startFrameCnt++;
 		startFrameCnt = Mathf::Max(startFrameCnt, frameMax - 1);
 	}
+
+	if(frameCnt > 0) frameCnt--;
 }

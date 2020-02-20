@@ -1,0 +1,61 @@
+{
+    "IronBlock": {
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "cereal_class_version": 2,
+                "name": "IronBlock",
+                "materialParam": {
+                    "cereal_class_version": 0,
+                    "ambient": {
+                        "r": 9.999999974752428e-7,
+                        "g": 9.999899930335233e-7,
+                        "b": 9.999899930335233e-7,
+                        "a": 1.0
+                    },
+                    "diffuse": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "emissive": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 1.399999976158142
+                    },
+                    "bump": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "specular": {
+                        "r": 0.25,
+                        "g": 0.25,
+                        "b": 0.25,
+                        "a": 5.130000114440918
+                    },
+                    "specularFactor": 1.0,
+                    "shininess": 1.0,
+                    "reflection": 9.960000038146973,
+                    "height": 1.0
+                },
+                "shader": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "MyDirectX::MeshShader",
+                    "ptr_wrapper": {
+                        "id": 2147483650,
+                        "data": {}
+                    }
+                },
+                "texName": "Asset\\Art\\Model\\Stage\\Textures\\Iron_Base_Color.png",
+                "normalName": "Asset\\Art\\Model\\Stage\\Textures\\Iron_Normal_DirectX.png",
+                "heightName": "Asset\\Art\\Model\\Stage\\Textures\\Iron_Height.png",
+                "value0": 0,
+                "value1": 3
+            }
+        }
+    }
+}

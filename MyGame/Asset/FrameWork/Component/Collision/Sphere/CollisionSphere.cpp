@@ -1,8 +1,10 @@
 #include "CollisionSphere.h"
 #include "../CollisionJudge.h"
 #include "DirectX/MeshData/LineMesh/DebugLine.h"
+#include "../../../../DirectX/Material/MaterialManager.h"
 
 using namespace FrameWork;
+using namespace MyDirectX;
 
 CollisionSphere::CollisionSphere(Vector3 offset, float radius, bool isTrigger)
 	: Collision("", isTrigger), radius(radius)
@@ -27,7 +29,11 @@ void CollisionSphere::Awake()
 
 void CollisionSphere::DrawImGui(int id)
 {
+
 	std::string strId = "##CollisionSphere" + std::to_string(id);
+	ImGui::Text("Material Type"); ImGui::SameLine();
+	Singleton<MaterialManager>::Instance()->DropTargetImGuiMaterial(material, strId);
+
 	ImGui::Checkbox(("IsTrigger" + strId).c_str(), &isTrigger);
 
 	Vector3 offset = localMatrix.position();

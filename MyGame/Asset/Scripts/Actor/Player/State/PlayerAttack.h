@@ -8,6 +8,7 @@ class PlayerAttack : public BaseFSM<PlayerActor>
 public:
 	void OnStart(PlayerActor * actor) override;
 	void OnUpdate(PlayerActor * actor) override;
+	void OnDestroy(PlayerActor * actor) override;
 
 	void Attack(PlayerActor * actor);
 

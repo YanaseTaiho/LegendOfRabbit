@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 1,
+                "cereal_class_version": 2,
                 "name": "Block",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -50,10 +50,11 @@
                         "data": {}
                     }
                 },
-                "texName": "Asset/Art/Model/Sumaphoman_BaseColor.png",
+                "texName": "Asset\\Art\\Model\\Ground.jpg",
                 "normalName": "Asset\\Art\\Texture\\Rock_Normal.png",
                 "heightName": "Asset\\Art\\Texture\\Rock_Displacement.png",
-                "value0": 0
+                "value0": 0,
+                "value1": 0
             }
         }
     }

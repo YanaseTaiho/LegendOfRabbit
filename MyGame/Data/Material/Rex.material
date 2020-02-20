@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 1,
+                "cereal_class_version": 2,
                 "name": "Rex",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -53,7 +53,8 @@
                 "texName": "Asset\\Art\\Model\\rex.jpg",
                 "normalName": "",
                 "heightName": "",
-                "value0": 0
+                "value0": 0,
+                "value1": 0
             }
         }
     }

@@ -3,7 +3,7 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 1,
+                "cereal_class_version": 2,
                 "name": "Sword_Locus",
                 "materialParam": {
                     "cereal_class_version": 0,
@@ -53,7 +53,8 @@
                 "texName": "Asset\\Art\\Texture\\Sword_Locus.png",
                 "normalName": "",
                 "heightName": "",
-                "value0": 1
+                "value0": 1,
+                "value1": 0
             }
         }
     }

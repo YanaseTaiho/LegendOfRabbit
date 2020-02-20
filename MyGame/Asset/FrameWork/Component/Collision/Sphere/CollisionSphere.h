@@ -2,6 +2,11 @@
 #define _COLLISIONSPHERE_H_
 
 #include "../Collision.h"
+//#include "../../../../DirectX/Material/Material.h"
+namespace MyDirectX
+{
+	class Material;
+}
 
 namespace FrameWork
 {
@@ -15,11 +20,13 @@ namespace FrameWork
 		void save(Archive & archive, std::uint32_t const version) const
 		{
 			archive(cereal::make_nvp("Collision", cereal::base_class<Collision>(this)), CEREAL_NVP(radius));
+			//if (version >= 1) archive(material);
 		}
 		template<class Archive>
 		void load(Archive & archive, std::uint32_t const version)
 		{
 			archive(cereal::make_nvp("Collision", cereal::base_class<Collision>(this)), CEREAL_NVP(radius));
+			//if (version >= 1) archive(material);
 		}
 
 	public:
@@ -31,6 +38,7 @@ namespace FrameWork
 		void SetRadius(float radius);
 		float GetRadius();
 
+		std::weak_ptr<MyDirectX::Material> material;	// ÉRÉäÉWÉáÉìÇ…ëÆê´ÇéùÇΩÇπÇÈÇ∆Ç´Ç…égÇ§
 	private:
 
 		float radius;
@@ -49,9 +57,8 @@ namespace FrameWork
 	};
 }
 
-CEREAL_CLASS_VERSION(FrameWork::CollisionSphere, 0)
+CEREAL_CLASS_VERSION(FrameWork::CollisionSphere, 1)
 CEREAL_REGISTER_TYPE(FrameWork::CollisionSphere)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(FrameWork::Component, FrameWork::CollisionSphere)
 
 
 #endif // !_COLLISIONSPHERE_H_

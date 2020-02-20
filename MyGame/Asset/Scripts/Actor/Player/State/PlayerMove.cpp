@@ -78,6 +78,9 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		if (actor->moveDir != Vector3::zero()
 			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B)))
 		{
+
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Jump);
+
 			switch (moveDirection)
 			{
 				// ジャンプ切り
@@ -103,6 +106,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			case PlayerActor::Direction::Right:
 
 			{
+
 				actor->rigidbody.lock()->velocity *= 0.1f;
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.50f;
 				force += actor->moveDir * 100.0f * Time::DeltaTime();
@@ -114,6 +118,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			// バク宙
 			case PlayerActor::Direction::Back:
 			{
+
 				actor->rigidbody.lock()->velocity *= 0.1f;
 				Vector3 force = Vector3::up() * actor->jumpForce * 0.75f;
 				force += actor->moveDir * 100.0f * Time::DeltaTime();
@@ -163,7 +168,9 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			DebugLine::DrawRay(downRay.start, downRay.end, Color::yellow());
 			if (!RayCast::JudgeAllCollision(&downRay, &info, actor->rigidbody.lock()->collisions) || Vector3::Dot(info.normal, Vector3::up()) < 0.8f)
 			{
-				actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->forceAmount);
+				Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Jump);
+
+				actor->rigidbody.lock()->AddForce(Vector3::up() * actor->jumpForce * actor->moveAmount);
 				actor->animator.lock()->SetTrigger("JumpTrigger");
 			}
 

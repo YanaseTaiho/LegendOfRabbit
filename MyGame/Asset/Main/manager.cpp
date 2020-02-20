@@ -25,7 +25,7 @@ using namespace MyDirectX;
 #if 0
 #define START_SCENE (GameScene)
 #else
-#define START_SCENE (EditorScene)
+#define START_SCENE (GameScene)
 #endif
 
 const std::string CManager::dataFolderName = "Data";

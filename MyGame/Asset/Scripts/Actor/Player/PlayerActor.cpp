@@ -8,6 +8,7 @@
 #include "State/PlayerCliffJump.h"
 #include "State/PlayerAttackJump.h"
 #include "State/PlayerAttack.h"
+#include "State/PlayerAttackFlip.h"
 #include "State/PlayerStep.h"
 #include "State/PlayerDamage.h"
 
@@ -88,6 +89,7 @@ void PlayerActor::OnStart()
 	fsmManager->AddState((int)State::CliffJump, new PlayerCliffJump());
 	fsmManager->AddState((int)State::AttackJump, new PlayerAttackJump());
 	fsmManager->AddState((int)State::Attack, new PlayerAttack());
+	fsmManager->AddState((int)State::AttackFlip, new PlayerAttackFlip());
 	fsmManager->AddState((int)State::Step, new PlayerStep());
 	fsmManager->AddState((int)State::Damage, new PlayerDamage());
 
@@ -144,23 +146,54 @@ void PlayerActor::OnStart()
 		});
 	}
 
+	auto GroundSE = [=](std::string name, int frame)
+	{
+		animator.lock()->SetAnimationCallBack(name, frame, [=]()
+		{
+			// マテリアル情報から音を変える
+			if (!castGroundInfo.material.expired())
+			{
+				switch (castGroundInfo.material.lock()->type)
+				{
+				case MaterialType::Soil:
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Foot_Soil);
+					break;
+				case MaterialType::Wood:
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Foot_Wood);
+					break;
+				case MaterialType::Stone:
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Foot_Stone);
+
+					break;
+				case MaterialType::Iron:
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Foot_Iron);
+
+					break;
+				}
+			}
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
+		});
+		
+	};
+
 	// アニメーションに応じてのSE再生用
-	animator.lock()->SetAnimationCallBack("Walk", 8, []()
-	{
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
-	});
-	animator.lock()->SetAnimationCallBack("Walk", 23, []()
-	{
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
-	});
-	animator.lock()->SetAnimationCallBack("Run", 8, []()
-	{
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
-	});
-	animator.lock()->SetAnimationCallBack("Run", 23, []()
-	{
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordChakin);
-	});
+	GroundSE("Walk", 8);
+	GroundSE("Walk", 23);
+	GroundSE("Run", 8);
+	GroundSE("Run", 23);
+	GroundSE("RockOn_Left_Walk", 7);
+	GroundSE("RockOn_Left_Walk", 15);
+	GroundSE("RockOn_Right_Walk", 7);
+	GroundSE("RockOn_Right_Walk", 15);
+	GroundSE("RockOn_Back_Walk", 7);
+	GroundSE("RockOn_Back_Walk", 15);
+
+	GroundSE("RockOn_Left_Run", 7);
+	GroundSE("RockOn_Left_Run", 15);
+	GroundSE("RockOn_Right_Run", 7);
+	GroundSE("RockOn_Right_Run", 15);
+	GroundSE("RockOn_Back_Run", 7);
+	GroundSE("RockOn_Back_Run", 15);
 }
 
 void PlayerActor::OnUpdate()
@@ -172,13 +205,13 @@ void PlayerActor::OnUpdate()
 		else ++itr;
 	}
 
-	ImGui::Text("TargetTrigger");
+	/*ImGui::Text("TargetTrigger");
 	ImGui::Indent();
 	for (auto & c : targetTriggerList)
 	{
 		ImGui::Text(c.lock()->gameObject.lock()->name.c_str());
 	}
-	ImGui::Unindent();
+	ImGui::Unindent();*/
 
 	// ロックオン処理
 	if (Input::Keyboad::IsTrigger('F')
@@ -313,7 +346,8 @@ void PlayerActor::Draw()
 void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
 {
 	// ダメージ中と無敵時間以外
-	if (currentState != State::Damage && !damageFlashColor.IsFlash())
+	if (/*mine.lock()->gameObject.lock() == this->gameObject.lock() // 中心となるコリジョンだけ判定*/
+		(currentState != State::Damage && !damageFlashColor.IsFlash()))
 	{
 		auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
 		if (actor.expired()) return;
@@ -329,7 +363,8 @@ void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<
 			if (!effect.expired())
 			{
 				effect.lock()->transform.lock()->SetWorldPosition(info.point);
-				//effect.lock()->GetComponent<EffekseerSystem>().lock();
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
 			}
 
 			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
@@ -524,17 +559,32 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
 		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
 		Ray ray(start, dir, locusLengh);
+		DebugLine::DrawRay(ray.start, ray.end, Color::red());
 		// レイを飛ばしてどこに当たったのかを確かめる
 		if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
 		{
 			hitInfo.point = info.point;
 		}
+		else // 当たっていなかったら違う方向から飛ばして確かめる
+		{
+			start = locusPoints.point[2];
+			ray.Set(start, dir, locusLengh);
+			DebugLine::DrawRay(ray.start, ray.end, Color::red());
+			if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
+			{
+				hitInfo.point = info.point;
+			}
+		}
 
 		auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
 		if (!effect.expired())
 		{
+			Vector3 pos = info.point + info.normal * 0.1f;
+			effect.lock()->transform.lock()->SetWorldPosition(pos);
+			Quaternion look = Quaternion::LookRotation(cameraController.lock()->cameraTransform.lock()->GetWorldPosition() - pos);
 			effect.lock()->transform.lock()->SetWorldPosition(hitInfo.point);
-			//effect.lock()->GetComponent<EffekseerSystem>().lock();
+			effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
+			effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
 		}
 
 		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
@@ -544,13 +594,41 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 	// 地面は判定しない
 	else if (Vector3::Dot(Vector3::up(), hitInfo.normal) < 0.4f)
 	{
-		RayCastInfo info;
-		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
-		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
-		Ray ray(start, dir, locusLengh);
-		// レイを飛ばしてどこに当たったのかを確かめる
-		if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
+		auto EffectSet = [&](RayCastInfo & info)
 		{
+			EffekseerType efcType;
+			// マテリアル情報から音を変える
+			if (!info.material.expired())
+			{
+				switch (info.material.lock()->type)
+				{
+				case MaterialType::Soil:
+					efcType = EffekseerType::Hit01;
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+					break;
+				case MaterialType::Wood:
+					efcType = EffekseerType::Hit01;
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit_Wood);
+					break;
+				case MaterialType::Stone:
+					efcType = EffekseerType::Hit02;
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit_Stone);
+
+					if(currentState == State::Attack)
+						ChangeState(State::AttackFlip);
+					break;
+				case MaterialType::Iron:
+					efcType = EffekseerType::Hit02;
+					Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit_Iron);
+
+					if (currentState == State::Attack)
+					{
+						ChangeState(State::AttackFlip);
+					}
+					break;
+				} 
+			}
+
 			Vector3 normal = info.normal;
 			normal.y = 0.0f;
 			normal.Normalize();
@@ -561,11 +639,35 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 				Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
 			if (!effect.expired())
 			{
-				effect.lock()->transform.lock()->SetWorldPosition(info.point);
-				//effect.lock()->GetComponent<EffekseerSystem>().lock();
+				Vector3 pos = info.point + info.normal * 0.1f;
+				effect.lock()->transform.lock()->SetWorldPosition(pos);
+				Quaternion look = Quaternion::LookRotation(cameraController.lock()->cameraTransform.lock()->GetWorldPosition() - pos);
+				effect.lock()->transform.lock()->SetWorldRotation(look);
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->type = efcType;
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
 			}
+		};
 
-			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+		RayCastInfo info;
+		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
+		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
+		Ray ray(start, dir, locusLengh);
+		// レイを飛ばしてどこに当たったのかを確かめる
+		if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
+		{
+			// エフェクト生成
+			EffectSet(info);
+		}
+		else // 当たっていなかったら違う方向から飛ばして確かめる
+		{
+			start = locusPoints.point[2];
+			ray.Set(start, dir, locusLengh);
+			DebugLine::DrawRay(ray.start, ray.end, Color::red());
+			if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
+			{
+				// エフェクト生成
+				EffectSet(info);
+			}
 		}
 	}
 }

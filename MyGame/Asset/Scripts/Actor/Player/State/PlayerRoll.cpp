@@ -7,6 +7,7 @@ void PlayerRoll::OnStart(PlayerActor * actor)
 
 	actor->animator.lock()->SetAnimationCallBack("Roll", 1, [=]()
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Roll);
 		actor->rigidbody.lock()->AddForce(actor->transform.lock()->forward() * (50.0f * Time::DeltaTime()));
 	});
 

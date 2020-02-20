@@ -44,10 +44,13 @@ public:
 	int remainTime = 0;	// 軌跡の残り続ける時間
 	int remainCnt = 0;
 	bool isStart = false;
+	int collisionInterval = 0; // 当たり判定を行う感覚（フレーム単位）
+	int frameCnt = 0; // フレームカウント
 
 	void SetCollision(std::weak_ptr<Rigidbody> myRigidbody, std::function<void(MeshCastInfo&, MeshPoints&, float)> hitFunc);
 
-	void LocusStart();
+	void LocusStart(int collisionInterval = 0);
+	void LocusStop();
 
 private:
 

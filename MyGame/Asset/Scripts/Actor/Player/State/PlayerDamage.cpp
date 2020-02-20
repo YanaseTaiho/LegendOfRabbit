@@ -11,6 +11,7 @@ void PlayerDamage::OnUpdate(PlayerActor * actor)
 	{
 		if (actor->rigidbody.lock()->velocity.y <= 0.0f && actor->onGround)
 		{
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Down);
 			isLand = true;
 			actor->animator.lock()->SetTrigger("Damage_Land_Trigger");
 		}

@@ -3,8 +3,10 @@
 #include "../Mesh/CollisionMesh.h"
 #include "../Sphere/CollisionSphere.h"
 #include "../../../GameObject/GameObject.h"
+#include "../../../../DirectX/Renderer/MeshRenderer.h"
 
 using namespace FrameWork;
+using namespace MyDirectX;
 
 bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<GameObject> myObject, int layerMask, bool isFaceHit)
 {
@@ -42,12 +44,16 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 					if (!hit)
 					{
 						addInfo.collision = collision;
+						// マテリアル情報取得用のレンダー取得
+						addInfo.material = ((CollisionSphere*)col)->material;
 						*castInfo = addInfo;
 						hit = true;
 					}
 					else if (castInfo->distance > addInfo.distance)
 					{
 						addInfo.collision = collision;
+						// マテリアル情報取得用のレンダー取得
+						addInfo.material = ((CollisionSphere*)col)->material;
 						*castInfo = addInfo;
 					}
 				}
@@ -74,7 +80,7 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 				if (colMesh->meshInfo.expired()) continue;
 				RayCastInfo addInfo;
 				// レイとメッシュの衝突判定
-				if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), &addInfo)) continue;
+				if (!JudgeMesh(&r, colMesh, &addInfo)) continue;
 
 				if (isFaceHit)
 				{
@@ -190,7 +196,7 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, const std::li
 				if (colMesh->meshInfo.expired()) continue;
 				RayCastInfo addInfo;
 				// レイとメッシュの衝突判定
-				if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), &addInfo)) continue;
+				if (!JudgeMesh(&r, colMesh, &addInfo)) continue;
 
 				if (isFaceHit)
 				{
@@ -260,7 +266,7 @@ bool RayCast::JudgeCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<Co
 		CollisionMesh * colMesh = (CollisionMesh*)col;
 		if (colMesh->meshInfo.expired()) return false;
 		// レイとメッシュの衝突判定
-		if (!JudgeMesh(&r, colMesh->meshInfo.lock().get(), castInfo)) return false;
+		if (!JudgeMesh(&r, colMesh, castInfo)) return false;
 
 		//if (isFaceHit)
 		//{
@@ -287,11 +293,15 @@ bool RayCast::JudgeCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<Co
 	return false;
 }
 
-bool RayCast::JudgeMesh(Ray * ray, CollisionMeshInfo * collisionMesh, RayCastInfo * castInfo)
+bool RayCast::JudgeMesh(Ray * ray, CollisionMesh * collisionMesh, RayCastInfo * castInfo)
 {
 	RayCastInfo finalInfo;
 	bool hit = false;
-	for (auto & mesh : collisionMesh->faceInfoArray)
+	auto meshInfo = collisionMesh->meshInfo.lock();
+	// マテリアル情報取得用のレンダー取得
+	auto renderer = collisionMesh->gameObject.lock()->GetComponent<MeshRenderer>();
+
+	for (auto & mesh : meshInfo->faceInfoArray)
 	{
 		RayCastInfo addInfo;
 		if (JudgeFace(ray, &mesh, &addInfo))
@@ -300,11 +310,23 @@ bool RayCast::JudgeMesh(Ray * ray, CollisionMeshInfo * collisionMesh, RayCastInf
 			{
 				// 後に当たったポリゴンと距離を比較して前に当たったポリゴンより近かった場合は上書き
 				if (finalInfo.distance > addInfo.distance)
+				{
 					finalInfo = addInfo;
+					// マテリアル情報取得
+					if (!renderer.expired())
+					{
+						finalInfo.material = renderer.lock()->GetMaterial(mesh.materialIndex);
+					}
+				}
 			}
 			else
 			{
 				finalInfo = addInfo;
+				// マテリアル情報取得
+				if (!renderer.expired())
+				{
+					finalInfo.material = renderer.lock()->GetMaterial(mesh.materialIndex);
+				}
 			}
 			hit = true;
 		}

@@ -63,6 +63,7 @@ public:
 		CliffJump,
 		AttackJump,
 		Attack,
+		AttackFlip,
 		Step,
 		Damage
 	};

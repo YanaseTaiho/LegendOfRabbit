@@ -28,8 +28,10 @@ namespace MyDirectX
 
 	enum class EffekseerType : int
 	{
-		Hit,
+		Hit01,
+		Hit02,
 		Atmosphere,
+		Deth,
 		MaxNum
 	};
 
@@ -37,8 +39,10 @@ namespace MyDirectX
 	{
 		switch (type)
 		{
-		case EffekseerType::Hit: return "Hit";
+		case EffekseerType::Hit01: return "Hit01";
+		case EffekseerType::Hit02: return "Hit02";
 		case EffekseerType::Atmosphere: return "Atmosphere";
+		case EffekseerType::Deth: return "Deth";
 		}
 		return "";
 	}

@@ -2,6 +2,8 @@
 
 void PlayerRollStop::OnStart(PlayerActor * actor)
 {
+	Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_RollHit);
+
 	if (!actor->animator.lock()->IsCurrentAnimation("Roll"))
 	{
 		actor->ChangeState(PlayerActor::State::Idle);

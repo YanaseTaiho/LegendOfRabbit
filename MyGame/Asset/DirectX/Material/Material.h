@@ -10,6 +10,27 @@ using namespace FrameWork;
 
 namespace MyDirectX
 {
+	enum class MaterialType : int
+	{
+		Soil,  // “y
+		Wood,  // –Ø
+		Stone, // Î
+		Iron,  // “S
+		MaxNum
+	};
+
+	static std::string enum_to_string(MaterialType type)
+	{
+		switch (type)
+		{
+		case MaterialType::Soil: return "Soil";
+		case MaterialType::Wood: return "Wood";
+		case MaterialType::Stone: return "Stone";
+		case MaterialType::Iron: return "Iron";
+		}
+		return "";
+	}
+
 	class Material
 	{
 	private:
@@ -27,8 +48,8 @@ namespace MyDirectX
 				CEREAL_NVP(normalName),
 				CEREAL_NVP(heightName));
 
-			if (version >= 1)
-				archive(rasterizer);
+			if (version >= 1) archive(rasterizer);
+			if (version >= 2) archive(type);
 		}
 		template <typename Archive>
 		void load(Archive & archive, std::uint32_t const version)
@@ -39,8 +60,8 @@ namespace MyDirectX
 				CEREAL_NVP(normalName),
 				CEREAL_NVP(heightName));
 
-			if (version >= 1)
-				archive(rasterizer);
+			if (version >= 1) archive(rasterizer);
+			if (version >= 2) archive(type);
 
 			LoadSerialize(texName, normalName, heightName);
 		}
@@ -69,9 +90,11 @@ namespace MyDirectX
 		std::weak_ptr<Texture> pTexture;
 		std::weak_ptr<Texture> pNormalTexture;
 		std::weak_ptr<Texture> pHeightTexture;
+
+		MaterialType type;
 	};
 }
 
-CEREAL_CLASS_VERSION(MyDirectX::Material, 1)
+CEREAL_CLASS_VERSION(MyDirectX::Material, 2)
 
 #endif //!__MATERIAL_H__

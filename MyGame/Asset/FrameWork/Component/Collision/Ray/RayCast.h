@@ -5,10 +5,16 @@
 #include "../Mesh/CollisionMeshInfo.h"
 #include <memory>
 
+namespace MyDirectX
+{
+	class Material;
+}
+
 namespace FrameWork
 {
 	class Collision;
 	class GameObject;
+	class CollisionMesh;
 
 	struct RayCastInfo
 	{
@@ -16,6 +22,7 @@ namespace FrameWork
 		Vector3 normal;
 		float distance;
 		std::weak_ptr<Collision> collision;
+		std::weak_ptr<MyDirectX::Material> material;
 	};
 
 	class RayCast
@@ -24,7 +31,7 @@ namespace FrameWork
 		static bool JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<GameObject> myObject = std::weak_ptr<GameObject>(), int layerMask = -1, bool isFaceHit = false);
 		static bool JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, const std::list<std::weak_ptr<Collision>> & myCollisions, int layerMask = -1, bool isFaceHit = false);
 		static bool JudgeCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr<Collision> other);
-		static bool JudgeMesh(Ray * ray, CollisionMeshInfo * collisionMesh, RayCastInfo * castInfo);
+		static bool JudgeMesh(Ray * ray, CollisionMesh * collisionMesh, RayCastInfo * castInfo);
 		static bool JudgeSphere(const Ray & ray, const Vector3 & pos, const float radius, RayCastInfo * castInfo);
 		static bool JudgeInfinityCilinder(const Ray & ray, const Vector3 & start, const Vector3 & end, const float radius, RayCastInfo * castInfo);
 		static bool JudgeCilinder(const Ray & ray, const Vector3 & start, const Vector3 & end, const float radius, RayCastInfo * castInfo);

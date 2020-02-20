@@ -59,7 +59,7 @@ public:
 	void OnTriggerStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;
 
 private:
-
+	void OnDestroy() override;
 	//void CheckGround();
 };
 

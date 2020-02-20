@@ -21,6 +21,19 @@ namespace FrameWork
 		SE_RockOn,
 		SE_RockOnChancel,
 		SE_Hit01,
+		SE_Hit_Soil,  // ìy
+		SE_Hit_Wood,  // ñÿ
+		SE_Hit_Stone, // êŒ
+		SE_Hit_Iron,  // ìS
+		SE_Foot_Soil,  // ìy
+		SE_Foot_Wood,  // ñÿ
+		SE_Foot_Stone, // êŒ
+		SE_Foot_Iron,  // ìS
+		SE_Jump,
+		SE_Down,
+		SE_Roll,
+		SE_RollHit,
+		SE_Bomb,
 		MaxNum
 	};
 

@@ -26,6 +26,7 @@ void RabitAnimationController::Initialize()
 	auto attack_Trigger = AddParameterTrigger("Attack_Trigger");
 	auto attack_Jump_Trigger = AddParameterTrigger("Attack_Jump_Trigger");
 	auto attack_Jump_Land_Trigger = AddParameterTrigger("Attack_Jump_Land_Trigger");
+	auto attack_Flip_Trigger = AddParameterTrigger("Attack_Flip_Trigger");	// UŒ‚‚ð’e‚©‚ê‚½Žž‚ÌƒgƒŠƒK[
 
 	// ƒƒbƒNƒIƒ“Œn
 	auto isRockOn = AddParameterBool("IsRockOn", false);
@@ -109,6 +110,9 @@ void RabitAnimationController::Initialize()
 		auto attack_Thrust_1 = Attack_Thrust_Filter->AddState("Attack_Thrust_1");
 		auto attack_Thrust_2 = Attack_Thrust_Filter->AddState("Attack_Thrust_2");
 		auto attack_Thrust_3 = Attack_Thrust_Filter->AddState("Attack_Thrust_3");
+
+		// ƒAƒ^ƒbƒN’e‚©‚ê
+		auto attack_Flip = filter->AddState("Attack_Flip");
 
 		// ƒ_ƒ[ƒW
 		auto damage_Forward = filter->AddState("Damage_Forward");
@@ -497,6 +501,12 @@ void RabitAnimationController::Initialize()
 
 		// Attack_Filter
 		{
+			// ’e‚©‚ê‚é
+			Attack_Filter->AddTransition(attack_Flip, [=](std::shared_ptr<AnimationTransition> & transition)
+			{
+				transition->SetOption(0.2f, false);
+				transition->AddConditionTrigger(attack_Flip_Trigger);
+			});
 			Attack_Filter->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.2f, true, 0.7f);
@@ -524,6 +534,17 @@ void RabitAnimationController::Initialize()
 				transition->AddConditionBool(isFall, true);
 			});
 		}
+
+		attack_Flip->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.1f, true, 0.8f);
+			transition->AddConditionFloat(walkValue, Less, 0.1f);
+		});
+		attack_Flip->AddTransition(walk, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.1f, true, 0.8f);
+			transition->AddConditionFloat(walkValue, Greater, 0.1f);
+		});
 
 		// Idle_Filter
 		{

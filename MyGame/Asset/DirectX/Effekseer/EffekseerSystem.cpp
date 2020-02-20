@@ -63,14 +63,27 @@ void EffekseerSystem::EndEffect()
 
 void EffekseerSystem::SetTransform()
 {
-	EffekseerManager* manager = Singleton<EffekseerManager>::Instance();
 	// トランスフォーム更新
-	Vector3 pos = transform.lock()->GetWorldPosition();
-	manager->manager->SetLocation(handle, pos.x, pos.y, pos.z);
-	Vector3 scale = transform.lock()->GetWorldScale();
-	manager->manager->SetScale(handle, scale.x, scale.y, scale.z);
-	Vector3 rot = transform.lock()->GetWorldRotation().GetEulerAnglesToRadian();
-	manager->manager->SetRotation(handle, rot.x, rot.y, rot.z);
+	EffekseerManager* manager = Singleton<EffekseerManager>::Instance();
+	Effekseer::Matrix43 setMat;
+	Matrix4 matrix = transform.lock()->GetWorldMatrix();
+	setMat.Value[0][0] = matrix.matrix(0, 0);
+	setMat.Value[0][1] = matrix.matrix(1, 0);
+	setMat.Value[0][2] = matrix.matrix(2, 0);
+
+	setMat.Value[1][0] = matrix.matrix(0, 1);
+	setMat.Value[1][1] = matrix.matrix(1, 1);
+	setMat.Value[1][2] = matrix.matrix(2, 1);
+
+	setMat.Value[2][0] = matrix.matrix(0, 2);
+	setMat.Value[2][1] = matrix.matrix(1, 2);
+	setMat.Value[2][2] = matrix.matrix(2, 2);
+
+	setMat.Value[3][0] = matrix.matrix(0, 3);
+	setMat.Value[3][1] = matrix.matrix(1, 3);
+	setMat.Value[3][2] = matrix.matrix(2, 3);
+
+	manager->manager->SetMatrix(handle, setMat);
 }
 
 void EffekseerSystem::Start()

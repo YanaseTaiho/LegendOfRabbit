@@ -61,7 +61,15 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 	{
 		frameCnt = 0;
 	}
-	ImGui::Text("Combo : %d", combo);
+	//ImGui::Text("Combo : %d", combo);
+}
+
+void PlayerAttack::OnDestroy(PlayerActor * actor)
+{
+	if (!actor->locusController.expired())
+	{
+		actor->locusController.lock()->LocusStop();
+	}
 }
 
 void PlayerAttack::Attack(PlayerActor * actor)
@@ -74,7 +82,7 @@ void PlayerAttack::Attack(PlayerActor * actor)
 	// 軌跡スタート
 	if (!actor->locusController.expired())
 	{
-		actor->locusController.lock()->LocusStart();
+		actor->locusController.lock()->LocusStart(5);
 	}
 
 	CheckAttackType(actor);

@@ -42,6 +42,11 @@ void Component::RemoveComponent()
 
 void Component::CleanupDestoryComponent()
 {
+	for (auto deth : destroyComponentList)
+	{
+		deth.lock()->OnDestroy();
+	}
+
 	for (auto itr = destroyComponentList.begin(), end = destroyComponentList.end(); itr != end;)
 	{
 		for (auto comItr = allComponentList.begin(), comEnd = allComponentList.end(); comItr != comEnd; ++comItr)
@@ -49,7 +54,7 @@ void Component::CleanupDestoryComponent()
 			if (itr->lock() != *comItr) continue;
 
 			itr = destroyComponentList.erase(itr);
-			(*comItr)->OnDestroy();
+			
 			(*comItr)->RemoveComponent();
 			allComponentList.erase(comItr);
 			break;
