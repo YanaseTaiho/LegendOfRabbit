@@ -32,6 +32,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		actor->ChangeState(PlayerActor::State::Idle);
 		return;
 	}
+	// UŒ‚
 	if (actor->GetInput(PlayerActor::InputKey::A_Trigger))
 	{
 		if (actor->isWeaponHold)
@@ -44,13 +45,10 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 			{
 				actor->ChangeState(PlayerActor::State::Attack);
 				auto attack = actor->fsmManager->GetState<PlayerAttack>();
-				//auto attack = std::static_pointer_cast<PlayerAttack>(actor->fsmManager->GetState((int)PlayerActor::State::Attack).lock());
 				attack.lock()->Attack(actor);
 			});
 			actor->ChangeState(PlayerActor::State::Idle);
-			//return;
 		}
-		
 		return;
 	}
 

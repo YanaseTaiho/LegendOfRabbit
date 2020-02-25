@@ -35,14 +35,16 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
-	if (!actor->animator.lock()->IsCurrentAnimation("Attack_Inside_Filter")
+	if (!actor->animator.lock()->GetTrigger("Attack_Trigger")
+		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Inside_Filter")
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Outside_Filter")
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Upper_Filter")
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Thrust_Filter"))
 	{
 		if (actor->GetInput(PlayerActor::InputKey::A_Trigger))
 		{
-			Attack(actor);	
+			Attack(actor);
+			return;
 		}
 
 		frameCnt++;
@@ -51,10 +53,12 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 			if (actor->moveAmount > 0.2f)
 			{
 				actor->ChangeState(PlayerActor::State::Move);
+				return;
 			}
 			else
 			{
 				actor->ChangeState(PlayerActor::State::Idle);
+				return;
 			}
 		}
 	}

@@ -260,7 +260,7 @@ bool AnimationFilter::CheckTransition(const AnimationState * currentState)
 	for (auto & transition : transitions)
 	{
 		auto const filter = GetBossParent();
-		if (filter->runningState.lock() == transition->nextAnimation.lock()) continue;
+		//if (filter->runningState.lock() == transition->nextAnimation.lock()) continue;
 
 		// ó‘Ô‘JˆÚ‚ÌðŒ‚ðŠm”F
 		if (transition->CheckTransition(currentState))
