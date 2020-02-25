@@ -22,8 +22,8 @@
 
 using namespace MyDirectX;
 
-#if 0
-#define START_SCENE (GameScene)
+#if 1
+#define START_SCENE (EditorScene)
 #else
 #define START_SCENE (GameScene)
 #endif

@@ -84,10 +84,13 @@ void LocusController::LateUpdate()
 			int colMeshNum = endFrameCnt - startFrameCnt;
 			if (colMeshNum > 1)
 			{
+				int start = endFrameCnt - colMeshNum / 2;
+				//end = Mathf::Max(end, endFrameCnt);
+
 				std::vector<MeshPoints> points(1);
 				// メッシュの先頭から末端のポイントを当たり判定に設定
-				points[0].point[0] = framePos1[startFrameCnt];
-				points[0].point[1] = framePos2[startFrameCnt];
+				points[0].point[0] = framePos1[start];
+				points[0].point[1] = framePos2[start];
 				points[0].point[2] = framePos1[endFrameCnt];
 				points[0].point[3] = framePos2[endFrameCnt];
 

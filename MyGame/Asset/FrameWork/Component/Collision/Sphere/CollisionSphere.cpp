@@ -31,8 +31,8 @@ void CollisionSphere::DrawImGui(int id)
 {
 
 	std::string strId = "##CollisionSphere" + std::to_string(id);
-	ImGui::Text("Material Type"); ImGui::SameLine();
-	Singleton<MaterialManager>::Instance()->DropTargetImGuiMaterial(material, strId);
+	/*ImGui::Text("Material Type"); ImGui::SameLine();
+	Singleton<MaterialManager>::Instance()->DropTargetImGuiMaterial(material, strId);*/
 
 	ImGui::Checkbox(("IsTrigger" + strId).c_str(), &isTrigger);
 
@@ -48,6 +48,7 @@ void CollisionSphere::DrawImGui(int id)
 	{
 		SetRadius(rad);
 	}
+	ImGui::DragFloat(("Push Dot Up" + strId).c_str(), &pushDotUp, 0.01f, -1.0f, 1.0f);
 }
 
 void CollisionSphere::Update()

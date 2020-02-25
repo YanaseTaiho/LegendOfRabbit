@@ -28,6 +28,11 @@ void PlayerAttackJump::OnStart(PlayerActor * actor)
 	actor->animator.lock()->SetAnimationCallBack("Attack_Jump_Land", 1, [=]()
 	{
 		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Landing);
+
+		if (!actor->locusController.expired())
+		{
+			actor->locusController.lock()->LocusStart(3);
+		}
 	});
 	actor->animator.lock()->SetAnimationCallBack("Attack_Jump_Land", 20, [=]()
 	{
@@ -47,7 +52,7 @@ void PlayerAttackJump::OnUpdate(PlayerActor * actor)
 		if (!actor->locusController.expired()
 			&& !actor->locusController.lock()->isStart
 			&& actor->animator.lock()->IsCurrentAnimation("Attack_Jump")
-			&& actor->animator.lock()->GetCurrentPercent() > 0.3f)
+			&& actor->animator.lock()->GetCurrentPercent() > 0.4f)
 		{
 			actor->locusController.lock()->LocusStart(5);
 		}

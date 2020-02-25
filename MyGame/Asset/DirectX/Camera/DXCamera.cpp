@@ -58,6 +58,11 @@ bool DXCamera::IsVisiblity(Vector3 position)
 
 void DXCamera::Draw()
 {
+	// エディタカメラのビューポート更新
+	RECT wRect;
+	GetClientRect(RendererSystem::hWnd, &wRect);
+	viewport = Rect(wRect.left, wRect.right, wRect.top, wRect.bottom);
+
 	float viewWidth = (float)(viewport.right - viewport.left);
 	float viewHeight = (float)(viewport.bottom - viewport.top);
 

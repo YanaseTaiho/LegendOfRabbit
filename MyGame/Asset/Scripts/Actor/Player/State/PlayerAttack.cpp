@@ -4,14 +4,15 @@
 
 void PlayerAttack::OnStart(PlayerActor * actor)
 {
-	if (actor->animator.lock()->IsCurrentAnimation("Attack_Inside_Filter")
+	/*if (actor->animator.lock()->IsCurrentAnimation("Attack_Inside_Filter")
 		|| actor->animator.lock()->IsCurrentAnimation("Attack_Outside_Filter")
 		|| actor->animator.lock()->IsCurrentAnimation("Attack_Upper_Filter")
 		|| actor->animator.lock()->IsCurrentAnimation("Attack_Thrust_Filter"))
 	{
 		actor->ChangeState(PlayerActor::State::Idle);
 		return;
-	}
+	}*/
+
 
 	frameCnt = 0;
 	combo = 0;
@@ -39,7 +40,7 @@ void PlayerAttack::OnUpdate(PlayerActor * actor)
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Upper_Filter")
 		&& !actor->animator.lock()->IsCurrentAnimation("Attack_Thrust_Filter"))
 	{
-		if (Input::Keyboad::IsTrigger('E')|| GamePad::IsTrigger(GamePad::Button::A))
+		if (actor->GetInput(PlayerActor::InputKey::A_Trigger))
 		{
 			Attack(actor);	
 		}
@@ -74,6 +75,8 @@ void PlayerAttack::OnDestroy(PlayerActor * actor)
 
 void PlayerAttack::Attack(PlayerActor * actor)
 {
+	if (actor->animator.lock()->GetTrigger("Attack_Trigger")) return;
+
 	Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_SwordSwing01);
 
 	// フレームリセット
@@ -94,6 +97,15 @@ void PlayerAttack::Attack(PlayerActor * actor)
 	// ロックオン時
 	if (actor->isRockOn)
 	{
+		if (!actor->targetTransform.expired())
+		{
+			Vector3 dir = actor->targetTransform.lock()->GetWorldPosition() - actor->transform.lock()->GetWorldPosition();
+			dir.y = 0;
+			dir.Normalize();
+			Quaternion look = Quaternion::LookRotation(dir);
+			actor->transform.lock()->SetWorldRotation(look);
+		}
+
 		Vector3 forward = actor->transform.lock()->forward();
 		float attackDot = Vector3::Dot(forward, actor->moveDir);
 		if (attackDot < 0.3f) attackDot = 0.3f;

@@ -26,7 +26,7 @@ void PlayerStep::OnUpdate(PlayerActor * actor)
 
 	if (!actor->animator.lock()->IsCurrentAnimation("RockOn_Back_Step"))
 	{
-		if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
+		if (actor->GetInput(PlayerActor::InputKey::A_Trigger))
 		{
 			if (actor->isWeaponHold)
 			{

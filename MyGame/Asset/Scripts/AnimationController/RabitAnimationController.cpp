@@ -513,19 +513,19 @@ void RabitAnimationController::Initialize()
 				transition->AddConditionFloat(walkValue, Less, 0.1f);
 				transition->AddConditionBool(isRockOn, true);
 			});
-			Attack_Filter->AddTransition(Idle_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
+			Attack_Filter->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.2f, true, 0.7f);
 				transition->AddConditionFloat(walkValue, Less, 0.1f);
 			});
 			Attack_Filter->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
-				transition->SetOption(0.2f, true, 0.8f);
+				transition->SetOption(0.1f, true, 0.9f);
 				transition->AddConditionFloat(walkValue, Greater, 0.5f);
 			});
 			Attack_Filter->AddTransition(walk, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
-				transition->SetOption(0.2f, true, 0.8f);
+				transition->SetOption(0.1f, true, 0.9f);
 				transition->AddConditionFloat(walkValue, Greater, 0.1f);
 			});
 			Attack_Filter->AddTransition(fall, [=](std::shared_ptr<AnimationTransition> & transition)

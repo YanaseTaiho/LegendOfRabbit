@@ -45,7 +45,7 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 					{
 						addInfo.collision = collision;
 						// マテリアル情報取得用のレンダー取得
-						addInfo.material = ((CollisionSphere*)col)->material;
+						//addInfo.material = ((CollisionSphere*)col)->material;
 						*castInfo = addInfo;
 						hit = true;
 					}
@@ -53,7 +53,7 @@ bool RayCast::JudgeAllCollision(Ray * ray, RayCastInfo * castInfo, std::weak_ptr
 					{
 						addInfo.collision = collision;
 						// マテリアル情報取得用のレンダー取得
-						addInfo.material = ((CollisionSphere*)col)->material;
+						//addInfo.material = ((CollisionSphere*)col)->material;
 						*castInfo = addInfo;
 					}
 				}

@@ -140,42 +140,46 @@ bool CollisionJudge::Sphere_VS_Mesh(CollisionSphere * a, CollisionMesh * b)
 					Vector3 normal = noPosMat * face.normal;
 					normal.Normalize();
 
-					//float gravityAngle = Mathf::RadToDeg(Mathf::ACosf(Vector3::Dot(Vector3::up(), normal)));
-					//// 一定の角度以下なら滑らない
-					//if (gravityAngle <= 45.1f)
-					//{
-					//	point = b->worldMatrix * point;	// ヒット座標をワールド座標に変換
-					//	Vector3 pushVec = a->worldMatrix.position() - point;
-					//	float pushForce = pushVec.Length() * def;
-
-					//	if (CP_Dot > 0)	// ポリゴンの表側にある場合
-					//		position.y += pushForce;
-					//	else  // ポリゴンの裏側にある場合
-					//		position.y += pushForce + (a->radius * def);
-					//	
- 				//		if(a->rigidbody.lock()->velocity.y < 0.0f)
-					//		a->rigidbody.lock()->velocity.y = 0.0f;
-					//}
-					//else
+					if (Vector3::Dot(Vector3::up(), normal) <= a->pushDotUp)
 					{
-						if (CP_Dot > 0)	// ポリゴンの表側にある場合
-						{
-							SC += (normal * def);
-							position += (normal * defW);
-						}
-						else  // ポリゴンの裏側にある場合
-						{
-							SC += normal * (def + a->radius);
-							position += normal * (defW + a->radius);
-						}
-						// 押し出す方向の逆に働いている力を打ち消す
-						float force = Vector3::Dot(normal, a->rigidbody.lock()->velocity);
-						if(force < 0.0f)
-							a->rigidbody.lock()->velocity -= normal * force;
-					}
 
-					rbA->SetWorldPosition(position);
-					a->Update();
+						//float gravityAngle = Mathf::RadToDeg(Mathf::ACosf(Vector3::Dot(Vector3::up(), normal)));
+						//// 一定の角度以下なら滑らない
+						//if (gravityAngle <= 45.1f)
+						//{
+						//	point = b->worldMatrix * point;	// ヒット座標をワールド座標に変換
+						//	Vector3 pushVec = a->worldMatrix.position() - point;
+						//	float pushForce = pushVec.Length() * def;
+
+						//	if (CP_Dot > 0)	// ポリゴンの表側にある場合
+						//		position.y += pushForce;
+						//	else  // ポリゴンの裏側にある場合
+						//		position.y += pushForce + (a->radius * def);
+						//	
+					//		if(a->rigidbody.lock()->velocity.y < 0.0f)
+						//		a->rigidbody.lock()->velocity.y = 0.0f;
+						//}
+						//else
+						{
+							if (CP_Dot > 0)	// ポリゴンの表側にある場合
+							{
+								SC += (normal * def);
+								position += (normal * defW);
+							}
+							else  // ポリゴンの裏側にある場合
+							{
+								SC += normal * (def + a->radius);
+								position += normal * (defW + a->radius);
+							}
+							// 押し出す方向の逆に働いている力を打ち消す
+							float force = Vector3::Dot(normal, a->rigidbody.lock()->velocity);
+							if (force < 0.0f)
+								a->rigidbody.lock()->velocity -= normal * force;
+						}
+
+						rbA->SetWorldPosition(position);
+						a->Update();
+					}
 				}
 				continue;
 			}
@@ -217,41 +221,44 @@ bool CollisionJudge::Sphere_VS_Mesh(CollisionSphere * a, CollisionMesh * b)
 						Vector3 normal = noPosMat * face.normal;
 						normal.Normalize();
 
-						//float gravityAngle = Mathf::RadToDeg(Mathf::ACosf(Vector3::Dot(Vector3::up(), normal)));
-						//// 一定の角度以下なら滑らない
-						//if (gravityAngle <= 45.1f)
-						//{
-						//	float pushForce = def;
-
-						//	if (CP_Dot > 0)	// ポリゴンの表側にある場合
-						//		position.y += pushForce;
-						//	else  // ポリゴンの裏側にある場合
-						//		position.y += pushForce + (a->radius * def);
-
-						//	if (a->rigidbody.lock()->velocity.y < 0.0f)
-						//		a->rigidbody.lock()->velocity.y = 0.0f;
-						//}
-						//else
+						if (Vector3::Dot(Vector3::up(), normal) <= a->pushDotUp)
 						{
-							if (CP_Dot > 0)	// ポリゴンの表側にある場合
+							//float gravityAngle = Mathf::RadToDeg(Mathf::ACosf(Vector3::Dot(Vector3::up(), normal)));
+							//// 一定の角度以下なら滑らない
+							//if (gravityAngle <= 45.1f)
+							//{
+							//	float pushForce = def;
+
+							//	if (CP_Dot > 0)	// ポリゴンの表側にある場合
+							//		position.y += pushForce;
+							//	else  // ポリゴンの裏側にある場合
+							//		position.y += pushForce + (a->radius * def);
+
+							//	if (a->rigidbody.lock()->velocity.y < 0.0f)
+							//		a->rigidbody.lock()->velocity.y = 0.0f;
+							//}
+							//else
 							{
-								SC += (normal * def);
-								position += (normal * defW);
-							}
-							else  // ポリゴンの裏側にある場合
-							{
-								SC += normal * (def + a->radius);
-								position += normal * (defW + a->radius);
+								if (CP_Dot > 0)	// ポリゴンの表側にある場合
+								{
+									SC += (normal * def);
+									position += (normal * defW);
+								}
+								else  // ポリゴンの裏側にある場合
+								{
+									SC += normal * (def + a->radius);
+									position += normal * (defW + a->radius);
+								}
+
+								// 押し出す方向の逆に働いている力を打ち消す
+								float force = Vector3::Dot(normal, a->rigidbody.lock()->velocity);
+								if (force < 0.0f)
+									a->rigidbody.lock()->velocity -= normal * force;
 							}
 
-							// 押し出す方向の逆に働いている力を打ち消す
-							float force = Vector3::Dot(normal, a->rigidbody.lock()->velocity);
-							if (force < 0.0f)
-								a->rigidbody.lock()->velocity -= normal * force;
+							rbA->SetWorldPosition(position);
+							a->Update();
 						}
-
-						rbA->SetWorldPosition(position);
-						a->Update();
 						break;
 					}
 				}

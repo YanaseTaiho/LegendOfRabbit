@@ -108,6 +108,7 @@ void AnimationClip::UpdateAnimation(Transform * const transform)
 void AnimationClip::UpdateFrame()
 {
 	frameCnt += speed * Time::DeltaTime();
+	// アニメーション再生
 	if (frameCnt >= 0.0f && frameCnt <= (float)maxFrame)
 	{
 		isEnd = false;
@@ -138,6 +139,7 @@ void AnimationClip::UpdateFrame()
 			oldFrameCnt = (int)frameCnt;
 		}
 	}
+	// アニメーション終了
 	else
 	{
 		isEnd = true;

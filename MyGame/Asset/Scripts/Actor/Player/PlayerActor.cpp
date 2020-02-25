@@ -79,6 +79,7 @@ void PlayerActor::OnStart()
 {
 	if (fsmManager) return;
 
+	// 全てのステートの初期化
 	fsmManager = std::make_unique<FSMManager<PlayerActor>>();
 	fsmManager->AddState((int)State::Idle, new PlayerIdle());
 	fsmManager->AddState((int)State::Move, new PlayerMove());
@@ -93,11 +94,17 @@ void PlayerActor::OnStart()
 	fsmManager->AddState((int)State::Step, new PlayerStep());
 	fsmManager->AddState((int)State::Damage, new PlayerDamage());
 
+	// 入力の数分生成
+	inputHandler.resize((int)InputKey::MaxNum);
+
+	// 必要なコンポーネントを取得
 	animator = this->gameObject.lock()->GetComponent<Animator>();
 	rigidbody = this->gameObject.lock()->GetComponent<Rigidbody>();
 
+	// ダメージ用のカラーの初期化
 	damageFlashColor.SetRenderer(this->gameObject.lock()->GetComponent<Renderer>());
 
+	// 初期姿勢に設定
 	ChangeState(State::Idle);
 
 	// 剣の当たり判定の設定
@@ -146,6 +153,7 @@ void PlayerActor::OnStart()
 		});
 	}
 
+	// 足音用の関数
 	auto GroundSE = [=](std::string name, int frame)
 	{
 		animator.lock()->SetAnimationCallBack(name, frame, [=]()
@@ -198,6 +206,14 @@ void PlayerActor::OnStart()
 
 void PlayerActor::OnUpdate()
 {
+	SetInput(InputKey::A_Trigger, Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A));
+	SetInput(InputKey::B_Trigger, Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B));
+	SetInput(InputKey::LS_Trigger, Input::Keyboad::IsTrigger('F') || GamePad::IsTrigger(GamePad::Button::LEFT_SHOULDER));
+	SetInput(InputKey::LS_Press, Input::Keyboad::IsPress('F') || GamePad::IsPress(GamePad::Button::LEFT_SHOULDER));
+	SetInput(InputKey::RS_Press, Input::Keyboad::IsPress('Q') || GamePad::IsPress(GamePad::Button::RIGHT_SHOULDER));
+	SetInput(InputKey::Left_Trigger, Input::Keyboad::IsTrigger(VK_LEFT) || GamePad::IsTrigger(GamePad::Button::THUMB_R_LEFT));
+	SetInput(InputKey::Right_Trigger, Input::Keyboad::IsTrigger(VK_RIGHT) || GamePad::IsTrigger(GamePad::Button::THUMB_R_RIGHT));
+
 	// リストにある対象が既に死んでいないかチェック
 	for (auto itr = targetTriggerList.begin(), end = targetTriggerList.end(); itr != end;)
 	{
@@ -214,8 +230,7 @@ void PlayerActor::OnUpdate()
 	ImGui::Unindent();*/
 
 	// ロックオン処理
-	if (Input::Keyboad::IsTrigger('F')
-		|| GamePad::IsTrigger(GamePad::Button::LEFT_SHOULDER))
+	if (GetInput(InputKey::LS_Trigger))
 	{
 		RockOn(!isRockOn);
 	}
@@ -224,15 +239,15 @@ void PlayerActor::OnUpdate()
 		//  ターゲットがいない場合は長押ししていないとロックオン状態を解除する
 		if (targetTransform.expired())
 		{
-			if (!GamePad::IsPress(GamePad::Button::LEFT_SHOULDER))
+			if (!GetInput(InputKey::LS_Press))
 				RockOn(false);
 		}
 		// ターゲット切り替え
-		else if (GamePad::IsTrigger(GamePad::Button::THUMB_R_LEFT))
+		else if (GetInput(InputKey::Left_Trigger))
 		{
 			SetNextTarget(false);
 		}
-		else if (GamePad::IsTrigger(GamePad::Button::THUMB_R_RIGHT))
+		else if (GetInput(InputKey::Right_Trigger))
 		{
 			SetNextTarget(true);
 		}
@@ -280,8 +295,7 @@ void PlayerActor::OnUpdate()
 
 			if (!shieldRock_HandContorller.expired())
 			{
-				if (Input::Keyboad::IsPress('2')
-					|| GamePad::IsPress(GamePad::Button::RIGHT_SHOULDER))
+				if (GetInput(InputKey::RS_Press))
 				{
 					shieldRock_HandContorller.lock()->SetWeight(0.2f);
 				}
@@ -541,6 +555,16 @@ void PlayerActor::SetNextTarget(bool isRight)
 	}
 }
 
+void PlayerActor::SetInput(InputKey key, bool flag)
+{
+	inputHandler[(int)key] = flag;
+}
+
+bool PlayerActor::GetInput(InputKey key)
+{
+	return inputHandler[(int)key];
+}
+
 void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints, float locusLengh)
 {
 	if (hitInfo.collision.lock()->isTrigger) return;
@@ -596,7 +620,7 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 	{
 		auto EffectSet = [&](RayCastInfo & info)
 		{
-			EffekseerType efcType;
+			EffekseerType efcType = EffekseerType::Hit01;
 			// マテリアル情報から音を変える
 			if (!info.material.expired())
 			{

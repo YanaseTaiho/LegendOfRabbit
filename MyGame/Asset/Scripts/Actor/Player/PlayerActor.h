@@ -52,6 +52,18 @@ public:
 	PlayerActor();
 	~PlayerActor();
 
+	enum class InputKey : int
+	{
+		A_Trigger,
+		B_Trigger,
+		LS_Trigger,
+		LS_Press,
+		RS_Press,
+		Left_Trigger,
+		Right_Trigger,
+		MaxNum
+	};
+
 	enum class State : int
 	{
 		Idle,
@@ -156,10 +168,15 @@ public:
 	void RockOn(bool flag);
 	void SetNextTarget(bool isRight);
 
+	bool GetInput(InputKey key);
+
 private:
 	float horizontal = 0.0f;
 	float vertical = 0.0f;
 	
+	std::vector<bool> inputHandler;
+	void SetInput(InputKey key, bool flag);
+
 	void AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints, float locusLengh);
 	void UpdateInput();
 	void CheckGround();

@@ -32,7 +32,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		actor->ChangeState(PlayerActor::State::Idle);
 		return;
 	}
-	if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
+	if (actor->GetInput(PlayerActor::InputKey::A_Trigger))
 	{
 		if (actor->isWeaponHold)
 		{
@@ -76,7 +76,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 		CheckDirection(actor);
 
 		if (actor->moveDir != Vector3::zero()
-			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B)))
+			&& actor->GetInput(PlayerActor::InputKey::B_Trigger))
 		{
 
 			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Jump);
@@ -180,7 +180,7 @@ void PlayerMove::OnUpdate(PlayerActor * actor)
 
 		// “]‚ª‚é
 		if (actor->moveAmount > 0.1f
-			&& (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
+			&& actor->GetInput(PlayerActor::InputKey::B_Trigger)
 			|| actor->animator.lock()->IsCurrentAnimation("Roll"))
 		{
 			actor->ChangeState(PlayerActor::State::Roll);

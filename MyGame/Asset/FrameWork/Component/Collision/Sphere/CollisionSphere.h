@@ -21,12 +21,14 @@ namespace FrameWork
 		{
 			archive(cereal::make_nvp("Collision", cereal::base_class<Collision>(this)), CEREAL_NVP(radius));
 			//if (version >= 1) archive(material);
+			if (version >= 2) archive(pushDotUp);
 		}
 		template<class Archive>
 		void load(Archive & archive, std::uint32_t const version)
 		{
 			archive(cereal::make_nvp("Collision", cereal::base_class<Collision>(this)), CEREAL_NVP(radius));
 			//if (version >= 1) archive(material);
+			if (version >= 2) archive(pushDotUp);
 		}
 
 	public:
@@ -38,10 +40,11 @@ namespace FrameWork
 		void SetRadius(float radius);
 		float GetRadius();
 
-		std::weak_ptr<MyDirectX::Material> material;	// コリジョンに属性を持たせるときに使う
+		//std::weak_ptr<MyDirectX::Material> material;	// コリジョンに属性を持たせるときに使う
 	private:
 
 		float radius;
+		float pushDotUp = 1.0f;	// 衝突時のupベクトルの内積の割合で押し出しを行うか決定(0.0f ～ 1.0f)
 
 		void Awake() override;
 		void DrawImGui(int id) override;
@@ -57,7 +60,7 @@ namespace FrameWork
 	};
 }
 
-CEREAL_CLASS_VERSION(FrameWork::CollisionSphere, 1)
+CEREAL_CLASS_VERSION(FrameWork::CollisionSphere, 2)
 CEREAL_REGISTER_TYPE(FrameWork::CollisionSphere)
 
 

@@ -81,7 +81,6 @@ private:
 
 	std::list<std::shared_ptr<NodeTransform>> nodeTransformList;
 	std::list<std::weak_ptr<NodeTransform>> selectNodeTransformList;		// 選択しているオブジェクト
-	//std::weak_ptr<NodeTransform> inspectorTransform;						// インスペクタに表示するオブジェクト
 	std::list <std::unique_ptr<std::stringstream>> copyDataList;			// コピーリスト
 	std::list <std::string> pastObjectNameList;								// ペーストしたオブジェクトを登録しておくリスト
 	std::weak_ptr<NodeTransform> curSelectParentNode;						// 現在選択している先頭のノードにある親を指すポインタ（いない場合は空）

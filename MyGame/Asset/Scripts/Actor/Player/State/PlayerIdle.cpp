@@ -25,7 +25,7 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 		return;
 	}
 
-	if (Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A))
+	if (actor->GetInput(PlayerActor::InputKey::A_Trigger))
 	{
 		if (actor->isWeaponHold)
 		{
@@ -56,7 +56,7 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 			actor->transform.lock()->SetWorldRotation(rot);
 		}
 
-		if (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
+		if (actor->GetInput(PlayerActor::InputKey::B_Trigger))
 		{
 			if (actor->isWeaponHold)
 			{
@@ -74,7 +74,7 @@ void PlayerIdle::OnUpdate(PlayerActor * actor)
 	}
 	else
 	{
-		if (Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B))
+		if (actor->GetInput(PlayerActor::InputKey::B_Trigger))
 		{
 			if (!actor->isWeaponHold) actor->WeaponHold();
 			else actor->WeaponNotHold();
