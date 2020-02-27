@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "../../Shader/ConstantBuffer.h"
-#include "../../Shader/MeshShader.h"
+#include "../../Shader/StandardShader.h"
 
 using namespace MyDirectX;
 
@@ -10,7 +10,7 @@ void Mesh::Initialize()
 	{
 		for (auto& subset : node.subsetArray)
 		{
-			subset.material.SetShader(new MeshShader());
+			subset.material.SetShader(new StandardShader());
 		}
 	}
 }
@@ -28,6 +28,7 @@ void Mesh::Draw(Transform * transform, std::vector<std::weak_ptr<Material>> & ma
 	for (auto & node : meshNode)
 	{
 		MeshData<VTX_MESH> & meshData = (MeshData<VTX_MESH>&)node.meshData;
+		meshData.IASetBuffer();
 
 		for (const auto& subset : node.subsetArray)
 		{
@@ -37,11 +38,17 @@ void Mesh::Draw(Transform * transform, std::vector<std::weak_ptr<Material>> & ma
 			else
 				material = &subset.material;
 
-			meshData.IASetBuffer();
-			material->SetOption();
-
 			// 描画
-			meshData.DrawIndexed(subset.indexNum, subset.startIndex);
+			if (material->shader)
+			{
+				// ラスタライザセット
+				RendererSystem::SetRasterizerState(material->rasterizer);
+				// シェーダーセット
+				//material->shader->SetShader();
+				// ここで描画
+				material->shader->Draw(material, &meshData, subset.startIndex, subset.indexNum);
+			}
+			//meshData.DrawIndexed(subset.indexNum, subset.startIndex);
 
 			materialCnt++;
 		}

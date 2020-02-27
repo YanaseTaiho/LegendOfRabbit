@@ -3,9 +3,9 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 2,
-                "name": "RabbitLink_Eye",
-                "materialParam": {
+                "cereal_class_version": 3,
+                "value0": "RabbitLink_Eye",
+                "value1": {
                     "cereal_class_version": 0,
                     "ambient": {
                         "r": 0.0,
@@ -14,16 +14,16 @@
                         "a": 1.0
                     },
                     "diffuse": {
-                        "r": 9.999999974752428e-7,
-                        "g": 9.999899930335233e-7,
-                        "b": 9.999899930335233e-7,
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
                         "a": 1.0
                     },
                     "emissive": {
                         "r": 0.0,
                         "g": 0.0,
                         "b": 0.0,
-                        "a": 1.0
+                        "a": 1.0099999904632569
                     },
                     "bump": {
                         "r": 1.0,
@@ -35,26 +35,28 @@
                         "r": 0.25,
                         "g": 0.25,
                         "b": 0.25,
-                        "a": 13.279999732971192
+                        "a": 13.640000343322754
                     },
                     "specularFactor": 1.0,
                     "shininess": 1.0,
-                    "reflection": 4.070000171661377,
+                    "reflection": 3.7799999713897707,
                     "height": 0.0
                 },
-                "shader": {
+                "value2": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "MyDirectX::SkinMeshShader",
+                    "polymorphic_name": "MyDirectX::StandardShader",
                     "ptr_wrapper": {
                         "id": 2147483650,
-                        "data": {}
+                        "data": {
+                            "cereal_class_version": 0
+                        }
                     }
                 },
-                "texName": "",
-                "normalName": "",
-                "heightName": "",
-                "value0": 0,
-                "value1": 0
+                "value3": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLinkEye_Base_Color.png",
+                "value4": "",
+                "value5": "",
+                "value6": 0,
+                "value7": 0
             }
         }
     }

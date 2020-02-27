@@ -3,9 +3,9 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 2,
-                "name": "RabbitLink_Base",
-                "materialParam": {
+                "cereal_class_version": 3,
+                "value0": "RabbitLink_Base",
+                "value1": {
                     "cereal_class_version": 0,
                     "ambient": {
                         "r": 0.0,
@@ -15,15 +15,15 @@
                     },
                     "diffuse": {
                         "r": 1.0,
-                        "g": 0.9999899864196777,
-                        "b": 0.9999899864196777,
+                        "g": 1.0,
+                        "b": 1.0,
                         "a": 1.0
                     },
                     "emissive": {
                         "r": 0.0,
                         "g": 0.0,
                         "b": 0.0,
-                        "a": 1.0
+                        "a": 1.1399999856948853
                     },
                     "bump": {
                         "r": 1.0,
@@ -35,26 +35,28 @@
                         "r": 0.25,
                         "g": 0.25,
                         "b": 0.25,
-                        "a": 6.010000228881836
+                        "a": 0.6499999761581421
                     },
                     "specularFactor": 1.0,
                     "shininess": 1.0,
-                    "reflection": 0.5,
+                    "reflection": 0.17000000178813935,
                     "height": 0.0
                 },
-                "shader": {
+                "value2": {
                     "polymorphic_id": 2147483649,
-                    "polymorphic_name": "MyDirectX::SkinMeshShader",
+                    "polymorphic_name": "MyDirectX::StandardShader",
                     "ptr_wrapper": {
                         "id": 2147483650,
-                        "data": {}
+                        "data": {
+                            "cereal_class_version": 0
+                        }
                     }
                 },
-                "texName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Base_Color.png",
-                "normalName": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Normal_DirectX.png",
-                "heightName": "",
-                "value0": 0,
-                "value1": 0
+                "value3": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Base_Color.png",
+                "value4": "Asset\\Art\\Model\\RabbitLink\\RabbitLink_Texture\\RabbitLink_Normal_DirectX.png",
+                "value5": "",
+                "value6": 0,
+                "value7": 0
             }
         }
     }

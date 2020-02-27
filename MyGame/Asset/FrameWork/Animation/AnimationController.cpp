@@ -146,6 +146,46 @@ void AnimationController::SetAnimation(std::string name)
 	}
 }
 
+void AnimationController::ChangeAnimation(std::string name)
+{
+	for (auto & filter : animationFilters)
+	{
+		// トランジションの中から次に遷移するアニメーションを探す
+		for (auto & transition : filter->runningState.lock()->transitions)
+		{
+			// 状態遷移の名前を確認
+			if (transition->nextAnimation.lock()->name == name)
+			{
+				// 既に遷移中かどうか確かめる
+				bool isTransition = !filter->runningTransition.expired();
+
+				// 次の状態に強制的に移行
+				if (isTransition)
+				{
+					filter->runningState = filter->runningTransition.lock()->nextAnimation;
+					filter->runningState.lock()->OnStart();	// フレームを初期化
+					filter->ChangeTransition(transition);
+				}
+				else
+				{
+					filter->ChangeTransition(transition);
+				}
+
+				return;
+			}
+		}
+
+		if (filter->runningTransition.expired())
+		{
+			if (filter->runningState.lock()->animFilter.lock()->ChangeAnimation(name)) return;
+		}
+		else
+		{
+			if (filter->runningTransition.lock()->nextAnimation.lock()->animFilter.lock()->ChangeAnimation(name)) return;
+		}
+	}
+}
+
 void AnimationController::SetParameterFloat(std::string name, float param)
 {
 	if (parameterFloatMap.count(name) == 0) return;

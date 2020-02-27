@@ -43,10 +43,17 @@ namespace MyDirectX
 			if ((!pNormalTexture.expired())) normalName = pNormalTexture.lock()->GetName();
 			if ((!pHeightTexture.expired())) heightName = pHeightTexture.lock()->GetName();
 
-			archive(CEREAL_NVP(name), CEREAL_NVP(materialParam), CEREAL_NVP(shader),
-				CEREAL_NVP(texName),
-				CEREAL_NVP(normalName),
-				CEREAL_NVP(heightName));
+			if (version <= 2)
+			{
+				archive(CEREAL_NVP(name), CEREAL_NVP(materialParam), CEREAL_NVP(shader),
+					CEREAL_NVP(texName),
+					CEREAL_NVP(normalName),
+					CEREAL_NVP(heightName));
+			}
+			else if(version >= 3)
+			{
+				archive(name, materialParam, shader, texName, normalName, heightName);
+			}
 
 			if (version >= 1) archive(rasterizer);
 			if (version >= 2) archive(type);
@@ -55,10 +62,18 @@ namespace MyDirectX
 		void load(Archive & archive, std::uint32_t const version)
 		{
 			std::string texName, normalName, heightName;
-			archive(CEREAL_NVP(name), CEREAL_NVP(materialParam), CEREAL_NVP(shader),
-				CEREAL_NVP(texName),
-				CEREAL_NVP(normalName),
-				CEREAL_NVP(heightName));
+
+			if (version <= 2)
+			{
+				archive(CEREAL_NVP(name), CEREAL_NVP(materialParam), CEREAL_NVP(shader),
+					CEREAL_NVP(texName),
+					CEREAL_NVP(normalName),
+					CEREAL_NVP(heightName));
+			}
+			else if (version >= 3)
+			{
+				archive(name, materialParam, shader, texName, normalName, heightName);
+			}
 
 			if (version >= 1) archive(rasterizer);
 			if (version >= 2) archive(type);
@@ -77,7 +92,6 @@ namespace MyDirectX
 
 		// テクスチャをピクセルシェーダーにセット
 		void SetPSResources() const;
-		void SetOption() const;
 
 		void SetTexture(std::string fileName);
 		void SetNormalTexture(std::string fileName);
@@ -95,6 +109,6 @@ namespace MyDirectX
 	};
 }
 
-CEREAL_CLASS_VERSION(MyDirectX::Material, 2)
+CEREAL_CLASS_VERSION(MyDirectX::Material, 3)
 
 #endif //!__MATERIAL_H__

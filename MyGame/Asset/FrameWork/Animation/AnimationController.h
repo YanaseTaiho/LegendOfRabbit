@@ -65,6 +65,7 @@ namespace FrameWork
 		void SetAnimationCallBack(std::string name, int frame, std::function<void(void)> callBack);
 
 		void SetAnimation(std::string name);
+		void ChangeAnimation(std::string name);
 		void SetParameterFloat(std::string name, float param);
 		void SetParameterInt(std::string name, int param);
 		void SetParameterBool(std::string name, bool param);

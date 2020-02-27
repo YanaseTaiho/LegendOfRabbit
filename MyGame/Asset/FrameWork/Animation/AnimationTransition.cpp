@@ -11,11 +11,12 @@ AnimationTransition::~AnimationTransition()
 	std::vector<std::weak_ptr<bool>>().swap(conditionTriggers);
 }
 
-void AnimationTransition::SetOption(float duration, bool isHasExitTime, float exitTime)
+void AnimationTransition::SetOption(float duration, bool isHasExitTime, float exitTime, bool isAuto)
 {
 	this->duration = duration;
 	this->isHasExitTime = isHasExitTime;
 	this->exitTime = Mathf::Clamp01(exitTime);
+	this->isAuto = isAuto;
 }
 
 void AnimationTransition::OnStart()
@@ -89,6 +90,9 @@ bool AnimationTransition::Update(Transform * const transform, const AnimationSta
 
 bool AnimationTransition::CheckTransition(const AnimationState * entry)
 {
+	// è“®‚Å‘JˆÚ‚³‚¹‚éê‡‚Í•K‚¸ğŒ¸”sˆµ‚¢
+	if (!isAuto) return false;
+
 	bool isExit = true;
 
 	if (isHasExitTime)

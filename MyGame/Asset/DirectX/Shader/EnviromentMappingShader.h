@@ -9,18 +9,26 @@ namespace MyDirectX
 	{
 		friend cereal::access;
 		template <typename Archive>
-		void serialize(Archive & archive)
+		void save(Archive & archive, std::uint32_t const version) const
 		{
+
+		}
+		template <typename Archive>
+		void load(Archive & archive, std::uint32_t const version)
+		{
+
 		}
 	public:
 		EnviromentMappingShader() {};
 		~EnviromentMappingShader() {};
 
-		void SetOption(const Material * material) override;
+		void Draw(const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
+		void Draw(const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
 		void DrawImGui(Material * material, int & id) override;
 	};
 }
 
+CEREAL_CLASS_VERSION(MyDirectX::EnviromentMappingShader, 0)
 CEREAL_REGISTER_TYPE(MyDirectX::EnviromentMappingShader)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(MyDirectX::Shader, MyDirectX::EnviromentMappingShader)
 

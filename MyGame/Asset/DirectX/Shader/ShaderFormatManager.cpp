@@ -146,6 +146,12 @@ void ShaderFormatManager::CreateVertexShader()
 			layout,
 			ARRAYSIZE(layout)
 		);
+
+		pVertexFormats[(int)VERTEX_SHADER_TYPE::SKINMESH_FAR_NORMAL_TEXTURE]->CreateShader(
+			FilePathShader(L"VertexShader/VS_SkinMesh_Far_NormalTexture.hlsl"),
+			layout,
+			ARRAYSIZE(layout)
+		);
 	}
 }
 
@@ -180,6 +186,12 @@ void ShaderFormatManager::CreatePixelShader()
 		int type = (int)PIXEL_SHADER_TYPE::MESH_TOON_TEXTURE;
 		pPixelFormats[type]->Initialize();
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Toon.hlsl"));
+	}
+	// メッシュ（ファー＆ノーマルテクスチャ）
+	{
+		int type = (int)PIXEL_SHADER_TYPE::MESH_FAR_NORMAL_TEXTURE;
+		pPixelFormats[type]->Initialize();
+		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Far_NormalTexture.hlsl"));
 	}
 	// メッシュ（環境マッピング）
 	{

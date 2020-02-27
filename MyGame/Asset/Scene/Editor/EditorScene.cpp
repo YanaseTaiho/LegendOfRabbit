@@ -38,6 +38,7 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, ActorContainer);
 	REGISTER_COMPONENT(componentList, PlayerActor);
 	REGISTER_COMPONENT(componentList, SmallGomaActor);
+	REGISTER_COMPONENT(componentList, SpikeRabbitActor);
 	REGISTER_COMPONENT(componentList, CameraController);
 	REGISTER_COMPONENT(componentList, RotationFixedController);
 	REGISTER_COMPONENT(componentList, LocusController);
@@ -45,10 +46,9 @@ void EditorScene::CreateComponentList()
 
 	// シェーダー
 	BindClass<Shader> shaderList;
-	REGISTER_COMPONENT(shaderList, MeshShader);
-	REGISTER_COMPONENT(shaderList, SkinMeshShader);
+	REGISTER_COMPONENT(shaderList, StandardShader);
 	REGISTER_COMPONENT(shaderList, SkyDomeShader);
-	REGISTER_COMPONENT(shaderList, ToonMeshShader);
+	REGISTER_COMPONENT(shaderList, ToonShader);
 	REGISTER_COMPONENT(shaderList, EnviromentMappingShader);
 	Singleton<MaterialManager>::Instance()->CreateShaderList(shaderList);
 
@@ -56,6 +56,7 @@ void EditorScene::CreateComponentList()
 	BindClass<AnimationController> animControllerList;
 	REGISTER_COMPONENT(animControllerList, TestAnimationController);
 	REGISTER_COMPONENT(animControllerList, RabitAnimationController);
+	REGISTER_COMPONENT(animControllerList, SpikeRabbitAnimationController);
 	Animator::CreateAnimationControllerList(animControllerList);
 }
 

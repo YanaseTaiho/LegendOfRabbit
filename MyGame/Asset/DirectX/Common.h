@@ -10,10 +10,9 @@
 
 // シェーダー
 #include "Shader/ShaderFormatManager.h"
-#include "Shader/MeshShader.h"
-#include "Shader/SkinMeshShader.h"
+#include "Shader/StandardShader.h"
 #include "Shader/SkyDomeShader.h"
-#include "Shader/ToonMeshShader.h"
+#include "Shader/ToonShader.h"
 #include "Shader/EnviromentMappingShader.h"
 
 // レンダラー

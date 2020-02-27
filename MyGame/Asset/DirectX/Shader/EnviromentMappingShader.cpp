@@ -2,10 +2,12 @@
 #include "ConstantBuffer.h"
 #include "../Material/Material.h"
 #include "../Texture/TextureManager.h"
+#include "../MeshData/Mesh/Mesh.h"
+#include "../MeshData/SkinMesh/SkinMesh.h"
 
 using namespace MyDirectX;
 
-void EnviromentMappingShader::SetOption(const Material * material)
+void EnviromentMappingShader::Draw(const Material * material, const MeshData<VTX_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
 {
 	VERTEX_SHADER_TYPE vertex = VERTEX_SHADER_TYPE::MESH;
 	PIXEL_SHADER_TYPE pixel = PIXEL_SHADER_TYPE::MESH_ENVIROMENT_MAPPING_TEXTURE;
@@ -17,6 +19,28 @@ void EnviromentMappingShader::SetOption(const Material * material)
 	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_MATERIAL, material->materialParam);
 	ConstantBuffer::SetPSRegister(1, CB_TYPE::CB_MATERIAL);
 	material->SetPSResources();
+
+	SetShader();
+
+	mesh->DrawIndexed(indexNum, startIndex);
+}
+
+void EnviromentMappingShader::Draw(const Material * material, const MeshData<VTX_SKIN_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
+{
+	VERTEX_SHADER_TYPE vertex = VERTEX_SHADER_TYPE::SKINMESH;
+	PIXEL_SHADER_TYPE pixel = PIXEL_SHADER_TYPE::MESH_ENVIROMENT_MAPPING_TEXTURE;
+
+	SetVertexShaderFormat(vertex);
+	SetPixelShaderFormat(pixel);
+	ResetGeometryShaderFormat();
+
+	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_MATERIAL, material->materialParam);
+	ConstantBuffer::SetPSRegister(1, CB_TYPE::CB_MATERIAL);
+	material->SetPSResources();
+
+	SetShader();
+
+	mesh->DrawIndexed(indexNum, startIndex);
 }
 
 void EnviromentMappingShader::DrawImGui(Material * material, int & id)

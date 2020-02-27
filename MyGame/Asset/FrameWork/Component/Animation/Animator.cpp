@@ -108,6 +108,11 @@ void Animator::SetAnimationCallBack(std::string name, int frame, std::function<v
 	this->animController->SetAnimationCallBack(name, frame, callBack);
 }
 
+void Animator::ChangeAnimation(std::string name)
+{
+	this->animController->ChangeAnimation(name);
+}
+
 void Animator::SetFloat(std::string name, float value)
 {
 	this->animController->SetParameterFloat(name, value);

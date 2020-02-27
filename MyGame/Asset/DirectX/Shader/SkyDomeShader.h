@@ -9,17 +9,25 @@ namespace MyDirectX
 	{
 		friend cereal::access;
 		template <typename Archive>
-		void serialize(Archive & archive)
+		void save(Archive & archive, std::uint32_t const version) const
 		{
+
+		}
+		template <typename Archive>
+		void load(Archive & archive, std::uint32_t const version)
+		{
+
 		}
 	public:
 		SkyDomeShader() {};
 		~SkyDomeShader() {};
 
-		void SetOption(const Material * material) override;
+		void Draw(const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
+		//void Draw(const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
 	};
 }
 
+CEREAL_CLASS_VERSION(MyDirectX::SkyDomeShader, 0)
 CEREAL_REGISTER_TYPE(MyDirectX::SkyDomeShader)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(MyDirectX::Shader, MyDirectX::SkyDomeShader)
 

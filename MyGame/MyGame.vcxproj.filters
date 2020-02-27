@@ -237,12 +237,6 @@
     <ClCompile Include="Asset\DirectX\MeshData\PlaneMesh\PlaneMesh.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Asset\DirectX\Shader\MeshShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Asset\DirectX\Shader\SkinMeshShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Asset\DirectX\Shader\SkyDomeShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -268,9 +262,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Asset\DirectX\Shader\ToonMeshShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Asset\FrameWork\Input\GamePad.cpp">
@@ -352,6 +343,42 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttackFlip.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\AnimationController\SpikeRabbitAnimationController.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\SpikeRabbitActor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitIdle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitMove.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDeth.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDamage.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackStop.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackReady.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackFinish.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttack.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\DirectX\Shader\StandardShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\DirectX\Shader\ToonShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -704,12 +731,6 @@
     <ClInclude Include="Asset\DirectX\Shader\Shader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Asset\DirectX\Shader\MeshShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Asset\DirectX\Shader\SkinMeshShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Asset\DirectX\Shader\SkyDomeShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -741,9 +762,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Asset\FrameWork\Animation\AnimationFilter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Asset\DirectX\Shader\ToonMeshShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Asset\FrameWork\Input\GamePad.h">
@@ -830,6 +848,42 @@
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerAttackFlip.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\Scripts\AnimationController\SpikeRabbitAnimationController.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\SpikeRabbitActor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitIdle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitMove.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackFinish.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackReady.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackStop.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDamage.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDeth.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\DirectX\Shader\StandardShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\DirectX\Shader\ToonShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Asset\Shader\PixelShader\PS_Texture.hlsl" />
@@ -848,6 +902,8 @@
     <FxCompile Include="Asset\Shader\GeometryShader\GS_Line.hlsl" />
     <FxCompile Include="Asset\Shader\PixelShader\PS_Toon.hlsl" />
     <FxCompile Include="Asset\Shader\PixelShader\PS_EnvironmentMapping.hlsl" />
+    <FxCompile Include="Asset\Shader\VertexShader\VS_SkinMesh_Far_NormalTexture.hlsl" />
+    <FxCompile Include="Asset\Shader\PixelShader\PS_Far_NormalTexture.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyGame.rc">

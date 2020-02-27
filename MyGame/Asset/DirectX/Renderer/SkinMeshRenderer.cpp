@@ -31,6 +31,11 @@ void SkinMeshRenderer::Awake()
 
 void SkinMeshRenderer::OnDestroy()
 {
+	for (auto bone : skeleton)
+	{
+		bone->ReleaseParent();
+	}
+
 	boneTransforms.clear();
 	skeleton.clear();
 }

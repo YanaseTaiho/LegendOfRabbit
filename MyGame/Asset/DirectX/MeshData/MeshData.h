@@ -40,10 +40,11 @@ namespace MyDirectX
 		void CreateIndexBuffer(const std::vector<unsigned short> * index);
 
 		// バッファーセット
-		void IASetBuffer();
+		void IASetBuffer() const;
 		
-		void Draw();
-		void DrawIndexed(int indexCount, int startIndex);
+		void Draw() const;
+		void DrawIndexed(int indexCount, int startIndex) const;
+		void DrawIndexedInstanced(unsigned int instanceConut,int indexCount, int startIndex) const;
 
 		// 頂点情報を変更したときに呼ぶ
 		void SetVertexBuffer();
@@ -148,7 +149,7 @@ namespace MyDirectX
 	
 
 	template<typename VTX>
-	inline void MeshData<VTX>::IASetBuffer()
+	inline void MeshData<VTX>::IASetBuffer() const
 	{
 		UINT stride = sizeof(VTX);
 		UINT offset = 0;
@@ -193,7 +194,7 @@ namespace MyDirectX
 
 	// 描画---------------------------------------------------------------------------------------------
 	template<typename VTX>
-	void MeshData<VTX>::Draw()
+	void MeshData<VTX>::Draw() const
 	{
 		// 描画実行
 		if (m_pIdxBuf == nullptr)
@@ -206,9 +207,14 @@ namespace MyDirectX
 		}
 	}
 	template<typename VTX>
-	inline void MeshData<VTX>::DrawIndexed(int indexCount, int startIndex)
+	inline void MeshData<VTX>::DrawIndexed(int indexCount, int startIndex) const
 	{
 		RendererSystem::GetDeviceContext()->DrawIndexed(indexCount, startIndex, 0);
+	}
+	template<typename VTX>
+	inline void MeshData<VTX>::DrawIndexedInstanced(unsigned int instanceConut, int indexCount, int startIndex) const
+	{
+		RendererSystem::GetDeviceContext()->DrawIndexedInstanced(indexCount, instanceConut, startIndex, 0, 0);
 	}
 }
 //--------------------------------------------------------------------------------------------------

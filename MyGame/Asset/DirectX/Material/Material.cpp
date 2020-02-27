@@ -81,18 +81,6 @@ void Material::SetPSResources() const
 	RendererSystem::SetTexture(3, pHeightTexture);
 }
 
-void Material::SetOption() const
-{
-	if (!shader)return;
-
-	shader->SetOption(this);
-
-	// ラスタライザセット
-	RendererSystem::SetRasterizerState(rasterizer);
-
-	shader->SetShader();
-}
-
 void Material::SetTexture(std::string fileName)
 {
 	pTexture = Singleton<TextureManager>::Instance()->Load(fileName);

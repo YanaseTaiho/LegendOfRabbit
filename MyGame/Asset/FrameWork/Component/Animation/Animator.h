@@ -41,6 +41,7 @@ namespace FrameWork
 		void Update();
 
 		void SetAnimationCallBack(std::string name, int frame, std::function<void(void)> callBack);
+		void ChangeAnimation(std::string name);
 		void SetFloat(std::string name, float value);
 		void SetInt(std::string name, int value);
 		void SetBool(std::string name, bool value);

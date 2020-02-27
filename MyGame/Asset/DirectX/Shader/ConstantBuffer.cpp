@@ -17,6 +17,7 @@ void ConstantBuffer::Create()
 	CreateConstBuffer<CB_DIRECTIONAL_LIGHT>(&constantBuffers[(int)CB_TYPE::CB_DIRECTIONAL_LIGHT]);
 	CreateConstBuffer<CB_LIGHT_VIEW_PROJECTION>(&constantBuffers[(int)CB_TYPE::CB_LIGHT_VIEW_PROJECTION]);
 	CreateConstBuffer<CB_LINE_WIDTH>(&constantBuffers[(int)CB_TYPE::CB_LINE_WIDTH]);
+	CreateConstBuffer<CB_FAR>(&constantBuffers[(int)CB_TYPE::CB_FAR]);
 }
 
 void ConstantBuffer::Release()

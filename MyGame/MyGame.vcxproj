@@ -49,10 +49,9 @@
     <ClCompile Include="Asset\DirectX\Renderer\SkinMeshRenderer.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\Infomation\PixelShaderInfo.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\ShaderFormatManager.cpp" />
-    <ClCompile Include="Asset\DirectX\Shader\MeshShader.cpp" />
-    <ClCompile Include="Asset\DirectX\Shader\SkinMeshShader.cpp" />
+    <ClCompile Include="Asset\DirectX\Shader\StandardShader.cpp" />
     <ClCompile Include="Asset\DirectX\Shader\SkyDomeShader.cpp" />
-    <ClCompile Include="Asset\DirectX\Shader\ToonMeshShader.cpp" />
+    <ClCompile Include="Asset\DirectX\Shader\ToonShader.cpp" />
     <ClCompile Include="Asset\DirectX\Shadow\Shadow.cpp" />
     <ClCompile Include="Asset\DirectX\Texture\Texture.cpp" />
     <ClCompile Include="Asset\DirectX\Texture\TextureManager.cpp" />
@@ -94,6 +93,15 @@
     <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaChase.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaIdle.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaMove.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\SpikeRabbitActor.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttack.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackFinish.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackReady.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackStop.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDamage.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDeth.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitIdle.cpp" />
+    <ClCompile Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitMove.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttack.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttackFlip.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerAttackJump.cpp" />
@@ -104,6 +112,7 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerRollStop.cpp" />
     <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerStep.cpp" />
     <ClCompile Include="Asset\Scripts\AnimationController\RabitAnimationController.cpp" />
+    <ClCompile Include="Asset\Scripts\AnimationController\SpikeRabbitAnimationController.cpp" />
     <ClCompile Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.cpp" />
     <ClCompile Include="Asset\Scripts\CollisionObserver.cpp" />
     <ClCompile Include="Asset\Scripts\FlashColor.cpp" />
@@ -173,10 +182,9 @@
     <ClInclude Include="Asset\DirectX\Shader\EnviromentMappingShader.h" />
     <ClInclude Include="Asset\DirectX\Shader\Infomation\GeometryShaderInfo.h" />
     <ClInclude Include="Asset\DirectX\Shader\Shader.h" />
-    <ClInclude Include="Asset\DirectX\Shader\MeshShader.h" />
-    <ClInclude Include="Asset\DirectX\Shader\SkinMeshShader.h" />
+    <ClInclude Include="Asset\DirectX\Shader\StandardShader.h" />
     <ClInclude Include="Asset\DirectX\Shader\SkyDomeShader.h" />
-    <ClInclude Include="Asset\DirectX\Shader\ToonMeshShader.h" />
+    <ClInclude Include="Asset\DirectX\Shader\ToonShader.h" />
     <ClInclude Include="Asset\DirectX\Shadow\Shadow.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationController.h" />
     <ClInclude Include="Asset\FrameWork\Animation\AnimationClipManager.h" />
@@ -243,6 +251,18 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Enemy\SmallGoma\State\SmallGomaMove.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\SpikeRabbitActor.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttack.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackFinish.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackReady.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitAttackStop.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDamage.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitDeth.h" />
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitIdle.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Enemy\SpikeRabbit\State\SpikeRabbitMove.h" />
     <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerAttack.h">
       <SubType>
       </SubType>
@@ -276,6 +296,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="Asset\Scripts\AnimationController\SpikeRabbitAnimationController.h" />
     <ClInclude Include="Asset\Scripts\Camera\Plugin\RockOnCameraPlugin.h">
       <SubType>
       </SubType>
@@ -361,6 +382,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Asset\Shader\PixelShader\PS_Far_NormalTexture.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="Asset\Shader\PixelShader\PS_Line.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -392,6 +423,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Asset\Shader\VertexShader\VS_SkinMesh_Far_NormalTexture.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Asset\Shader\VertexShader\VS_SkinMesh_NormalTexture.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>

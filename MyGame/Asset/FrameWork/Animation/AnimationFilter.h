@@ -36,6 +36,7 @@ namespace FrameWork
 
 		bool SetAnimationCallBack(std::string name, int frame, std::function<void(void)> callBack);
 		bool SetAnimation(std::string name);
+		bool ChangeAnimation(std::string name);	// ƒgƒ‰ƒ“ƒWƒVƒ‡ƒ“‚É‰ˆ‚Á‚ÄØ‚è‘Ö‚¦‚·‚é
 
 		void SetEntryPoint(std::weak_ptr<AnimationState> entryState);
 		std::shared_ptr<AnimationFilter> & AddFilter(std::string name, std::function<void(std::shared_ptr<AnimationFilter> & filter)> func = nullptr);

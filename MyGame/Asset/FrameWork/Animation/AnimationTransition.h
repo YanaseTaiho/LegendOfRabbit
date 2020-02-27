@@ -22,6 +22,8 @@ namespace FrameWork
 			{
 				archive(nextAnimation,conditionInts, conditionFloats, conditionBools, conditionTriggers);
 				archive(duration, isHasExitTime, exitTime);
+
+				if (version >= 2) archive(isAuto);
 			}
 			else
 			{
@@ -35,7 +37,7 @@ namespace FrameWork
 		AnimationTransition() {}
 		~AnimationTransition();
 
-		void SetOption(float duration, bool isHasExitTime, float exitTime = 1.0f);
+		void SetOption(float duration, bool isHasExitTime, float exitTime = 1.0f, bool isAuto = true);
 		void OnStart();
 
 		// パラメータが設定した値の条件を満たせば 真
@@ -53,6 +55,7 @@ namespace FrameWork
 		bool CheckTransition(const AnimationState * entry);
 
 		bool isHasExitTime;
+		bool isAuto;	// 自動で条件から判断して遷移するのか
 		float exitTime;	
 		float duration;	// 遷移時間
 
@@ -113,7 +116,7 @@ namespace FrameWork
 	};
 }
 
-CEREAL_CLASS_VERSION(FrameWork::AnimationTransition, 1)
+CEREAL_CLASS_VERSION(FrameWork::AnimationTransition, 2)
 
 #endif // !_ANIMATIONTRANSITION_H_
 

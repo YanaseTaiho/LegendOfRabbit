@@ -1,7 +1,7 @@
 #include "SkinMesh.h"
 #include "FrameWork/Animation/AnimationClipManager.h"
 #include "../../Shader/ConstantBuffer.h"
-#include "../../Shader/SkinMeshShader.h"
+#include "../../Shader/StandardShader.h"
 
 using namespace MyDirectX;
 
@@ -17,7 +17,7 @@ void SkinMesh::Initialize()
 	{
 		for (auto& subset : node.subsetArray)
 		{
-			subset.material.SetShader(new SkinMeshShader());
+			subset.material.SetShader(new StandardShader());
 		}
 	}
 }
@@ -48,6 +48,7 @@ void SkinMesh::Draw(Transform * transform, std::vector<std::weak_ptr<Material>> 
 	for (auto & node : meshNode)
 	{
 		MeshData<VTX_SKIN_MESH> & meshData = (MeshData<VTX_SKIN_MESH>&)node.meshData;
+		meshData.IASetBuffer();
 
 		for (const auto& subset : node.subsetArray)
 		{
@@ -57,11 +58,18 @@ void SkinMesh::Draw(Transform * transform, std::vector<std::weak_ptr<Material>> 
 			else
 				material = &subset.material;
 
-			material->SetOption();
-			meshData.IASetBuffer();
-
 			// 描画
-			meshData.DrawIndexed(subset.indexNum, subset.startIndex);
+			if (material->shader)
+			{
+				// ラスタライザセット
+				RendererSystem::SetRasterizerState(material->rasterizer);
+				// シェーダーセット
+				//material->shader->SetShader();
+				// ここで描画
+				material->shader->Draw(material, &meshData, subset.startIndex, subset.indexNum);
+			}
+			
+			//meshData.DrawIndexed(subset.indexNum, subset.startIndex);
 
 			materialCnt++;
 		}

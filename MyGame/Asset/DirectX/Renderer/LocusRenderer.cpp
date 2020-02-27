@@ -76,7 +76,6 @@ void LocusRenderer::Draw()
 
 	meshData.SetVertexBuffer();
 	meshData.IASetBuffer();
-	material.lock()->SetOption();
 
 	RendererSystem::SetUseLightOption(false, false);
 
@@ -85,5 +84,7 @@ void LocusRenderer::Draw()
 	ConstantBuffer::SetPSRegister(0, CB_TYPE::CB_COLOR);
 
 	// •`‰æ
-	meshData.DrawIndexed(indexNum - startNum, startNum);
+	//meshData.DrawIndexed(indexNum - startNum, startNum);
+
+	material.lock()->shader->Draw(material.lock().get(), &meshData, startNum, indexNum - startNum);
 }

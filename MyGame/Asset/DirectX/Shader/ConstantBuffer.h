@@ -84,6 +84,13 @@ namespace MyDirectX
 		Vector3 CameraPos;
 	};
 
+	struct CB_FAR
+	{
+		UINT maxNum;		// •`‰æ‰ñ”
+		float scaleOffset;  // –@ü•ûŒü‚ÉŠg‘å‚µ‚Ä‚¢‚­ŠÔŠu
+		float dumy[2];
+	};
+
 	enum class CB_TYPE : int
 	{
 		CB_WORLD,
@@ -98,6 +105,7 @@ namespace MyDirectX
 		CB_LIGHT_VIEW_PROJECTION,
 		CB_MATRIX_2,
 		CB_LINE_WIDTH,
+		CB_FAR,
 		CB_NUM
 	};
 

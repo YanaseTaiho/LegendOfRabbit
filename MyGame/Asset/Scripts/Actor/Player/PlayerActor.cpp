@@ -221,14 +221,6 @@ void PlayerActor::OnUpdate()
 		else ++itr;
 	}
 
-	/*ImGui::Text("TargetTrigger");
-	ImGui::Indent();
-	for (auto & c : targetTriggerList)
-	{
-		ImGui::Text(c.lock()->gameObject.lock()->name.c_str());
-	}
-	ImGui::Unindent();*/
-
 	// ƒƒbƒNƒIƒ“ˆ—
 	if (GetInput(InputKey::LS_Trigger))
 	{

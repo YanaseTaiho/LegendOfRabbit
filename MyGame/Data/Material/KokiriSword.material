@@ -1,0 +1,63 @@
+{
+    "KokiriSword": {
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "cereal_class_version": 3,
+                "value0": "KokiriSword",
+                "value1": {
+                    "cereal_class_version": 0,
+                    "ambient": {
+                        "r": 9.999999974752428e-7,
+                        "g": 9.999899930335233e-7,
+                        "b": 9.999899930335233e-7,
+                        "a": 1.0
+                    },
+                    "diffuse": {
+                        "r": 1.0,
+                        "g": 0.9999899864196777,
+                        "b": 0.9999899864196777,
+                        "a": 1.0
+                    },
+                    "emissive": {
+                        "r": 9.999999974752428e-7,
+                        "g": 9.999899930335233e-7,
+                        "b": 9.999899930335233e-7,
+                        "a": 1.2599999904632569
+                    },
+                    "bump": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "specular": {
+                        "r": 0.25,
+                        "g": 0.25,
+                        "b": 0.25,
+                        "a": 3.9800000190734865
+                    },
+                    "specularFactor": 1.0,
+                    "shininess": 1.0,
+                    "reflection": 20.75,
+                    "height": 0.0
+                },
+                "value2": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "MyDirectX::EnviromentMappingShader",
+                    "ptr_wrapper": {
+                        "id": 2147483650,
+                        "data": {
+                            "cereal_class_version": 0
+                        }
+                    }
+                },
+                "value3": "Asset\\Art\\Texture\\Rainbow.png",
+                "value4": "",
+                "value5": "",
+                "value6": 0,
+                "value7": 0
+            }
+        }
+    }
+}

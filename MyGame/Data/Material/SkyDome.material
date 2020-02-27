@@ -3,9 +3,9 @@
         "ptr_wrapper": {
             "id": 2147483649,
             "data": {
-                "cereal_class_version": 2,
-                "name": "SkyDome",
-                "materialParam": {
+                "cereal_class_version": 3,
+                "value0": "SkyDome",
+                "value1": {
                     "cereal_class_version": 0,
                     "ambient": {
                         "r": 0.0,
@@ -42,19 +42,21 @@
                     "reflection": 0.30000001192092898,
                     "height": 0.0
                 },
-                "shader": {
+                "value2": {
                     "polymorphic_id": 2147483649,
                     "polymorphic_name": "MyDirectX::SkyDomeShader",
                     "ptr_wrapper": {
                         "id": 2147483650,
-                        "data": {}
+                        "data": {
+                            "cereal_class_version": 0
+                        }
                     }
                 },
-                "texName": "",
-                "normalName": "",
-                "heightName": "",
-                "value0": 0,
-                "value1": 0
+                "value3": "",
+                "value4": "",
+                "value5": "",
+                "value6": 0,
+                "value7": 0
             }
         }
     }
