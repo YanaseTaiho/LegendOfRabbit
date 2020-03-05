@@ -3,7 +3,7 @@
 void SpikeRabbitAttack::OnStart(SpikeRabbitActor * actor)
 {
 	actor->animator.lock()->ChangeAnimation("Attack");
-	frameCnt = 120;
+	frameCnt = 60;
 }
 
 void SpikeRabbitAttack::OnUpdate(SpikeRabbitActor * actor)

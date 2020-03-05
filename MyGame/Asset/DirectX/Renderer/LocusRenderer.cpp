@@ -66,7 +66,7 @@ void LocusRenderer::SetMesh(const std::vector<Vector3>& pos1, const std::vector<
 
 void LocusRenderer::Draw()
 {
-	if (material.expired() || indexNum <= 0 || meshData.vertex.size() == 0) return;
+	if (material.expired() || !material.lock()->shader || indexNum <= 0 || meshData.vertex.size() == 0) return;
 
 	// パラメータの受け渡し
 	ConstantBuffer::UpdateConstBuffer(CB_TYPE::CB_WORLD, Matrix4::Identity());
@@ -86,5 +86,8 @@ void LocusRenderer::Draw()
 	// 描画
 	//meshData.DrawIndexed(indexNum - startNum, startNum);
 
-	material.lock()->shader->Draw(material.lock().get(), &meshData, startNum, indexNum - startNum);
+	// ラスタライザセット
+	RendererSystem::SetRasterizerState(material.lock()->rasterizer);
+
+	material.lock()->shader->Draw(transform.lock().get(), material.lock().get(), &meshData, startNum, indexNum - startNum);
 }

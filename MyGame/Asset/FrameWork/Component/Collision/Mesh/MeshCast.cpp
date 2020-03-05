@@ -50,14 +50,6 @@ bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std
 			}
 			if (myHit) continue;
 
-
-			// 球の判定をする
-			float rayDistSq = (center - col->worldMatrix.position()).LengthSq();
-			float RadiusSq = col->scaleRadius * col->scaleRadius + radiusSq;
-			if (rayDistSq > RadiusSq)
-				continue;
-
-			
 			if (col->GetType() == typeid(CollisionSphere))
 			{
 				CollisionSphere * sphere = (CollisionSphere*)col;
@@ -102,6 +94,12 @@ bool MeshCast::JudgeAllCollision(const std::vector<MeshPoints> & meshPoints, std
 			// 相手がメッシュコリジョンの場合
 			if (col->GetType() == typeid(CollisionMesh))
 			{
+				// 球の判定をする
+				float rayDistSq = (center - col->worldMatrix.position()).LengthSq();
+				float RadiusSq = col->scaleRadius * col->scaleRadius + radiusSq;
+				if (rayDistSq > RadiusSq)
+					continue;
+
 				CollisionMesh * colMesh = (CollisionMesh*)col;
 
 				// 判定をする相手の逆行列を掛ける

@@ -77,7 +77,8 @@ public:
 		Attack,
 		AttackFlip,
 		Step,
-		Damage
+		Damage,
+		Guard
 	};
 
 	enum class AttackType : int
@@ -123,9 +124,7 @@ public:
 
 	// ソードの軌跡コントローラー
 	std::weak_ptr<LocusController> locusController;
-
 	std::weak_ptr<Transform> targetTransform;
-
 	std::weak_ptr<TargetImageController> targetImageController; // 注目しているターゲットの位置に現す画像
 
 	float rayStart = 5.0f;
@@ -151,10 +150,11 @@ public:
 	bool onGround = false;
 	bool isRockOn = false;
 
-	void OnStart() override;
-	void OnUpdate() override;
-	void OnLateUpdate() override;
-	void Draw() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
+
+	DamageType Damage(int damage, std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other, Vector3 force = Vector3::zero()) override;
 
 	// 物理的に当たっている間は呼ばれる
 	void OnCollisionStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;

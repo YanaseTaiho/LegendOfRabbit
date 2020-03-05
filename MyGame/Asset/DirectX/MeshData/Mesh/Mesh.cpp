@@ -43,10 +43,8 @@ void Mesh::Draw(Transform * transform, std::vector<std::weak_ptr<Material>> & ma
 			{
 				// ラスタライザセット
 				RendererSystem::SetRasterizerState(material->rasterizer);
-				// シェーダーセット
-				//material->shader->SetShader();
 				// ここで描画
-				material->shader->Draw(material, &meshData, subset.startIndex, subset.indexNum);
+				material->shader->Draw(transform, material, &meshData, subset.startIndex, subset.indexNum);
 			}
 			//meshData.DrawIndexed(subset.indexNum, subset.startIndex);
 

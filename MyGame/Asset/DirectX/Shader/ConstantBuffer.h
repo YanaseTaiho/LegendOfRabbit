@@ -86,6 +86,7 @@ namespace MyDirectX
 
 	struct CB_FAR
 	{
+		Matrix4 world;
 		UINT maxNum;		// •`‰æ‰ñ”
 		float scaleOffset;  // –@ü•ûŒü‚ÉŠg‘å‚µ‚Ä‚¢‚­ŠÔŠu
 		float dumy[2];

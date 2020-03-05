@@ -50,6 +50,7 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(shaderList, SkyDomeShader);
 	REGISTER_COMPONENT(shaderList, ToonShader);
 	REGISTER_COMPONENT(shaderList, EnviromentMappingShader);
+	REGISTER_COMPONENT(shaderList, FarShader);
 	Singleton<MaterialManager>::Instance()->CreateShaderList(shaderList);
 
 	// アニメションコントローラー

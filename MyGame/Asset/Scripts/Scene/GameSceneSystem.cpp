@@ -1,4 +1,6 @@
 #include "GameSceneSystem.h"
+#include "../Camera/Plugin/CharacterCameraPlugin.h"
+#include "../Camera/Plugin/RockOnCameraPlugin.h"
 
 GameSceneSystem::GameSceneSystem()
 {
@@ -22,9 +24,8 @@ void GameSceneSystem::Start()
 	player.lock()->cameraController = cameraController;
 	cameraController.lock()->playerActor = player;
 
-	player.lock()->OnStart();
-
-	cameraController.lock()->OnStart();
+	cameraController.lock()->AddPlugin(CameraController::Plugin::Character, new CharacterCameraPlugin());
+	cameraController.lock()->AddPlugin(CameraController::Plugin::RockOn, new RockOnCameraPlugin());
 	cameraController.lock()->ChangePlugin(CameraController::Plugin::Character);
 
 	enemyContainer.lock()->OnStart();
@@ -34,9 +35,7 @@ void GameSceneSystem::Start()
 
 void GameSceneSystem::Update()
 {
-	player.lock()->OnUpdate();
-	cameraController.lock()->OnUpdate();
-	enemyContainer.lock()->OnUpdate();
+
 	/*if (Input::Keyboad::IsTrigger(VK_RETURN))
 	{
 		SceneManager::Instance()->SceneChange(new TitleScene());
@@ -45,9 +44,6 @@ void GameSceneSystem::Update()
 
 void GameSceneSystem::LateUpdate()
 {
-	player.lock()->OnLateUpdate();
-	enemyContainer.lock()->OnLateUpdate();
-	cameraController.lock()->OnLateUpdate();
 }
 
 void GameSceneSystem::OnDestroy()

@@ -12,5 +12,8 @@ void SpikeRabbitAttackStop::OnStart(SpikeRabbitActor * actor)
 
 void SpikeRabbitAttackStop::OnUpdate(SpikeRabbitActor * actor)
 {
-	
+	if (!actor->animator.lock()->IsCurrentAnimation("Attack_Stop"))
+	{
+		actor->ChangeState(SpikeRabbitActor::State::Idle);
+	}
 }

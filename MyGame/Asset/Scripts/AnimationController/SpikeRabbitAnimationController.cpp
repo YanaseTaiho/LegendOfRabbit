@@ -46,7 +46,7 @@ void SpikeRabbitAnimationController::Initialize()
 		{
 			transition->SetOption(0.1f, false, 1.0f, false);
 		});
-		Attack->AddTransition(Attack_Stop, [=](std::shared_ptr<AnimationTransition> & transition)
+		filter->AddTransition(Attack_Stop, [=](std::shared_ptr<AnimationTransition> & transition)
 		{
 			transition->SetOption(0.2f, false, 1.0f, false);
 		});

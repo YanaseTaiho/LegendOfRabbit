@@ -73,6 +73,13 @@ void ShaderFormatManager::CreateVertexShader()
 			layout,
 			ARRAYSIZE(layout)
 		);
+
+		// ファー
+		pVertexFormats[(int)VERTEX_SHADER_TYPE::MESH_FAR_TEXTURE]->CreateShader(
+			FilePathShader(L"VertexShader/VS_Mesh_Far.hlsl"),
+			layout,
+			ARRAYSIZE(layout)
+		);
 	}
 	// スキンメッシュ
 	{
@@ -85,6 +92,13 @@ void ShaderFormatManager::CreateVertexShader()
 		};
 		pVertexFormats[(int)VERTEX_SHADER_TYPE::SKINMESH]->CreateShader(
 			FilePathShader(L"VertexShader/VS_SkinMesh.hlsl"),
+			layout,
+			ARRAYSIZE(layout)
+		);
+
+		// ファー
+		pVertexFormats[(int)VERTEX_SHADER_TYPE::SKINMESH_FAR_TEXTURE]->CreateShader(
+			FilePathShader(L"VertexShader/VS_SkinMesh_Far.hlsl"),
 			layout,
 			ARRAYSIZE(layout)
 		);
@@ -129,6 +143,13 @@ void ShaderFormatManager::CreateVertexShader()
 			layout,
 			ARRAYSIZE(layout)
 		);
+
+		// ファー
+		pVertexFormats[(int)VERTEX_SHADER_TYPE::MESH_FAR_NORMAL_TEXTURE]->CreateShader(
+			FilePathShader(L"VertexShader/VS_Mesh_Far_NormalTexture.hlsl"),
+			layout,
+			ARRAYSIZE(layout)
+		);
 	}
 	// ノーマルテクスチャ_スキンメッシュ
 	{
@@ -147,6 +168,7 @@ void ShaderFormatManager::CreateVertexShader()
 			ARRAYSIZE(layout)
 		);
 
+		// ファー
 		pVertexFormats[(int)VERTEX_SHADER_TYPE::SKINMESH_FAR_NORMAL_TEXTURE]->CreateShader(
 			FilePathShader(L"VertexShader/VS_SkinMesh_Far_NormalTexture.hlsl"),
 			layout,
@@ -186,6 +208,12 @@ void ShaderFormatManager::CreatePixelShader()
 		int type = (int)PIXEL_SHADER_TYPE::MESH_TOON_TEXTURE;
 		pPixelFormats[type]->Initialize();
 		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Toon.hlsl"));
+	}
+	// メッシュ（ファー＆テクスチャ）
+	{
+		int type = (int)PIXEL_SHADER_TYPE::MESH_FAR_TEXTURE;
+		pPixelFormats[type]->Initialize();
+		pPixelFormats[type]->CreateShader(FilePathShader(L"PixelShader/PS_Far_Texture.hlsl"));
 	}
 	// メッシュ（ファー＆ノーマルテクスチャ）
 	{

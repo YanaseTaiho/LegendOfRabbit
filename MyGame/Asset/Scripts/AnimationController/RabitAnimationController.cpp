@@ -180,17 +180,18 @@ void RabitAnimationController::Initialize()
 			});
 		};
 		
+		filter->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
+		{
+			transition->SetOption(0.05f, false);
+			transition->AddConditionTrigger(attack_Jump_Trigger);
+		});
+
 		// RockOn_Filter
 		{
 			RockOn_Filter->AddTransition(Idle_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
 				transition->AddConditionBool(isRockOn, false);
-			});
-			RockOn_Filter->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.0f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 			RockOn_Filter->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
@@ -370,18 +371,6 @@ void RabitAnimationController::Initialize()
 			});
 			// 左ステップ
 			
-			rockOn_Left_Step->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
-			});
-			/*rockOn_Left_Step->AddTransition(rockOn_Left_Run, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(step_Trigger_Land);
-				transition->AddConditionBool(isRockOn, true);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
-			});*/
 			rockOn_Left_Step->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
@@ -404,18 +393,6 @@ void RabitAnimationController::Initialize()
 
 			// 右ステップ
 			
-			rockOn_Right_Step->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
-			});
-			/*rockOn_Right_Step->AddTransition(rockOn_Right_Run, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(step_Trigger_Land);
-				transition->AddConditionBool(isRockOn, true);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
-			});*/
 			rockOn_Right_Step->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
@@ -438,18 +415,6 @@ void RabitAnimationController::Initialize()
 
 			// バックステップ
 			
-			/*rockOn_Back_Step->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
-			});*/
-			/*rockOn_Back_Step->AddTransition(rockOn_Back_Run, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(step_Trigger_Land);
-				transition->AddConditionBool(isRockOn, true);
-				transition->AddConditionFloat(walkValue, Greater, 0.5f);
-			});*/
 			rockOn_Back_Step->AddTransition(land, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.05f, false);
@@ -479,23 +444,12 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.1f, true);
 			});
-			attack_Jump_Land->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionBool(isFall, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
-			});
 		}
 		// Weapon_Change
 		{
 			weapon_Change->AddTransition(idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.05f, true);
-			});
-			weapon_Change->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.05f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 		}
 
@@ -573,11 +527,6 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.03f, false);
 				transition->AddConditionTrigger(cliff_Jump_Trigger);
 			});
-			Idle_Filter->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.03f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
-			});
 			Idle_Filter->AddTransition(RockOn_Filter, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
@@ -602,11 +551,6 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.05f, false);
 				transition->AddConditionTrigger(rollTrigger);
-			});
-			Move_Filter->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.03f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 			Move_Filter->AddTransition(rockOn_Idle, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
@@ -715,11 +659,6 @@ void RabitAnimationController::Initialize()
 				transition->SetOption(0.0f, false);
 				transition->AddConditionBool(isCliff_Grap, true);
 			});
-			jump->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.0f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
-			});
 			jump->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
 				transition->SetOption(0.1f, false);
@@ -744,11 +683,6 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.0f, false);
 				transition->AddConditionBool(isCliff_Grap, true);
-			});
-			fall->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.0f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 			fall->AddTransition(run, [=](std::shared_ptr<AnimationTransition> & transition)
 			{
@@ -783,11 +717,6 @@ void RabitAnimationController::Initialize()
 			{
 				transition->SetOption(0.2f, false);
 				transition->AddConditionFloat(walkValue, Greater, 0.2f);
-			});
-			land->AddTransition(attack_Jump, [=](std::shared_ptr<AnimationTransition> & transition)
-			{
-				transition->SetOption(0.1f, false);
-				transition->AddConditionTrigger(attack_Jump_Trigger);
 			});
 		}
 		// Cliff_Jump

@@ -1,9 +1,6 @@
 #include "CameraController.h"
 #include "../Actor/Player/PlayerActor.h"
 
-#include "Plugin/CharacterCameraPlugin.h"
-#include "Plugin/RockOnCameraPlugin.h"
-
 #include "DirectX/Common.h"
 
 void CameraController::DrawImGui(int id)
@@ -22,22 +19,22 @@ void CameraController::DrawImGui(int id)
 	ImGui::DragFloat("offsetHeight", &offsetHeight);
 }
 
-void CameraController::OnStart()
+void CameraController::Start()
 {
-	AddPlugin(Plugin::Character, new CharacterCameraPlugin());
-	AddPlugin(Plugin::RockOn, new RockOnCameraPlugin());
+	vibration.SetTarget(this->transform);
 }
 
-void CameraController::OnUpdate()
+void CameraController::Update()
 {
 	if (currentPlugin.expired()) return;
 	currentPlugin.lock()->OnUpdate(this);
 }
 
-void CameraController::OnLateUpdate()
+void CameraController::LateUpdate()
 {
 	if (currentPlugin.expired()) return;
 	currentPlugin.lock()->OnLateUpdate(this);
+	vibration.Update();
 }
 
 void CameraController::AddPlugin(Plugin key, CameraPlugin * plugin)

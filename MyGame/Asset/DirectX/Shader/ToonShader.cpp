@@ -5,7 +5,7 @@
 
 using namespace MyDirectX;
 
-void ToonShader::Draw(const Material * material, const MeshData<VTX_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
+void ToonShader::Draw(Transform * transform, const Material * material, const MeshData<VTX_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
 {
 	VERTEX_SHADER_TYPE vertex = VERTEX_SHADER_TYPE::MESH;
 	PIXEL_SHADER_TYPE pixel;
@@ -46,7 +46,7 @@ void ToonShader::Draw(const Material * material, const MeshData<VTX_MESH>* mesh,
 	mesh->DrawIndexed(indexNum, startIndex);
 }
 
-void ToonShader::Draw(const Material * material, const MeshData<VTX_SKIN_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
+void ToonShader::Draw(Transform * transform, const Material * material, const MeshData<VTX_SKIN_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
 {
 	VERTEX_SHADER_TYPE vertex = VERTEX_SHADER_TYPE::SKINMESH;
 	PIXEL_SHADER_TYPE pixel;

@@ -71,6 +71,10 @@ namespace FrameWork
 		Layer GetLayer() { return layer; }
 		Layer ChangeLayer(Layer layer);
 
+		// stopFrame : オブジェクトを停止するフレーム数(0以下で設定した場合は無限に停止する)
+		void SetStop(bool isStop);
+		bool IsStop() { return isStop; }
+
 		// 親をセットする
 		std::weak_ptr<GameObject> SetParent(std::weak_ptr<GameObject> gameObject, SetType type = SetType::World);
 		// 子をセットする
@@ -257,7 +261,8 @@ namespace FrameWork
 		std::list<std::weak_ptr<MonoBehaviour>> behaviours;
 
 		Layer layer;
-		bool isActive; // オブジェクトが有効かどうか
+		bool isActive;	// オブジェクトが有効かどうか
+		bool isStop;	// オブジェクトを一時停止するためのフラグ
 	};
 }
 

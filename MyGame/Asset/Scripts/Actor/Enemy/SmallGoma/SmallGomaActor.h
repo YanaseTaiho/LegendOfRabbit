@@ -48,9 +48,9 @@ public:
 
 	std::weak_ptr<PlayerActor> player;
 
-	void OnStart() override;
-	void OnUpdate() override;
-	void OnLateUpdate() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 	void ChangeState(State state);
 

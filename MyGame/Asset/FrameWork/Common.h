@@ -27,6 +27,7 @@
 #include "Audio/AudioClipManager.h"
 
 #include "Time.h"
+#include "FrameTimer.h"
 #include "debugPrintf.h"
 #include "Rect.h"
 

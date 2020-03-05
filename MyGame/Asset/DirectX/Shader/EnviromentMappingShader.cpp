@@ -7,7 +7,7 @@
 
 using namespace MyDirectX;
 
-void EnviromentMappingShader::Draw(const Material * material, const MeshData<VTX_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
+void EnviromentMappingShader::Draw(Transform * transform, const Material * material, const MeshData<VTX_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
 {
 	VERTEX_SHADER_TYPE vertex = VERTEX_SHADER_TYPE::MESH;
 	PIXEL_SHADER_TYPE pixel = PIXEL_SHADER_TYPE::MESH_ENVIROMENT_MAPPING_TEXTURE;
@@ -25,7 +25,7 @@ void EnviromentMappingShader::Draw(const Material * material, const MeshData<VTX
 	mesh->DrawIndexed(indexNum, startIndex);
 }
 
-void EnviromentMappingShader::Draw(const Material * material, const MeshData<VTX_SKIN_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
+void EnviromentMappingShader::Draw(Transform * transform, const Material * material, const MeshData<VTX_SKIN_MESH>* mesh, unsigned short startIndex, unsigned short indexNum)
 {
 	VERTEX_SHADER_TYPE vertex = VERTEX_SHADER_TYPE::SKINMESH;
 	PIXEL_SHADER_TYPE pixel = PIXEL_SHADER_TYPE::MESH_ENVIROMENT_MAPPING_TEXTURE;

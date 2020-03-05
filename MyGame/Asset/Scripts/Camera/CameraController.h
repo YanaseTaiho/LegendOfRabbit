@@ -3,6 +3,8 @@
 
 #include "FrameWork/Common.h"
 #include "CameraPlugin.h"
+#include "../../Scripts/Vibration.h"
+
 
 class PlayerActor;
 
@@ -42,9 +44,9 @@ public:
 		RockOn
 	};
 
-	void OnStart();
-	void OnUpdate();
-	void OnLateUpdate();
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 	void AddPlugin(Plugin key, CameraPlugin * plugin);
 	void ChangePlugin(Plugin key);
@@ -57,6 +59,8 @@ public:
 	std::weak_ptr<Transform> verticalTransform;	// カメラの極位方向の回転用トランスフォーム
 	std::weak_ptr<Transform> targetTransform;	// カメラの注視点のトランスフォーム
 	std::weak_ptr<PlayerActor> playerActor;		// プレイヤーコンポーネント
+
+	Vibration vibration;
 
 	float targetDistance = 150.0f;
 	float distanceSpeed = 1.0f;

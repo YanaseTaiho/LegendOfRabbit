@@ -1,8 +1,11 @@
 #include "PlayerRollStop.h"
+#include "../../../Camera/CameraController.h"
 
 void PlayerRollStop::OnStart(PlayerActor * actor)
 {
 	Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_RollHit);
+	// カメラバイブレーション
+	actor->cameraController.lock()->vibration.SetVibration(Vector3::up() * 1.3f);
 
 	if (!actor->animator.lock()->IsCurrentAnimation("Roll"))
 	{

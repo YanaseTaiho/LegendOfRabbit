@@ -26,10 +26,6 @@ public:
 	void DrawImGui(int id) override;
 
 	void OnStart();
-	void OnUpdate();
-	void OnLateUpdate();
-
-	//void OnDestroy() override;
 
 	std::list<std::weak_ptr<BaseActor>> actorList;
 private:

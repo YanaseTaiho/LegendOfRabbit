@@ -14,6 +14,7 @@
 #include "Shader/SkyDomeShader.h"
 #include "Shader/ToonShader.h"
 #include "Shader/EnviromentMappingShader.h"
+#include "Shader/FarShader.h"
 
 // ƒŒƒ“ƒ_ƒ‰[
 #include "Renderer/MeshRenderer.h"

@@ -69,6 +69,13 @@ bool Component::IsEnable()
 	return enable && gameObject.lock()->IsActive(); 
 }
 
+bool Component::IsStop()
+{
+	if (gameObject.expired()) return true;
+
+	return gameObject.lock()->gameObject.lock()->IsStop();
+}
+
 //// 非侵入型のシリアライズ定義
 //template<class Archive>
 //void serialize(Archive & archive, Component &component)

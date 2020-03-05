@@ -10,7 +10,7 @@ void SmallGomaActor::DrawImGui(int id)
 	ImGui::DragFloat(("Move Speed" + strId).c_str(), &moveSpeed);
 }
 
-void SmallGomaActor::OnStart()
+void SmallGomaActor::Start()
 {
 	animator = gameObject.lock()->GetComponent<Animator>();
 	rigidbody = gameObject.lock()->GetComponent<Rigidbody>();
@@ -23,14 +23,14 @@ void SmallGomaActor::OnStart()
 	ChangeState(State::Idle);
 }
 
-void SmallGomaActor::OnUpdate()
+void SmallGomaActor::Update()
 {
 	state.lock()->OnUpdate(this);
 
 	player.reset();
 }
 
-void SmallGomaActor::OnLateUpdate()
+void SmallGomaActor::LateUpdate()
 {
 	state.lock()->OnLateUpdate(this);
 }

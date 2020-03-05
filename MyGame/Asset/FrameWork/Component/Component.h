@@ -81,6 +81,7 @@ namespace FrameWork
 		void SetEnable(bool enable) { this->enable = enable; }
 		bool & Enable() { return this->enable; }
 		bool IsEnable();
+		bool IsStop();
 		Layer GetLayer() { return layer; };
 
 		// 自身のオブジェクトの参照を得る

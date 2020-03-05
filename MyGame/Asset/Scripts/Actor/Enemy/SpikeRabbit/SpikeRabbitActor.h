@@ -3,6 +3,7 @@
 
 #include "../../BaseActor.h"
 #include "../../FSMManager.h"
+#include "../../../FlashColor.h"
 
 class PlayerActor;
 
@@ -15,6 +16,9 @@ private:
 	{
 		archive(cereal::base_class<MonoBehaviour>(this));
 		archive(moveSpeed, attackMoveSpeed);
+
+		if (version >= 1) archive(rayLength);
+		if (version >= 2) archive(attackCollision);
 	}
 
 	template<class Archive>
@@ -22,6 +26,9 @@ private:
 	{
 		archive(cereal::base_class<MonoBehaviour>(this));
 		archive(moveSpeed, attackMoveSpeed);
+
+		if (version >= 1) archive(rayLength);
+		if (version >= 2) archive(attackCollision);
 	}
 
 	void DrawImGui(int id) override;
@@ -48,14 +55,18 @@ public:
 	std::weak_ptr<Animator> animator;
 	std::weak_ptr<Rigidbody> rigidbody;
 
+	std::weak_ptr<Collision> attackCollision;	// 攻撃範囲のコリジョン
+
 	float moveSpeed = 10.0f;
 	float attackMoveSpeed = 20.0f;
 
 	std::weak_ptr<PlayerActor> player;
+	FlashColor damageFlashColor;	// ダメージを受けた時の点滅用（ 無敵時間 ）
+	float playerFindTime;				// プレイヤーを見失う時間
 
-	void OnStart() override;
-	void OnUpdate() override;
-	void OnLateUpdate() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 	void ChangeState(State state);
 
@@ -63,12 +74,16 @@ public:
 	void OnCollisionStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;
 	void OnTriggerStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;
 
+	DamageType Damage(int damage, std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other, Vector3 force = Vector3::zero()) override;
 private:
+	float rayLength = 10.0f;
+	int hitPoint;	// 体力
+
 	void OnDestroy() override;
-	//void CheckGround();
+	void CheckGround();
 };
 
-CEREAL_CLASS_VERSION(SpikeRabbitActor, 0)
+CEREAL_CLASS_VERSION(SpikeRabbitActor, 2)
 CEREAL_REGISTER_TYPE(SpikeRabbitActor)
 
 #endif // !_SPIKE_RABBIT_ACTOR_H_

@@ -6,6 +6,7 @@
 #include "../Shader/Infomation/GeometryShaderInfo.h"
 #include "../Shader/Infomation/PixelShaderInfo.h"
 #include "../MeshData/MeshData.h"
+#include "../../FrameWork/Component/Transform/Transform.h"
 
 namespace MyDirectX
 {
@@ -30,8 +31,8 @@ namespace MyDirectX
 		Shader() {};
 		virtual ~Shader() {};
 		// メッシュデータごとに関数分けをする
-		virtual void Draw(const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) {}
-		virtual void Draw(const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) {}
+		virtual void Draw(Transform * transform, const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) {}
+		virtual void Draw(Transform * transform, const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) {}
 		virtual void DrawImGui(Material * material, int & id) {}
 
 		static void SetShader(

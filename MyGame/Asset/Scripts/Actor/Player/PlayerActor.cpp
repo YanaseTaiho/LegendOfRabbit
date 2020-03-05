@@ -11,6 +11,7 @@
 #include "State/PlayerAttackFlip.h"
 #include "State/PlayerStep.h"
 #include "State/PlayerDamage.h"
+#include "State/PlayerGuard.h"
 
 #include "../../Camera/CameraController.h"
 #include "../../RotationFixedController.h"
@@ -75,7 +76,7 @@ PlayerActor::~PlayerActor()
 {
 }
 
-void PlayerActor::OnStart()
+void PlayerActor::Start()
 {
 	if (fsmManager) return;
 
@@ -93,6 +94,7 @@ void PlayerActor::OnStart()
 	fsmManager->AddState((int)State::AttackFlip, new PlayerAttackFlip());
 	fsmManager->AddState((int)State::Step, new PlayerStep());
 	fsmManager->AddState((int)State::Damage, new PlayerDamage());
+	fsmManager->AddState((int)State::Guard, new PlayerGuard());
 
 	// 入力の数分生成
 	inputHandler.resize((int)InputKey::MaxNum);
@@ -204,7 +206,7 @@ void PlayerActor::OnStart()
 	GroundSE("RockOn_Back_Run", 15);
 }
 
-void PlayerActor::OnUpdate()
+void PlayerActor::Update()
 {
 	SetInput(InputKey::A_Trigger, Input::Keyboad::IsTrigger('E') || GamePad::IsTrigger(GamePad::Button::A));
 	SetInput(InputKey::B_Trigger, Input::Keyboad::IsTrigger('R') || GamePad::IsTrigger(GamePad::Button::B));
@@ -339,69 +341,65 @@ void PlayerActor::OnUpdate()
 	damageFlashColor.OnUpdate();
 }
 
-void PlayerActor::OnLateUpdate()
+void PlayerActor::LateUpdate()
 {
 	if (!state.expired())
 		state.lock()->OnLateUpdate(this);
 }
 
-void PlayerActor::Draw()
+DamageType PlayerActor::Damage(int damage, std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other, Vector3 force)
 {
+	// ダメージ中と無敵時間以外
+	if ((currentState == State::Damage || damageFlashColor.IsFlash()))
+		return DamageType::None;
+
+	RayCastInfo info;
+	Ray ray(mine.lock()->worldMatrix.position(), other.lock()->worldMatrix.position());
+	Vector3 toDir = ray.end - ray.start;
+	// レイを飛ばしてどこに当たったのかを確かめる
+	if (RayCast::JudgeCollision(&ray, &info, other))
+	{
+		auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
+		if (!effect.expired())
+		{
+			effect.lock()->transform.lock()->SetWorldPosition(info.point);
+			effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
+			effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
+		}
+
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+
+		// 後方ダメージ（ 前からの衝突 ）
+		if (Vector3::Dot(transform.lock()->forward(), toDir.Normalize()) > 0)
+		{
+			// ガード時
+			if (!shieldRock_HandContorller.expired()
+				&& shieldRock_HandContorller.lock()->IsWeightDone())
+			{
+				ChangeState(State::Guard);
+				rigidbody.lock()->AddForce((-transform.lock()->forward() * 12.0f));
+				return DamageType::Guard;
+			}
+			else
+			{
+				ChangeState(State::Damage);
+				fsmManager->GetState<PlayerDamage>().lock()->SetDamage(this, PlayerDamage::DamageDirection::Back);
+			}
+		}
+		// 前方ダメージ
+		else
+		{
+			ChangeState(State::Damage);
+			fsmManager->GetState<PlayerDamage>().lock()->SetDamage(this, PlayerDamage::DamageDirection::Forward);
+		}
+
+		return DamageType::Hit;
+	}
+	return DamageType::None;
 }
 
 void PlayerActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
 {
-	// ダメージ中と無敵時間以外
-	if (/*mine.lock()->gameObject.lock() == this->gameObject.lock() // 中心となるコリジョンだけ判定*/
-		(currentState != State::Damage && !damageFlashColor.IsFlash()))
-	{
-		auto actor = other.lock()->gameObject.lock()->GetComponent<BaseActor>();
-		if (actor.expired()) return;
-
-		
-		RayCastInfo info;
-		Ray ray(mine.lock()->worldMatrix.position(), other.lock()->worldMatrix.position());
-		Vector3 toDir = ray.end - ray.start;
-		// レイを飛ばしてどこに当たったのかを確かめる
-		if (RayCast::JudgeCollision(&ray, &info, other))
-		{
-			auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
-			if (!effect.expired())
-			{
-				effect.lock()->transform.lock()->SetWorldPosition(info.point);
-				effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
-				effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
-			}
-
-			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
-
-			// 後方ダメージ（ 前からの衝突 ）
-			if (Vector3::Dot(transform.lock()->forward(), toDir.Normalize()) > 0)
-			{
-				// ガード時
-				if (!shieldRock_HandContorller.expired()
-					&& shieldRock_HandContorller.lock()->IsWeightDone())
-				{
-					auto otherRigid = actor.lock()->gameObject.lock()->GetComponent<Rigidbody>();
-					if (!otherRigid.expired())
-					{
-						otherRigid.lock()->AddForce(toDir * (otherRigid.lock()->velocity.Length() + 1.0f) * 300.0f * Time::DeltaTime());
-					}
-				}
-				else
-				{
-					ChangeState(State::Damage);
-					fsmManager->GetState<PlayerDamage>().lock()->SetDamage(this, PlayerDamage::DamageDirection::Back);
-				}
-			}
-			// 前方ダメージ
-			else
-			{
-				ChangeState(State::Damage);
-				fsmManager->GetState<PlayerDamage>().lock()->SetDamage(this, PlayerDamage::DamageDirection::Forward);
-			}
-		}
-	}
 }
 
 void PlayerActor::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)
@@ -562,15 +560,20 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 	if (hitInfo.collision.lock()->isTrigger) return;
 
 	auto other = hitInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
+	if(other.expired()) other = hitInfo.collision.lock()->gameObject.lock()->GetComponentWithParent<BaseActor>();
+
+	// 他のアクターにヒット
 	if (!other.expired())
 	{
-		auto rb = other.lock()->gameObject.lock()->GetComponent<Rigidbody>();
-		if (!rb.expired())
-		{
-			Vector3 dir = other.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
-			rb.lock()->AddForce(dir.Normalized() * 7.0f);
-		}
-		
+		int damage = 1;
+		if (currentState == State::AttackJump) damage = 2;
+
+		auto dummy = std::weak_ptr<Collision>();
+		Vector3 damageDir = hitInfo.collision.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
+		DamageType damageType = other.lock()->Damage(damage, hitInfo.collision, dummy, damageDir.Normalized() * 7.0f);
+
+		if (damageType == DamageType::None) return;
+
 		RayCastInfo info;
 		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
 		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
@@ -592,20 +595,53 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 			}
 		}
 
-		auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
-		if (!effect.expired())
+		if (damageType == DamageType::Hit || damageType == DamageType::Deth)
 		{
-			Vector3 pos = info.point + info.normal * 0.1f;
-			effect.lock()->transform.lock()->SetWorldPosition(pos);
-			Quaternion look = Quaternion::LookRotation(cameraController.lock()->cameraTransform.lock()->GetWorldPosition() - pos);
-			effect.lock()->transform.lock()->SetWorldPosition(hitInfo.point);
-			effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
-			effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
+			auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
+			if (!effect.expired())
+			{
+				Vector3 pos = info.point + info.normal * 0.1f;
+				effect.lock()->transform.lock()->SetWorldPosition(pos);
+				Quaternion look = Quaternion::LookRotation(cameraController.lock()->cameraTransform.lock()->GetWorldPosition() - pos);
+				effect.lock()->transform.lock()->SetWorldPosition(hitInfo.point);
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
+			}
+
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+
+			int hitStop = 8;
+			if (damageType == DamageType::Deth)
+			{
+				hitStop = 20;
+			}
+
+			// ヒットストップ
+			this->gameObject.lock()->SetStop(true);
+			other.lock()->gameObject.lock()->SetStop(true);
+			locusController.lock()->gameObject.lock()->SetStop(true);
+			FrameTimer::SetFuncTimer(hitStop, [=]()
+			{
+				this->gameObject.lock()->SetStop(false);
+				other.lock()->gameObject.lock()->SetStop(false);
+				locusController.lock()->gameObject.lock()->SetStop(false);
+			});
 		}
+		else if(damageType == DamageType::Guard)
+		{
+			auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
+			if (!effect.expired())
+			{
+				Vector3 pos = info.point + info.normal * 0.1f;
+				effect.lock()->transform.lock()->SetWorldPosition(pos);
+				Quaternion look = Quaternion::LookRotation(cameraController.lock()->cameraTransform.lock()->GetWorldPosition() - pos);
+				effect.lock()->transform.lock()->SetWorldPosition(hitInfo.point);
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->type = EffekseerType::Hit01;
+				effect.lock()->GetComponent<EffekseerSystem>().lock()->Play();
+			}
 
-		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
-
-		GameObject::Destroy(other.lock()->gameObject, 0.5f);
+			Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_Hit01);
+		}
 	}
 	// 地面は判定しない
 	else if (Vector3::Dot(Vector3::up(), hitInfo.normal) < 0.4f)
@@ -667,7 +703,9 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 		RayCastInfo info;
 		Vector3 start = (locusPoints.point[0] + locusPoints.point[2]) * 0.5f;
 		Vector3 dir = (locusPoints.point[3] - locusPoints.point[2]).Normalized();
-		Ray ray(start, dir, locusLengh);
+		start -= dir * (locusLengh * 0.5f);
+		float rayLen = locusLengh * 1.5f;
+		Ray ray(start, dir, rayLen);
 		// レイを飛ばしてどこに当たったのかを確かめる
 		if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
 		{
@@ -676,8 +714,8 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 		}
 		else // 当たっていなかったら違う方向から飛ばして確かめる
 		{
-			start = locusPoints.point[2];
-			ray.Set(start, dir, locusLengh);
+			start = locusPoints.point[2] - dir * (locusLengh * 0.5f);
+			ray.Set(start, dir, rayLen);
 			DebugLine::DrawRay(ray.start, ray.end, Color::red());
 			if (RayCast::JudgeCollision(&ray, &info, hitInfo.collision))
 			{
@@ -773,6 +811,8 @@ void PlayerActor::CheckGround()
 	if (RayCast::JudgeAllCollision(&downRay, &castGroundInfo, rigidbody.lock()->collisions))
 	{
 		auto other = castGroundInfo.collision.lock()->gameObject.lock()->GetComponent<BaseActor>();
+		if (other.expired()) other = castGroundInfo.collision.lock()->gameObject.lock()->GetComponentWithParent<BaseActor>();
+
 		if (other.expired())	// アクターは対象外
 		{
 			float h = castGroundInfo.point.y + height;

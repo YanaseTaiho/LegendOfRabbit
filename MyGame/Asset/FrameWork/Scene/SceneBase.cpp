@@ -36,19 +36,19 @@ void SceneBase::Update()
 {
 	for (const auto & com : MonoBehaviour::ComponentList())
 	{
-		if (!com.lock()->IsEnable()) continue;
+		if (!com.lock()->IsEnable() || com.lock()->IsStop()) continue;
 		com.lock()->Update();
 	}
 
 	for (const auto & com : Animator::ComponentList())
 	{
-		if (!com.lock()->IsEnable()) continue;
+		if (!com.lock()->IsEnable() || com.lock()->IsStop()) continue;
 		com.lock()->Update();
 	}
 
 	for (const auto & com : Rigidbody::ComponentList())
 	{
-		if (!com.lock()->IsEnable()) continue;
+		if (!com.lock()->IsEnable() || com.lock()->IsStop()) continue;
 		com.lock()->Update();
 	}
 
@@ -56,7 +56,7 @@ void SceneBase::Update()
 	{
 		for (const auto & col : Collision::CollisionList(i))
 		{
-			if (!col.lock()->IsEnable()) continue;
+			if (!col.lock()->IsEnable() || col.lock()->IsStop()) continue;
 			col.lock()->Update();
 		}
 	}
@@ -65,13 +65,14 @@ void SceneBase::Update()
 
 	for (const auto & com : MonoBehaviour::ComponentList())
 	{
-		if (!com.lock()->IsEnable()) continue;
+		if (!com.lock()->IsEnable() || com.lock()->IsStop()) continue;
 		com.lock()->LateUpdate();
 	}
 
 	//======= エフェクトの更新 ======//
 	Singleton<MyDirectX::EffekseerManager>::Instance()->Update();
 
+	// このタイミングでオブジェクトやコンポーネントの削除処理を行う
 	Singleton<GameObjectManager>::Instance()->CleanupDestroyGameObject();
 	Component::CleanupDestoryComponent();
 }

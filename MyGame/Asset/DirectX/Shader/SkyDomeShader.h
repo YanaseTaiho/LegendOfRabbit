@@ -22,7 +22,7 @@ namespace MyDirectX
 		SkyDomeShader() {};
 		~SkyDomeShader() {};
 
-		void Draw(const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
+		void Draw(Transform * transform, const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
 		//void Draw(const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
 	};
 }

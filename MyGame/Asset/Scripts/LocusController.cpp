@@ -91,8 +91,14 @@ void LocusController::LateUpdate()
 				// メッシュの先頭から末端のポイントを当たり判定に設定
 				points[0].point[0] = framePos1[start];
 				points[0].point[1] = framePos2[start];
-				points[0].point[2] = framePos1[endFrameCnt];
-				points[0].point[3] = framePos2[endFrameCnt];
+				// 前フレームと変動がない場合もあるので少し位置をずらす
+				points[0].point[2] = framePos1[endFrameCnt] + Vector3::one() * 0.01f;
+				points[0].point[3] = framePos2[endFrameCnt] + Vector3::one() * 0.01f;
+
+				DebugLine::DrawRay(points[0].point[0], points[0].point[1], Color::red(), 2.0f);
+				DebugLine::DrawRay(points[0].point[0], points[0].point[2], Color::red(), 2.0f);
+				DebugLine::DrawRay(points[0].point[1], points[0].point[1], Color::red(), 2.0f);
+				DebugLine::DrawRay(points[0].point[2], points[0].point[3], Color::red(), 2.0f);
 
 				float locusLength = (points[0].point[0] - points[0].point[1]).Length();
 

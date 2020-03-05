@@ -36,12 +36,12 @@ void PlayerDamage::SetDamage(PlayerActor * actor, DamageDirection dir)
 	if (dir == DamageDirection::Forward)
 	{
 		actor->animator.lock()->SetInt("Damage_Direction", 0);
-		actor->rigidbody.lock()->AddForce((Vector3::up() * 150.0f + actor->transform.lock()->forward() * 800.0f) * Time::DeltaTime());
+		actor->rigidbody.lock()->AddForce((Vector3::up() * 2.0f + actor->transform.lock()->forward() * 15.0f));
 	}
 	// Œã•ûƒ_ƒ[ƒW
 	if (dir == DamageDirection::Back)
 	{
 		actor->animator.lock()->SetInt("Damage_Direction", 1);
-		actor->rigidbody.lock()->AddForce((Vector3::up() * 150.0f - actor->transform.lock()->forward() * 800.0f) * Time::DeltaTime());
+		actor->rigidbody.lock()->AddForce((Vector3::up() * 2.0f - actor->transform.lock()->forward() * 15.0f));
 	}
 }

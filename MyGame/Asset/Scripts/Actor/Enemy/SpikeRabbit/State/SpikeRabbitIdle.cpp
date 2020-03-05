@@ -3,7 +3,7 @@
 void SpikeRabbitIdle::OnStart(SpikeRabbitActor * actor)
 {
 	actor->animator.lock()->ChangeAnimation("Idle");
-	frameCnt = 300;
+	frameCnt = 250;
 }
 
 void SpikeRabbitIdle::OnUpdate(SpikeRabbitActor * actor)

@@ -20,10 +20,14 @@ struct DIRECTIONAL_LIGHT
 // レジスタ定義
 //------------------------------------------------------------------------------------------------
 
-// マトリクスバッファ
+// マトリクスバッファ&ファーバッファー
 cbuffer WorldBuffer : register(b0)
 {
 	matrix World;
+	uint FarMaxNum;		// 描画回数
+	float FarScaleOffset;  // 法線方向に拡大していく間隔
+
+	float2 FarDumy;
 }
 
 // ビューバッファ
@@ -63,14 +67,6 @@ cbuffer DirLightBuffer : register(b6)
 	DIRECTIONAL_LIGHT DirLight;
 }
 
-// ファーバッファー
-cbuffer FarBuffer : register(b7)
-{
-	uint FarMaxNum;		// 描画回数
-	float FarScaleOffset;  // 法線方向に拡大していく間隔
-	float2 FarDumy;
-}
-
 // 頂点レイアウト
 struct VS_INPUT {
 	float4 pos        : POSITION;
@@ -80,6 +76,7 @@ struct VS_INPUT {
 	float4 boneWeights: BLENDWEIGHT;
 	float3 tangent    : TANGENT;
 	float3 binormal   : BINORMAL;
+	uint instanceID : SV_InstanceID;	// インスタンシングの番号
 };
 
 // ピクセルシェーダに送るデータ
@@ -98,7 +95,7 @@ struct VS_OUTPUT {
 //=============================================================================
 // 頂点シェーダ	------ インスタンシング -------
 //=============================================================================
-VS_OUTPUT main(VS_INPUT In, in uint inInstanceID : SV_InstanceID)
+VS_OUTPUT main(VS_INPUT In)
 {
 	VS_OUTPUT output = (VS_OUTPUT)0;
 	In.pos.w = 1.0f;
@@ -112,12 +109,12 @@ VS_OUTPUT main(VS_INPUT In, in uint inInstanceID : SV_InstanceID)
 	// 移動成分をなくしたワールド行列
 	float3x3 worldMat = (float3x3)worldTransform;
 
-	output.posw = mul(float4(In.pos.xyz + In.normal * FarScaleOffset * inInstanceID, 1.0f), worldTransform);	// ここで拡大していく
+	output.posw = mul(float4(In.pos.xyz + In.normal * FarScaleOffset * (float)In.instanceID, 1.0f), worldTransform);	// ここで拡大していく
 	output.pos = mul(output.posw, View);
 	output.pos = mul(output.pos, Projection);
 	output.uv = In.uv;
 	output.normal = normalize(mul(In.normal, worldMat));
-	output.farAlpha = 1.0 - (inInstanceID / FarMaxNum);		// インスタンス番号に上がるにつれて値を小さくする
+	output.farAlpha = 1.0 - ((float)In.instanceID / (float)FarMaxNum);		// インスタンス番号に上がるにつれて値を小さくする
 
 	// ライトの深度テクスチャのの座標に変換
 	output.lightViewPos = output.posw;

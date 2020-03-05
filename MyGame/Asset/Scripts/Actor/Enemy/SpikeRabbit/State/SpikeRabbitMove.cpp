@@ -3,7 +3,9 @@
 void SpikeRabbitMove::OnStart(SpikeRabbitActor * actor)
 {
 	actor->animator.lock()->ChangeAnimation("Move");
-	frameCnt = 300;
+	frameCnt = rand() % 200 + 100;
+
+	look = Quaternion::AxisAngle(Vector3::up(), (float)(rand() % 360));
 
 	actor->animator.lock()->SetAnimationCallBack("Move", 6, [=]()
 	{
@@ -26,5 +28,10 @@ void SpikeRabbitMove::OnUpdate(SpikeRabbitActor * actor)
 		actor->ChangeState(SpikeRabbitActor::State::Idle);
 		return;
 	}
+
+	Quaternion rot = actor->transform.lock()->GetWorldRotation();
+	rot = rot.Slerp(look, 0.5f);
+	actor->transform.lock()->SetWorldRotation(rot);
+
 	frameCnt--;
 }

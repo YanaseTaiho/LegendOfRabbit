@@ -10,6 +10,7 @@ public:
 	void OnUpdate(SpikeRabbitActor * actor) override;
 private:
 	int frameCnt;
+	Quaternion look;
 };
 
 #endif // !__SpikeRabbitMove__H__

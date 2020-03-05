@@ -18,7 +18,6 @@ private:
 	float moveSpeed;
 
 	float lookValue;		// ‰¡•ûŒü‚Ì‰ñ“]‚Ì—Ê
-	float lookHolizontal;	// …•½•ûŒü‚Ì‰ñ“]Šp
 	float lookVertical;		// ‹ÉˆÊ•ûŒü‚Ì‰ñ“]Šp
 };
 

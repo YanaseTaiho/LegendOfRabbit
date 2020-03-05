@@ -214,7 +214,7 @@ namespace MyDirectX
 	template<typename VTX>
 	inline void MeshData<VTX>::DrawIndexedInstanced(unsigned int instanceConut, int indexCount, int startIndex) const
 	{
-		RendererSystem::GetDeviceContext()->DrawIndexedInstanced(indexCount, instanceConut, startIndex, 0, 0);
+		RendererSystem::GetDeviceContext()->DrawIndexedInstanced(indexCount, instanceConut, startIndex, 0, 1);
 	}
 }
 //--------------------------------------------------------------------------------------------------

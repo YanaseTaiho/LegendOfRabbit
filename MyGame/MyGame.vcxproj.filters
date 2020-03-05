@@ -168,9 +168,6 @@
     <ClCompile Include="Asset\Scripts\Actor\Player\PlayerActor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Asset\Scripts\Actor\Player\PlayerController.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Asset\FrameWork\Component\Component.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -379,6 +376,18 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Asset\DirectX\Shader\ToonShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\DirectX\Shader\FarShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Vibration.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\FrameWork\FrameTimer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Asset\Scripts\Actor\Player\State\PlayerGuard.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -606,9 +615,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\Player\PlayerActor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Asset\Scripts\Actor\Player\PlayerController.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Actor\BaseActor.h">
@@ -884,6 +890,18 @@
     <ClInclude Include="Asset\DirectX\Shader\ToonShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Asset\DirectX\Shader\FarShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Vibration.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\FrameWork\FrameTimer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\Actor\Player\State\PlayerGuard.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Asset\Shader\PixelShader\PS_Texture.hlsl" />
@@ -904,6 +922,10 @@
     <FxCompile Include="Asset\Shader\PixelShader\PS_EnvironmentMapping.hlsl" />
     <FxCompile Include="Asset\Shader\VertexShader\VS_SkinMesh_Far_NormalTexture.hlsl" />
     <FxCompile Include="Asset\Shader\PixelShader\PS_Far_NormalTexture.hlsl" />
+    <FxCompile Include="Asset\Shader\PixelShader\PS_Far_Texture.hlsl" />
+    <FxCompile Include="Asset\Shader\VertexShader\VS_Mesh_Far.hlsl" />
+    <FxCompile Include="Asset\Shader\VertexShader\VS_SkinMesh_Far.hlsl" />
+    <FxCompile Include="Asset\Shader\VertexShader\VS_Mesh_Far_NormalTexture.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyGame.rc">

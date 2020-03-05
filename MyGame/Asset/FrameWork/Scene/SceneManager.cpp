@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include "../GameObject/GameObjectManager.h"
 #include "../../Main/manager.h"
+#include "../FrameTimer.h"
 #include <cereal/archives/binary.hpp>
 #include <direct.h>
 #include <fstream>
@@ -233,6 +234,7 @@ void SceneManager::DrawImGui()
 
 void SceneManager::Update()
 {
+	FrameTimer::Update();	// フレームタイマーの更新
 	currentScene->Update();
 }
 
@@ -356,6 +358,8 @@ void SceneManager::DeleteSceneData(std::shared_ptr<SceneData>& deleteData)
 		Singleton<GameObjectManager>::Instance()->CleanupDestroyGameObject();
 		Component::CleanupDestoryComponent();
 	}
+	// フレームタイマーのセットされた情報をリセット
+	FrameTimer::Release();
 }
 
 void SceneManager::CreateSceneData(std::shared_ptr<SceneData>& createData)

@@ -22,8 +22,8 @@ namespace MyDirectX
 		EnviromentMappingShader() {};
 		~EnviromentMappingShader() {};
 
-		void Draw(const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
-		void Draw(const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
+		void Draw(Transform * transform, const Material * material, const MeshData<VTX_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
+		void Draw(Transform * transform, const Material * material, const MeshData<VTX_SKIN_MESH> * mesh, unsigned short startIndex, unsigned short indexNum) override;
 		void DrawImGui(Material * material, int & id) override;
 	};
 }

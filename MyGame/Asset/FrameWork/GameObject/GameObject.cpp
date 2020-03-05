@@ -173,6 +173,11 @@ Layer GameObject::ChangeLayer(Layer layer)
 	return this->layer;
 }
 
+void GameObject::SetStop(bool isStop)
+{
+	this->isStop = isStop;
+}
+
 void GameObject::OnDestroy(float limit)
 {
 	Singleton<GameObjectManager>::Instance()->DestroyGameObject(gameObject, limit);
