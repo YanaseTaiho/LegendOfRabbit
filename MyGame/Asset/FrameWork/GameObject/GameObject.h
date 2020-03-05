@@ -15,6 +15,7 @@ class EditorScene;
 namespace FrameWork
 {
 	class GameObjectManager;
+	class SceneManager;
 	class Collision;
 	class Rigidbody;
 	class MonoBehaviour;
@@ -23,6 +24,7 @@ namespace FrameWork
 	class GameObject final
 	{
 		friend GameObjectManager;
+		friend SceneManager;
 		friend Component;
 		friend Transform;
 		friend MonoBehaviour;
@@ -237,7 +239,12 @@ namespace FrameWork
 		// リミット( 秒数 )経過後にオブジェクトを削除する
 		static void Destroy(std::weak_ptr<GameObject> gameObject, float limit = 0);
 
+		// シーンを変更しても削除されないオブジェクトとして登録
+		static void DontDestroyOnLoad(std::weak_ptr<GameObject> object);
+
 	private:
+
+		static void DontDestroyOnLoadChild(std::weak_ptr<Transform> child);
 
 		// 自身のインスタンスを入れる
 		void Initialize(std::shared_ptr<GameObject> thisObject);
@@ -263,6 +270,7 @@ namespace FrameWork
 		Layer layer;
 		bool isActive;	// オブジェクトが有効かどうか
 		bool isStop;	// オブジェクトを一時停止するためのフラグ
+		bool isDontDestroyOnLoad;	// シーンを切り替えた時に消されるかのフラグ
 	};
 }
 

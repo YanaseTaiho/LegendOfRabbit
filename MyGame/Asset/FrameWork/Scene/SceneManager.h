@@ -36,6 +36,8 @@ namespace FrameWork
 		void RemoveSceneGameObject(std::weak_ptr<GameObject> remove);
 
 	private:
+		void LoadEditorSceneData(std::string sceneName);	// エディタ用
+
 		void LoadFileData(std::string path);
 		void SaveSceneData(std::shared_ptr<SceneData> sceneData);
 		void DeleteSceneFile(std::string delName);
@@ -46,6 +48,8 @@ namespace FrameWork
 
 		SceneBase * currentScene;
 		SceneBase * nextScene;
+
+		std::shared_ptr<SceneData> nextSceneData;
 
 		std::vector<std::shared_ptr<std::string>> sceneNameArray;
 	};

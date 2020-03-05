@@ -48,6 +48,11 @@ private:
 	std::weak_ptr<PlayerActor> player;
 	std::weak_ptr<CameraController> cameraController;
 	std::weak_ptr<ActorContainer> enemyContainer;
+
+	int playerEntryNumber;	// プレイヤーがシーン上のどの位置からスタートするかの番号
+
+	std::string nextSceneName;
+	bool isSceneChange;
 };
 
 CEREAL_CLASS_VERSION(GameSceneSystem, 1)

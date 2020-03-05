@@ -6,6 +6,7 @@
 
 SceneBase::SceneBase()
 {
+
 }
 
 SceneBase::~SceneBase()

@@ -84,7 +84,7 @@ void LocusController::LateUpdate()
 			int colMeshNum = endFrameCnt - startFrameCnt;
 			if (colMeshNum > 1)
 			{
-				int start = endFrameCnt - colMeshNum / 2;
+				int start = endFrameCnt - (int)((float)colMeshNum * 0.8f);
 				//end = Mathf::Max(end, endFrameCnt);
 
 				std::vector<MeshPoints> points(1);

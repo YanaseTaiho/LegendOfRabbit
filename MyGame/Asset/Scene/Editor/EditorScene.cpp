@@ -43,6 +43,8 @@ void EditorScene::CreateComponentList()
 	REGISTER_COMPONENT(componentList, RotationFixedController);
 	REGISTER_COMPONENT(componentList, LocusController);
 	REGISTER_COMPONENT(componentList, TargetImageController);
+	REGISTER_COMPONENT(componentList, SceneChangePoint);
+	REGISTER_COMPONENT(componentList, SceneChangePointContainer);
 
 	// シェーダー
 	BindClass<Shader> shaderList;
@@ -147,73 +149,11 @@ void EditorScene::Initialize()
 
 		isSort = true;	// ソートオン
 	};
-
-	auto manager = Singleton<GameObjectManager>::Instance();
-
-	//std::weak_ptr<GameObject> dirLight = manager->CreateGameObject(new GameObject("Light", Tag::None, Layer::Default));
-	//dirLight.lock()->AddComponent(new Transform(Vector3(0.0f, 10.0f, 0.0f), Vector3::one(), Quaternion(45.0f, 0.0f, 45.0f)));
-	//dirLight.lock()->AddComponent(new DirectionalLight(
-	//	Color(1.0f, 1.0f, 1.0f, 1.0f),		// ディフーズ
-	//	Color(0.1f, 0.1f, 0.1f, 1.0f)));	// アンビエント
-
-	//{
-	//	std::weak_ptr<GameObject> chara2 = manager->CreateGameObject(new GameObject("SuperRabit", Tag::None, Layer::Default));
-	//	chara2.lock()->AddComponent(new Transform(Vector3(-30.0f, 0.0f, 0.0f), Vector3(0.08f, 0.08f, 0.08f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara2.lock()->AddComponent(new SkinMeshRenderer(FilePathModel("SuperRabit2.fbx"), false));
-	//	chara2.lock()->AddComponent(new Animator(new TestAnimationController("SuperRabit2|Idle", 50.0f)));
-	//}
-	//{
-	//	std::weak_ptr<GameObject> chara2 = manager->CreateGameObject(new GameObject("Ellie", Tag::None, Layer::Default));
-	//	chara2.lock()->AddComponent(new Transform(Vector3(-30.0f, 100.0f, 30.0f), Vector3(10.0f, 10.0f, 10.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara2.lock()->AddComponent(new SkinMeshRenderer(FilePathModel("Ellie/Ellie.fbx"), true));
-	//	chara2.lock()->AddComponent(new Animator(new TestAnimationController("Ellie|Run", 30.0f)));
-	//}
-	//{
-	//	std::weak_ptr<GameObject> chara2 = manager->CreateGameObject(new GameObject("Baby", Tag::None, Layer::Default));
-	//	chara2.lock()->AddComponent(new Transform(Vector3(30.0f, 100.0f, 30.0f), Vector3(10.0f, 10.0f, 10.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara2.lock()->AddComponent(new SkinMeshRenderer(FilePathModel("Baby2.fbx"), false));
-	//	//chara2.lock()->AddComponent(new Animator(new TestAnimationController("Baby2|Catch", 20.0f)));
-	//}
-	//{
-	//	std::weak_ptr<GameObject> chara = manager->CreateGameObject(new GameObject("SmaphoMan", Tag::None, Layer::Default));
-	//	chara.lock()->AddComponent(new Transform(Vector3(0.0f, 1.0f, 0.0f), Vector3(3.08f, 3.08f, 3.08f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara.lock()->AddComponent(new SkinMeshRenderer(FilePathModel("SmaphoMan.fbx"), true));
-	//	chara.lock()->AddComponent(new Animator(new TestAnimationController("SmaphoMan|Deth", 20.0f)));
-	//}
-
-	//std::weak_ptr<GameObject> sea = manager->CreateGameObject(new GameObject("sea", Tag::None, Layer::Default));
-	//sea.lock()->AddComponent(new Transform(Vector3(0.0f, 0.0f, 0.0f), Vector3(50.0f, 50.0f, 50.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//sea.lock()->AddComponent(new MeshRenderer(FilePathModel("sea.fbx"), true));
-	////sea.lock()->AddComponent(new CollisionMesh(false));
-
-	//{
-	//	std::weak_ptr<GameObject> chara = manager->CreateGameObject(new GameObject("Chicken", Tag::None, Layer::Default));
-	//	chara.lock()->AddComponent(new Transform(Vector3(0.0f, 10.0f, -50.0f), Vector3(15.0f, 15.0f, 15.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara.lock()->AddComponent(new MeshRenderer(FilePathModel("Chicken/Chicken.fbx"), true));
-	//	/*{
-	//		std::weak_ptr<GameObject> chara3 = manager->CreateGameObject(new GameObject("ChickenLitle", Tag::None, Layer::Default));
-	//		chara3.lock()->AddComponent(new Transform(Vector3(0.0f, 10.0f, 0.0f), Vector3(5.0f, 5.0f, 5.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//		chara3.lock()->AddComponent(new MeshRenderer(FilePathModel("Chicken/Chicken.fbx"), true));
-	//		chara3.lock()->SetParent(chara);
-	//	}*/
-	//}
-	//
-	//{
-	//	std::weak_ptr<GameObject> chara = manager->CreateGameObject(new GameObject("SkyDome", Tag::None, Layer::Default));
-	//	chara.lock()->AddComponent(new Transform(Vector3(0.0f, 0.0f, 0.0f), Vector3(5000.0f, 5000.0f, 5000.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara.lock()->AddComponent(new MeshRenderer(FilePathModel("SkyDome1.fbx"), false));
-	//}
-
-	///*{
-	//	std::weak_ptr<GameObject> chara = manager->CreateGameObject(new GameObject("Plane", Tag::None, Layer::Canvas));
-	//	chara.lock()->AddComponent(new Transform(Vector3(0.0f, 0.0f, 0.0f), Vector3(300.0f, 300.0f, 1.0f), Quaternion(0.0f, 0.0f, 0.0f)));
-	//	chara.lock()->AddComponent(new CanvasRenderer(FilePathTexture("maple.jpg")));
-	//}*/
 }
 
 void EditorScene::Start()
 {
-	if (isStart)
+//	if (isStart)
 	{
 		SceneBase::Start();
 	}
@@ -312,6 +252,13 @@ void EditorScene::Draw()
 						state = State::Stop;
 						isInterruption = false;
 						this->isStart = false;
+
+						// DontDestroyOnLoadに登録されたオブジェクトを全て削除
+						for (auto dethObject : sceneData->gameObjectList)
+						{
+							if(dethObject.lock()->isDontDestroyOnLoad)
+								GameObject::Destroy(dethObject);
+						}
 
 						// 実行直前のデータを復元
 						Singleton<SceneManager>::Instance()->LoadSceneData(*editSceneData);
@@ -565,7 +512,7 @@ void EditorScene::DrawImGui()
 	ImGui::Image((void*)RendererSystem::GetShadowTexture(), ImVec2(200, 200), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(1, 1, 1, 1));
 
 	// デモ
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 	//ImGui::ShowMetricsWindow();
 }
 

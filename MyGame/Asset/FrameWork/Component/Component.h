@@ -89,17 +89,29 @@ namespace FrameWork
 		std::weak_ptr<Transform> transform;
 
 		template<class T>
+		static std::weak_ptr<T> FindComponent()
+		{
+			for (auto & com : allComponentList)
+			{
+				std::weak_ptr<T> cast = std::dynamic_pointer_cast<T>(com);
+				if (cast.expired()) continue;
+
+				return cast;
+			}
+			return std::weak_ptr<T>();
+		}
+
+		template<class T>
 		static std::list<std::weak_ptr<T>> FindComponents()
 		{
 			std::list<std::weak_ptr<T>> outList;
 
 			for (auto & com : allComponentList)
 			{
-				if (com->GetType() == typeid(T))
-				{
-					std::shared_ptr<T> hit = std::static_pointer_cast<T>(com);
-					outList.emplace_back(hit);
-				}
+				std::weak_ptr<T> cast = std::dynamic_pointer_cast<T>(com);
+				if (cast.expired()) continue;
+
+				outList.emplace_back(cast);
 			}
 			return outList;
 		}

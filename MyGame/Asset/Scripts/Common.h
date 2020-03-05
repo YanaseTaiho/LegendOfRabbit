@@ -18,6 +18,8 @@
 #include "LocusController.h"
 #include "TargetImageController.h"
 #include "CollisionObserver.h"
+#include "SceneChangePoint.h"
+#include "SceneChangePointContainer.h"
 
 #endif // ! __COMMON_SCRIPTS__H__
 

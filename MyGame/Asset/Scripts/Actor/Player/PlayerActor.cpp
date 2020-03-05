@@ -569,6 +569,7 @@ void PlayerActor::AttackSwordHit(MeshCastInfo & hitInfo, MeshPoints& locusPoints
 		if (currentState == State::AttackJump) damage = 2;
 
 		auto dummy = std::weak_ptr<Collision>();
+		if (rigidbody.lock()->collisions.size() > 0) dummy = rigidbody.lock()->collisions.front();
 		Vector3 damageDir = hitInfo.collision.lock()->transform.lock()->GetWorldPosition() - transform.lock()->GetWorldPosition();
 		DamageType damageType = other.lock()->Damage(damage, hitInfo.collision, dummy, damageDir.Normalized() * 7.0f);
 

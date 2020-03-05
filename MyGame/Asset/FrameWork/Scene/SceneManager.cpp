@@ -44,43 +44,23 @@ SceneBase * SceneManager::GetCurrentScene()
 
 void SceneManager::LoadSceneData(std::string sceneName)
 {
-	std::string filePathName = DATA_FOLDER_PATH + std::string(FileName);
-	std::ifstream ifs(filePathName + "/" + sceneName + ".scene", std::ios::binary);
-	if (!ifs) return;
-
-	{
-		std::shared_ptr<SceneData> newScene;
-		cereal::BinaryInputArchive i_archive(ifs);
-		i_archive(newScene);
-
-		if (!newScene) return;
-
-		newScene->name = sceneName;
-
-		// 現在のオブジェクトを削除
-		DeleteSceneData(currentScene->sceneData);
-
-		// シーンデータから新しくオブジェクトを生成
-		CreateSceneData(newScene);
-	}
-
-	// ゲームスタート
-	currentScene->Start();
+	nextSceneData = std::make_shared<SceneData>();
+	nextSceneData->name = sceneName;
 }
 
 void SceneManager::LoadSceneData(std::stringstream & sceneData)
 {
-	std::shared_ptr<SceneData> newScene;
+	std::shared_ptr<SceneData> newSceneData;
 	cereal::BinaryInputArchive i_archive(sceneData);
-	i_archive(newScene);
+	i_archive(newSceneData);
 
-	if (!newScene) return;
+	if (!newSceneData) return;
 
 	// 現在のオブジェクトを削除
 	DeleteSceneData(currentScene->sceneData);
 
 	// シーンデータから新しくオブジェクトを生成
-	CreateSceneData(newScene);
+	CreateSceneData(newSceneData);
 }
 
 void SceneManager::SaveSceneData()
@@ -144,7 +124,7 @@ void SceneManager::DrawImGui()
 				ImGui::Text("final confirmation.");
 				if (ImGui::Button("OK", ImVec2(120, 0)))
 				{
-					LoadSceneData(*selectDataName.lock());
+					LoadEditorSceneData(*selectDataName.lock());
 					selectDataName.reset();
 					ImGui::CloseCurrentPopup();
 				}
@@ -245,6 +225,37 @@ void SceneManager::Draw()
 
 void SceneManager::SceneCheck()
 {
+	// 次のシーンデータがあったら遷移
+	if (nextSceneData)
+	{
+		std::string sceneName = nextSceneData->name;
+		std::string filePathName = DATA_FOLDER_PATH + std::string(FileName);
+		std::ifstream ifs(filePathName + "/" + sceneName + ".scene", std::ios::binary);
+		if (ifs)
+		{
+			cereal::BinaryInputArchive i_archive(ifs);
+			i_archive(nextSceneData);
+
+			if (!nextSceneData) return;
+
+			nextSceneData->name = sceneName;
+
+			// 一時的にシーンのスタートフラグをリセットしておく
+			currentScene->isStart = false;
+
+			// 現在のオブジェクトを削除
+			DeleteSceneData(currentScene->sceneData);
+
+			// シーンデータから新しくオブジェクトを生成
+			CreateSceneData(nextSceneData);
+
+			// ゲームスタート
+			currentScene->Start();
+		}
+		// 次のシーンデータをリセット
+		nextSceneData.reset();
+	}
+
 	if (nextScene == nullptr) return;
 
 	if (currentScene->GetType() != nextScene->GetType())
@@ -271,6 +282,28 @@ void SceneManager::RemoveSceneGameObject(std::weak_ptr<GameObject> remove)
 			objectList.erase(itr);
 			return;
 		}
+	}
+}
+
+void SceneManager::LoadEditorSceneData(std::string sceneName)
+{
+	std::string filePathName = DATA_FOLDER_PATH + std::string(FileName);
+	std::ifstream ifs(filePathName + "/" + sceneName + ".scene", std::ios::binary);
+	if (ifs)
+	{
+		std::shared_ptr<SceneData> newSceneData;
+		cereal::BinaryInputArchive i_archive(ifs);
+		i_archive(newSceneData);
+
+		if (!newSceneData) return;
+
+		newSceneData->name = sceneName;
+
+		// 現在のオブジェクトを削除
+		DeleteSceneData(currentScene->sceneData);
+
+		// シーンデータから新しくオブジェクトを生成
+		CreateSceneData(newSceneData);
 	}
 }
 
@@ -346,13 +379,14 @@ void SceneManager::DeleteSceneFile(std::string delName)
 
 void SceneManager::DeleteSceneData(std::shared_ptr<SceneData>& deleteData)
 {
-	if (currentScene->sceneData)
+	if (deleteData)
 	{
-		for (auto & object : currentScene->sceneData->gameObjectList)
+		for (auto & object : deleteData->gameObjectList)
 		{
-			GameObject::Destroy(object);
+			if(!object.lock()->isDontDestroyOnLoad)
+				GameObject::Destroy(object);
 		}
-		currentScene->sceneData.reset();
+		deleteData.reset();
 
 		// 現在ある削除されるオブジェクトを全て破棄
 		Singleton<GameObjectManager>::Instance()->CleanupDestroyGameObject();

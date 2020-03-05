@@ -9,11 +9,7 @@ void GameObject::DrawImGui()
 		SetActive(!isActive);
 //	ImGui::SameLine();
 
-	char inName[32] = {};
-	if (!name.empty())
-		memcpy(inName, &name.front(), name.size());
-	if (ImGui::InputText("Name", inName, ARRAYSIZE(inName)))
-		name = inName;
+	MyImGui::InputString("Name##GameObject", name, 32);
 
 	//int layerNum = (int)layer;
 	ImGui::Text("Layer"); ImGui::SameLine();
@@ -216,4 +212,29 @@ void GameObject::Destroy(std::weak_ptr<GameObject> gameObject, float limit)
 {
 	if (gameObject.expired()) return;
 	gameObject.lock()->OnDestroy(limit);
+}
+
+void GameObject::DontDestroyOnLoad(std::weak_ptr<GameObject> object)
+{
+	if (object.expired()) return;
+
+	object.lock()->isDontDestroyOnLoad = true;
+
+	for (auto child : object.lock()->transform.lock()->GetChilds())
+	{
+		object.lock()->DontDestroyOnLoadChild(child);
+	}
+}
+
+void GameObject::DontDestroyOnLoadChild(std::weak_ptr<Transform> child)
+{
+	if (child.expired()) return;
+
+	if(!child.lock()->gameObject.expired())
+		child.lock()->gameObject.lock()->isDontDestroyOnLoad = true;
+
+	for (auto c : child.lock()->GetChilds())
+	{
+		DontDestroyOnLoadChild(c);
+	}
 }

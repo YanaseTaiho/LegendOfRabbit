@@ -121,6 +121,8 @@
     <ClCompile Include="Asset\Scripts\FlashColor.cpp" />
     <ClCompile Include="Asset\Scripts\LocusController.cpp" />
     <ClCompile Include="Asset\Scripts\RotationFixedController.cpp" />
+    <ClCompile Include="Asset\Scripts\SceneChangePoint.cpp" />
+    <ClCompile Include="Asset\Scripts\SceneChangePointContainer.cpp" />
     <ClCompile Include="Asset\Scripts\TargetImageController.cpp" />
     <ClCompile Include="Asset\Scripts\Vibration.cpp" />
     <ClCompile Include="Asset\Tool\Menu.cpp" />
@@ -315,6 +317,14 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="Asset\Scripts\Common.h" />
+    <ClInclude Include="Asset\Scripts\SceneChangePoint.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Asset\Scripts\SceneChangePointContainer.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Asset\Scripts\FlashColor.h">
       <SubType>
       </SubType>

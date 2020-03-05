@@ -179,6 +179,20 @@ namespace FrameWork
 			}
 			
 		}
+
+		static void InputString(std::string label, std::string & str, std::uint32_t size)
+		{
+			std::uint32_t newSize = (size < (std::uint32_t)str.size()) ? (std::uint32_t)str.size() : size;
+			char* inName = new char[newSize];
+			ZeroMemory(inName, newSize);
+			if (!str.empty())
+				memcpy(inName, &str.front(), str.size());
+
+			if (ImGui::InputText(label.c_str(), inName, newSize))
+				str = inName;
+
+			delete[] inName;
+		}
 	}
 }
 
