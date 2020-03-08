@@ -1,0 +1,63 @@
+{
+    "IronBlock": {
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "cereal_class_version": 3,
+                "value0": "IronBlock",
+                "value1": {
+                    "cereal_class_version": 0,
+                    "ambient": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 1.0
+                    },
+                    "diffuse": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "emissive": {
+                        "r": 0.0,
+                        "g": 0.0,
+                        "b": 0.0,
+                        "a": 1.350000023841858
+                    },
+                    "bump": {
+                        "r": 1.0,
+                        "g": 1.0,
+                        "b": 1.0,
+                        "a": 1.0
+                    },
+                    "specular": {
+                        "r": 0.25,
+                        "g": 0.25,
+                        "b": 0.25,
+                        "a": 2.7100000381469728
+                    },
+                    "specularFactor": 1.0,
+                    "shininess": 1.0,
+                    "reflection": 4.380000114440918,
+                    "height": 1.0
+                },
+                "value2": {
+                    "polymorphic_id": 2147483649,
+                    "polymorphic_name": "MyDirectX::StandardShader",
+                    "ptr_wrapper": {
+                        "id": 2147483650,
+                        "data": {
+                            "cereal_class_version": 0
+                        }
+                    }
+                },
+                "value3": "Asset\\Art\\Model\\Stage\\Textures\\Iron_Base_Color.png",
+                "value4": "Asset\\Art\\Model\\Stage\\Textures\\Iron_Normal_DirectX.png",
+                "value5": "Asset\\Art\\Model\\Stage\\Textures\\Iron_Base_Color.png",
+                "value6": 0,
+                "value7": 3
+            }
+        }
+    }
+}

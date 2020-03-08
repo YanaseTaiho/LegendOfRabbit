@@ -82,10 +82,10 @@ void LocusController::LateUpdate()
 		if (CollisionFunc)
 		{
 			int colMeshNum = endFrameCnt - startFrameCnt;
-			if (colMeshNum > 1)
+			if (colMeshNum > 0)
 			{
-				int start = endFrameCnt - (int)((float)colMeshNum * 0.8f);
-				//end = Mathf::Max(end, endFrameCnt);
+				int start = endFrameCnt - 6;
+				start = Mathf::Min(start, startFrameCnt);
 
 				std::vector<MeshPoints> points(1);
 				// メッシュの先頭から末端のポイントを当たり判定に設定
@@ -97,13 +97,14 @@ void LocusController::LateUpdate()
 
 				DebugLine::DrawRay(points[0].point[0], points[0].point[1], Color::red(), 2.0f);
 				DebugLine::DrawRay(points[0].point[0], points[0].point[2], Color::red(), 2.0f);
-				DebugLine::DrawRay(points[0].point[1], points[0].point[1], Color::red(), 2.0f);
+				DebugLine::DrawRay(points[0].point[1], points[0].point[3], Color::red(), 2.0f);
 				DebugLine::DrawRay(points[0].point[2], points[0].point[3], Color::red(), 2.0f);
 
 				float locusLength = (points[0].point[0] - points[0].point[1]).Length();
 
 				auto HitFunc = [this, points, locusLength](MeshCastInfo& info)
 				{
+					if (info.collision.lock()->isTrigger) return;
 					frameCnt = collisionInterval;
 					CollisionFunc(info, (MeshPoints &)points[0], locusLength);
 				};

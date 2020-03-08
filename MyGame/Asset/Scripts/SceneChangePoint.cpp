@@ -6,6 +6,8 @@ void SceneChangePoint::DrawImGui(int id)
 	std::string strId = "##SceneChangePoint" + std::to_string(id);
 	MyImGui::InputString("NextSceneName" + strId, nextSceneName, 32);
 	ImGui::InputInt(("EntryNumber" + strId).c_str(), &entryNumber);
+	ImGui::Text("Scene Start Point");
+	MyImGui::DropTargetComponent(sceneStartPoint, strId);
 }
 
 void SceneChangePoint::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_ptr<Collision>& other)

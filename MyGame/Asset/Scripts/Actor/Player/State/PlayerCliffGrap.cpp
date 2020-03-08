@@ -39,3 +39,8 @@ void PlayerCliffGrap::OnUpdate(PlayerActor * actor)
 		}
 	}
 }
+
+void PlayerCliffGrap::OnDestroy(PlayerActor * actor)
+{
+	actor->animator.lock()->SetBool("IsCliff_Grap", false);
+}

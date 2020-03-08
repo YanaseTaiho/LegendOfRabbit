@@ -254,9 +254,9 @@ void EditorScene::Draw()
 						this->isStart = false;
 
 						// DontDestroyOnLoadに登録されたオブジェクトを全て削除
-						for (auto dethObject : sceneData->gameObjectList)
+						for (auto dethObject : Singleton<GameObjectManager>::Instance()->GetGameObjectList())
 						{
-							if(dethObject.lock()->isDontDestroyOnLoad)
+							if(dethObject->isDontDestroyOnLoad)
 								GameObject::Destroy(dethObject);
 						}
 

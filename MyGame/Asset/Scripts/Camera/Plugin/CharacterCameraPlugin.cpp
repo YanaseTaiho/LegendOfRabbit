@@ -22,6 +22,8 @@ void CharacterCameraPlugin::OnStart(CameraController * controller)
 	if (Vector3::Dot(verF, controller->transform.lock()->up()) > 0) deg = -deg;
 
 	this->lookVertical = deg;
+	if (std::isnan(this->lookVertical))
+		this->lookVertical = 20.0f;
 }
 
 void CharacterCameraPlugin::OnUpdate(CameraController * controller)

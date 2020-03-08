@@ -1,4 +1,5 @@
 #include "DebugLine.h"
+#include "Main/manager.h"
 
 using namespace MyDirectX;
 
@@ -12,16 +13,23 @@ std::vector<DebugLine::DrawRayData> DebugLine::drawRayDataArray;
 
 void DebugLine::RegisterLineData(std::string name, LineMesh * data)
 {
+#if EDITOR_MODE
 	lineMap[name].reset(data);
+#endif // EDITOR_MODE
 }
 
 bool DebugLine::IsRegisterdLineData(std::string name)
 {
+#if EDITOR_MODE
 	return lineMap.count(name) > 0;
+#else
+	return false;
+#endif // EDITOR_MODE
 }
 
 void DebugLine::CreateDebugLines()
 {
+#if EDITOR_MODE
 	rayMesh = std::make_unique<RayMesh>();
 	CreateLineGrid();
 	CreateLineSphere();
@@ -29,46 +37,61 @@ void DebugLine::CreateDebugLines()
 	CreateLineCircle();
 	CreateLineHalfCircle();
 	CreateLineBox();
+#endif // EDITOR_MODE
 }
 
 void DebugLine::DrawLine(std::string name, Matrix4 matrix, Color color, float width)
 {
+#if EDITOR_MODE
 	if (lineMap.count(name) == 0) return;
 
 	lineMap[name]->Draw(matrix, color, width);
+#endif // EDITOR_MODE
 }
 
 void DebugLine::DrawRay(Vector3 start, Vector3 end, Color color, float width)
 {
+#if EDITOR_MODE
 	drawRayDataArray.emplace_back(start, end, color, width);
+#endif // EDITOR_MODE
 }
 
 void DebugLine::DrawRay(Vector3 start, Vector3 dir, float length, Color color, float width)
 {
+#if EDITOR_MODE
 	drawRayDataArray.emplace_back(start, start + dir * length, color, width);
+#endif // EDITOR_MODE
 }
 
 void DebugLine::DrawRayMoment(Vector3 start, Vector3 dir, float length, Color color, float width)
 {
+#if EDITOR_MODE
 	rayMesh->Draw(start, dir, length, color, width);
+#endif // EDITOR_MODE
 }
 
 void DebugLine::DrawRayAll()
 {
+#if EDITOR_MODE
 	for (auto data : drawRayDataArray)
 	{
 		rayMesh->Draw(data.start, data.end, data.color, data.width);
 	}
+#endif // EDITOR_MODE
 }
 
 void DebugLine::DrawDataReset()
 {
+#if EDITOR_MODE
 	std::vector<DrawRayData>().swap(drawRayDataArray);
+#endif // EDITOR_MODE
 }
 
 void DebugLine::Release()
 {
+#if EDITOR_MODE
 	lineMap.clear();
+#endif // EDITOR_MODE
 }
 
 void DebugLine::CreateLineGrid()

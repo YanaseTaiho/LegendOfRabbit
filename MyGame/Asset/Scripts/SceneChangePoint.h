@@ -12,6 +12,7 @@ private:
 	{
 		archive(cereal::base_class<MonoBehaviour>(this));
 		archive(nextSceneName, entryNumber);
+		if (version >= 1) archive(sceneStartPoint);
 	}
 
 	template<class Archive>
@@ -19,6 +20,7 @@ private:
 	{
 		archive(cereal::base_class<MonoBehaviour>(this));
 		archive(nextSceneName, entryNumber);
+		if (version >= 1) archive(sceneStartPoint);
 	}
 
 
@@ -27,6 +29,7 @@ public:
 
 	std::string nextSceneName;	// 次のシーン切り替え先の名前
 	int entryNumber;			// 次のシーンのSceneChangePointの番号
+	std::weak_ptr<Transform> sceneStartPoint;	// シーン開始時のスタート地点
 	std::function<void(SceneChangePoint & point)> PlaySceneChange = nullptr;	// シーンを切り替えるタイミングで呼ぶ
 private:
 //	void Start() override;
@@ -35,7 +38,7 @@ private:
 	void OnTriggerStay(std::weak_ptr<Collision> & mine, std::weak_ptr<Collision> & other) override;
 };
 
-CEREAL_CLASS_VERSION(SceneChangePoint, 0)
+CEREAL_CLASS_VERSION(SceneChangePoint, 1)
 CEREAL_REGISTER_TYPE(SceneChangePoint)
 
 #endif // !__EntryPoint__H__

@@ -22,7 +22,7 @@
 
 using namespace MyDirectX;
 
-#if 1
+#if EDITOR_MODE
 #define START_SCENE (EditorScene)
 #else
 #define START_SCENE (GameScene)

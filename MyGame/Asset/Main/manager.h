@@ -3,6 +3,8 @@
 
 #include <string>
 
+#define EDITOR_MODE (1)
+
 #define DATA_FOLDER_NAME (std::string("Data"))
 #define DATA_FOLDER_PATH (DATA_FOLDER_NAME + std::string("/"))
 

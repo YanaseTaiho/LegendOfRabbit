@@ -27,7 +27,7 @@ static audio_data LoadData[(int)AudioData::MaxNum] =
 	{ "SE/hit_stone.wav", 2 },
 	{ "SE/hit_iron.wav", 2 },
 	{ "SE/foot_kusa.wav", 2 },
-	{ "SE/hit70.wav", 2 },
+	{ "SE/foot_soil.wav", 2 },
 	{ "SE/foot_soil.wav", 2 },
 	{ "SE/foot_iron.wav", 2 },
 	{ "SE/hyu.wav", 1 },

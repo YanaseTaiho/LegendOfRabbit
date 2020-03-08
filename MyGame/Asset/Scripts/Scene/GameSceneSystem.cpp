@@ -18,8 +18,8 @@ void GameSceneSystem::DrawImGui(int id)
 	MyImGui::DropTargetComponent(player, std::to_string(id));
 	ImGui::Text("Camera Controller"); //ImGui::SameLine();
 	MyImGui::DropTargetComponent(cameraController, std::to_string(id));
-	ImGui::Text("Enemy Container"); //ImGui::SameLine();
-	MyImGui::DropTargetComponent(enemyContainer, std::to_string(id));
+	//ImGui::Text("Enemy Container"); //ImGui::SameLine();
+	//MyImGui::DropTargetComponent(enemyContainer, std::to_string(id));
 
 	if (ImGui::InputInt(("PlayerEntryNumber" + strId).c_str(), &playerEntryNumber))
 	{
@@ -60,12 +60,13 @@ void GameSceneSystem::Start()
 		if (playerEntryNumber < entryContainer.lock()->pointArray.size()
 			&& !entryContainer.lock()->pointArray[playerEntryNumber].expired())
 		{
-			auto entryTransform = entryContainer.lock()->pointArray[playerEntryNumber].lock()->transform.lock();
-			Vector3 entryPos = entryTransform->GetWorldPosition() + entryTransform->forward() * 80.0f;
+			auto entryTransform = entryContainer.lock()->pointArray[playerEntryNumber].lock()->sceneStartPoint.lock();
+			Vector3 entryPos = entryTransform->GetWorldPosition();
 			Quaternion entryRot = entryTransform->GetWorldRotation();
 			player.lock()->transform.lock()->SetWorldPosition(entryPos);
 			player.lock()->transform.lock()->SetWorldRotation(entryRot);
 
+			entryPos.y += cameraController.lock()->offsetHeight;
 			cameraController.lock()->transform.lock()->SetWorldPosition(entryPos);
 			cameraController.lock()->transform.lock()->SetWorldRotation(entryRot);
 		}
@@ -105,5 +106,9 @@ void GameSceneSystem::LateUpdate()
 
 void GameSceneSystem::OnDestroy()
 {
-	Singleton<AudioClipManager>::Instance()->Stop(AudioData::BGM_StageBGM01);
+	auto gameScene = Component::FindComponent<GameSceneSystem>();
+	if (!gameScene.expired() && gameScene.lock().get() == this )
+	{
+		Singleton<AudioClipManager>::Instance()->Stop(AudioData::BGM_StageBGM01);
+	}
 }

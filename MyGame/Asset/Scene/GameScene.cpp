@@ -8,5 +8,5 @@ void GameScene::Initialize()
 {
 	prefab.Load(DATA_FOLDER_PATH);
 
-	Singleton<SceneManager>::Instance()->LoadSceneData("GameStage02");
+	Singleton<SceneManager>::Instance()->LoadSceneData("GameScene01");
 }

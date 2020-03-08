@@ -95,6 +95,8 @@ void SpikeRabbitActor::OnCollisionStay(std::weak_ptr<Collision>& mine, std::weak
 	}
 	else if(currentState == State::Attack)
 	{
+		Singleton<AudioClipManager>::Instance()->Play(AudioData::SE_RollHit);
+
 		auto effect = Singleton<GameObjectManager>::Instance()->Instantiate(Singleton<SceneManager>::Instance()->GetCurrentScene()->GetPrefabGameObject("Effect"));
 		if (!effect.expired())
 		{
@@ -113,8 +115,16 @@ void SpikeRabbitActor::OnTriggerStay(std::weak_ptr<Collision>& mine, std::weak_p
 	auto p = other.lock()->gameObject.lock()->GetComponent<PlayerActor>();
 	if (!p.expired())
 	{
-		player = p;
-		playerFindTime = 3.0f;
+		// ƒŒƒC‚ð”ò‚Î‚µ‚ÄŽ€Šp‚È‚Ì‚©Šm‚©‚ß‚é
+		RayCastInfo info;
+		Ray ray;
+		ray.Set(this->transform.lock()->GetWorldPosition(), other.lock()->worldMatrix.position());
+		if (RayCast::JudgeAllCollision(&ray, &info, rigidbody.lock()->collisions)
+			&& info.collision.lock() == other.lock())
+		{
+			player = p;
+			playerFindTime = 3.0f;
+		}
 	}
 }
 
